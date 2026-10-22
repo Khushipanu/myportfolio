@@ -1,17 +1,23 @@
 @import 'tailwindcss';
 
 @theme {
-  --color-paper: #ece7df;
-  --color-paper-2: #e2dcd2;
-  --color-ink: #141210;
-  --color-ink-2: #1e1b18;
-  --color-muted: #6d665d;
-  --color-line: #cfc7bb;
-  --color-accent: #ff4f1f;
+  /* Dark theme taken from the Mike Wilcock reference. "paper" is the page,
+     "ink" is the text colour drawn on it. */
+  --color-paper: #131313;
+  --color-paper-2: #1a1a1a;
+  --color-ink: #e9e4df;
+  --color-muted: #8e8983;
+  --color-accent: #749dfb;
+
+  /* Fixed colours for the code-drawn artwork, independent of the theme. */
+  --color-cream: #e9e4df;
+  --color-cream-2: #d9d3cb;
+  --color-coal: #131313;
 
   --font-display: 'Anton', 'Impact', sans-serif;
   --font-serif: 'Instrument Serif', Georgia, serif;
   --font-sans: 'Inter Variable', 'Inter', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, monospace;
 }
 
 html {
@@ -29,7 +35,7 @@ body {
 
 ::selection {
   background: var(--color-accent);
-  color: var(--color-ink);
+  color: var(--color-coal);
 }
 
 /* Lenis */
@@ -57,27 +63,6 @@ html.lenis body {
     display: block;
     will-change: transform;
   }
-
-  /* Letter-by-letter roll used on menu links (see RollText.jsx). */
-  .roll {
-    display: inline-block;
-    overflow: hidden;
-    vertical-align: bottom;
-    line-height: 1.25;
-  }
-  .roll-chars {
-    display: inline-flex;
-  }
-  .roll-char {
-    display: inline-block;
-    text-shadow: 0 1.25em currentColor;
-    transition: transform 0.55s cubic-bezier(0.7, 0, 0.2, 1);
-    transition-delay: calc(var(--i) * 22ms);
-  }
-  .roll-trigger:hover .roll-char,
-  .roll-trigger:focus-visible .roll-char {
-    transform: translateY(-1.25em);
-  }
 }
 
 /* Subtle film grain over the whole site */
@@ -86,7 +71,7 @@ html.lenis body {
   inset: -50%;
   z-index: 60;
   pointer-events: none;
-  opacity: 0.07;
+  opacity: 0.05;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 

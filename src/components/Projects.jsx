@@ -15,7 +15,7 @@ function Project({ p, flip }) {
       </div>
 
       <div className={`col-span-12 flex flex-col md:col-span-5 ${flip ? 'md:order-1' : ''}`}>
-        <div className="flex items-baseline justify-between text-xs uppercase tracking-[0.2em] text-muted">
+        <div className="flex items-baseline justify-between font-mono text-[11px] uppercase tracking-[0.12em] text-muted">
           <span>({p.index})</span>
           <span>{p.kind}</span>
         </div>

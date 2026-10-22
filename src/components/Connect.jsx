@@ -3,7 +3,6 @@ import { gsap, useGSAP, MOTION_OK } from '../lib/gsap'
 import { scrollToTarget } from '../hooks/useLenis'
 import { useLocalTime } from '../hooks/useLocalTime'
 import { profile, socials } from '../data/content'
-import RollText from './RollText'
 
 // Visuvate-inspired closing section: oversized "Let's Connect" type that
 // assembles as you arrive, a magnetic email link and the contact details.
@@ -56,13 +55,13 @@ export default function Connect() {
   )
 
   return (
-    <footer id="contact" ref={root} className="relative overflow-hidden bg-ink px-5 pb-8 pt-24 text-paper md:px-10 md:pt-36">
-      <p className="text-xs uppercase tracking-[0.2em] text-paper/50">(06) Contact</p>
+    <footer id="contact" ref={root} className="relative overflow-hidden bg-paper-2 px-5 pb-8 pt-24 text-ink md:px-10 md:pt-36">
+      <p className="font-mono text-[11px] uppercase tracking-[0.12em] text-ink/50">(06) Contact</p>
 
       <h2 className="mt-10 font-display uppercase leading-[0.82] md:mt-14" aria-label="Let's connect">
         <span aria-hidden="true" data-lc-a className="block text-[24vw] md:text-[17vw]">Let's</span>
         <span aria-hidden="true" className="flex items-center justify-end gap-[2vw]">
-          <span data-lc-dot className="inline-flex h-[12vw] w-[12vw] shrink-0 items-center justify-center rounded-full bg-accent text-[6vw] text-ink md:h-[9vw] md:w-[9vw] md:text-[4.5vw]">
+          <span data-lc-dot className="inline-flex h-[12vw] w-[12vw] shrink-0 items-center justify-center rounded-full bg-accent text-[6vw] text-coal md:h-[9vw] md:w-[9vw] md:text-[4.5vw]">
             ↗
           </span>
           <span data-lc-b className="block text-[24vw] md:text-[17vw]">Connect</span>
@@ -71,7 +70,7 @@ export default function Connect() {
 
       <div data-lc-details className="mt-16 grid grid-cols-12 gap-x-5 gap-y-12 md:mt-24">
         <div className="col-span-12 md:col-span-7" data-lc-fade>
-          <p className="text-xs uppercase tracking-[0.2em] text-paper/50">Write to me</p>
+          <p className="font-mono text-[11px] uppercase tracking-[0.12em] text-ink/50">Write to me</p>
           <Magnetic
             href={`mailto:${profile.email}`}
             data-cursor="Email"
@@ -79,24 +78,24 @@ export default function Connect() {
           >
             {profile.email}
           </Magnetic>
-          <p className="mt-6 text-paper/60">
-            or call <a className="link-underline text-paper" href={profile.phoneHref}>{profile.phone}</a>
+          <p className="mt-6 text-ink/60">
+            or call <a className="link-underline text-ink" href={profile.phoneHref}>{profile.phone}</a>
           </p>
         </div>
 
         <div className="col-span-12 md:col-span-4 md:col-start-9" data-lc-fade>
-          <p className="text-xs uppercase tracking-[0.2em] text-paper/50">Elsewhere</p>
-          <ul className="mt-4 border-t border-paper/15">
+          <p className="font-mono text-[11px] uppercase tracking-[0.12em] text-ink/50">Elsewhere</p>
+          <ul className="mt-4 border-t border-ink/15">
             {socials.map((s) => (
-              <li key={s.label} className="border-b border-paper/15">
+              <li key={s.label} className="border-b border-ink/15">
                 <a
                   href={s.href}
                   target="_blank"
                   rel="noreferrer"
-                  className="roll-trigger group flex items-center justify-between py-4 text-lg transition-colors hover:text-accent"
+                  className="group flex items-center justify-between py-4 text-lg transition-colors hover:text-accent"
                 >
-                  <RollText>{s.label}</RollText>
-                  <span className="text-sm text-paper/50 transition-transform duration-500 group-hover:-translate-y-0.5 group-hover:translate-x-1 group-hover:text-accent">
+                  <span>{s.label}</span>
+                  <span className="text-sm text-ink/50 transition-transform duration-500 group-hover:-translate-y-0.5 group-hover:translate-x-1 group-hover:text-accent">
                     @{s.handle} ↗
                   </span>
                 </a>
@@ -106,11 +105,11 @@ export default function Connect() {
         </div>
       </div>
 
-      <div className="mt-24 flex flex-col gap-4 border-t border-paper/15 pt-6 text-xs uppercase tracking-[0.2em] text-paper/50 md:flex-row md:items-center md:justify-between">
+      <div className="mt-24 flex flex-col gap-4 border-t border-ink/15 pt-6 font-mono text-[11px] uppercase tracking-[0.12em] text-ink/50 md:flex-row md:items-center md:justify-between">
         <span>© 2026 {profile.name}</span>
         <span>{profile.location} — <span className="tabular-nums">{time}</span> IST</span>
-        <button type="button" onClick={() => scrollToTarget('#top')} className="roll-trigger self-start uppercase tracking-[0.2em] md:self-auto">
-          <RollText>Back to top ↑</RollText>
+        <button type="button" onClick={() => scrollToTarget('#top')} className="self-start uppercase tracking-[0.12em] transition-colors hover:text-accent md:self-auto">
+          Back to top ↑
         </button>
       </div>
     </footer>

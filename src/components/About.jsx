@@ -9,6 +9,7 @@ function ServiceRow({ s, i }) {
     <li className="group relative border-t border-ink/20 last:border-b">
       <div
         tabIndex={0}
+        data-cursor-tone="dark"
         className="relative grid grid-cols-12 items-center gap-x-5 overflow-hidden px-1 py-6 outline-none transition-colors duration-500 group-hover:text-paper focus-visible:text-paper md:px-4 md:py-9"
       >
         <span
@@ -72,7 +73,7 @@ export default function About() {
   return (
     <section id="about" ref={root} aria-labelledby="about-title" className="px-5 py-24 md:px-10 md:py-40">
       <div className="grid grid-cols-12 gap-x-5 gap-y-10">
-        <h2 id="about-title" className="col-span-12 text-xs uppercase tracking-[0.2em] text-muted md:col-span-3">
+        <h2 id="about-title" className="col-span-12 font-mono text-[11px] uppercase tracking-[0.12em] text-muted md:col-span-3">
           (03) About
         </h2>
         <div className="col-span-12 md:col-span-9">
@@ -92,7 +93,7 @@ export default function About() {
       <div id="services" className="mt-24 scroll-mt-24 md:mt-36">
         <div className="mb-8 flex items-end justify-between">
           <h2 className="font-display text-[15vw] uppercase leading-[0.85] md:text-[8vw]">Services</h2>
-          <p className="hidden text-xs uppercase tracking-[0.2em] text-muted md:block">(Hover to explore)</p>
+          <p className="hidden font-mono text-[11px] uppercase tracking-[0.12em] text-muted md:block">(Hover to explore)</p>
         </div>
         <ul data-service-list>
           {services.map((s, i) => (

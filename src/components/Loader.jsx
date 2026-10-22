@@ -41,11 +41,11 @@ export default function Loader({ onDone }) {
   return (
     <div
       ref={root}
-      className="fixed inset-0 z-[80] flex flex-col justify-between bg-ink px-5 py-6 text-paper md:px-10 md:py-8"
+      className="fixed inset-0 z-[80] flex flex-col justify-between bg-paper-2 px-5 py-6 text-ink md:px-10 md:py-8"
       role="status"
       aria-label="Loading"
     >
-      <div className="flex justify-between text-xs uppercase tracking-[0.2em] text-paper/60">
+      <div className="flex justify-between font-mono text-[11px] uppercase tracking-[0.12em] text-ink/60">
         <span className="mask"><span data-loader-line>Portfolio</span></span>
         <span className="mask"><span data-loader-line>©2026</span></span>
       </div>

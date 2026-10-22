@@ -37,7 +37,7 @@ export default function Experience() {
     <section id="experience" ref={root} aria-labelledby="exp-title" className="bg-paper-2 px-5 py-24 md:px-10 md:py-36">
       <div className="mb-14 flex items-end justify-between md:mb-20">
         <h2 id="exp-title" className="font-display text-[15vw] uppercase leading-[0.85] md:text-[8vw]">Experience</h2>
-        <p className="text-xs uppercase tracking-[0.2em] text-muted">(04)</p>
+        <p className="font-mono text-[11px] uppercase tracking-[0.12em] text-muted">(04)</p>
       </div>
 
       <ol>
@@ -64,7 +64,7 @@ export default function Experience() {
       </ol>
 
       <div className="mt-16 md:mt-24">
-        <h3 className="mb-6 text-xs uppercase tracking-[0.2em] text-muted">Education</h3>
+        <h3 className="mb-6 font-mono text-[11px] uppercase tracking-[0.12em] text-muted">Education</h3>
         <ul>
           {education.map((ed) => (
             <li key={ed.degree} className="relative grid grid-cols-12 gap-x-5 gap-y-1 py-5">

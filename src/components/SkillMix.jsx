@@ -85,7 +85,7 @@ export default function SkillMix() {
 
   return (
     <section ref={root} aria-labelledby="skills-title" className="overflow-hidden px-5 py-24 md:px-10 md:py-40">
-      <p className="text-xs uppercase tracking-[0.2em] text-muted">(05) Toolkit</p>
+      <p className="font-mono text-[11px] uppercase tracking-[0.12em] text-muted">(05) Toolkit</p>
       <h2 id="skills-title" className="mt-8 text-center font-display uppercase leading-[0.9]">
         <span className="mask text-[9vw] md:text-[5vw]"><span data-mix-head>I build with</span></span>
         <span className="mask">
@@ -99,7 +99,7 @@ export default function SkillMix() {
       <div data-groups className="mx-auto mt-20 grid max-w-6xl grid-cols-2 gap-x-5 gap-y-10 md:mt-28 md:grid-cols-3">
         {skillGroups.map((g) => (
           <div key={g.label} data-group className="border-t border-ink/20 pt-4">
-            <h3 className="text-xs uppercase tracking-[0.2em] text-muted">{g.label}</h3>
+            <h3 className="font-mono text-[11px] uppercase tracking-[0.12em] text-muted">{g.label}</h3>
             <ul className="mt-3 space-y-1 text-[15px] md:text-base">
               {g.items.map((it) => (
                 <li key={it}>{it}</li>

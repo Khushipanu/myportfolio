@@ -70,16 +70,16 @@ export default function Work() {
   )
 
   return (
-    <section id="work" ref={root} aria-labelledby="work-title" className="relative bg-ink text-paper">
+    <section id="work" ref={root} aria-labelledby="work-title" className="relative bg-paper-2 text-ink">
       <div ref={stage} className="relative h-[100svh] overflow-hidden motion-reduce:hidden">
         <div className="absolute inset-x-5 top-24 flex items-start justify-between md:inset-x-10 md:top-28">
-          <p className="text-xs uppercase tracking-[0.2em] text-paper/50">(02) Selected work</p>
-          <p className="hidden max-w-[16rem] text-right text-sm text-paper/60 md:block">
+          <p className="font-mono text-[11px] uppercase tracking-[0.12em] text-ink/50">(02) Selected work</p>
+          <p className="hidden max-w-[16rem] text-right text-sm text-ink/60 md:block">
             Two projects, one stack — scroll to move through the work.
           </p>
         </div>
 
-        <h2 id="work-title" className="pointer-events-none absolute inset-0 flex items-center justify-center font-display text-[24vw] uppercase leading-none text-paper/[0.06] md:text-[17vw]">
+        <h2 id="work-title" className="pointer-events-none absolute inset-0 flex items-center justify-center font-display text-[24vw] uppercase leading-none text-ink/[0.06] md:text-[17vw]">
           Work
         </h2>
 
@@ -96,28 +96,28 @@ export default function Work() {
                 data-cursor="View"
                 className="group block w-full text-left"
               >
-                <Art variant={c.variant} className="aspect-[4/3] w-full rounded-[4px] ring-1 ring-paper/10 transition-transform duration-700 group-hover:scale-[1.03]" />
+                <Art variant={c.variant} className="aspect-[4/3] w-full rounded-[4px] ring-1 ring-ink/10 transition-transform duration-700 group-hover:scale-[1.03]" />
                 <span className="mt-3 flex items-baseline justify-between gap-4 text-[13px]">
                   <span className="font-medium">{c.label}</span>
-                  <span className="text-paper/50">{c.meta}</span>
+                  <span className="text-ink/50">{c.meta}</span>
                 </span>
               </button>
             </li>
           ))}
         </ul>
 
-        <p className="absolute bottom-6 left-5 text-xs uppercase tracking-[0.2em] text-paper/40 md:left-10">MERN · React.js · Node.js</p>
-        <p className="absolute bottom-6 right-5 text-xs uppercase tracking-[0.2em] text-paper/40 md:right-10">Scroll</p>
+        <p className="absolute bottom-6 left-5 font-mono text-[11px] uppercase tracking-[0.12em] text-ink/40 md:left-10">MERN · React.js · Node.js</p>
+        <p className="absolute bottom-6 right-5 font-mono text-[11px] uppercase tracking-[0.12em] text-ink/40 md:right-10">Scroll</p>
       </div>
 
       {/* Calm fallback for people who prefer reduced motion. */}
       <div className="hidden px-5 py-24 motion-reduce:block md:px-10">
-        <p className="text-xs uppercase tracking-[0.2em] text-paper/50">(02) Selected work</p>
+        <p className="font-mono text-[11px] uppercase tracking-[0.12em] text-ink/50">(02) Selected work</p>
         <ul className="mt-10 grid gap-8 md:grid-cols-3">
           {cards.map((c, i) => (
             <li key={i} className="text-[2.6vw] md:text-[1vw]">
               <Art variant={c.variant} className="aspect-[4/3] w-full rounded-[4px]" />
-              <p className="mt-3 flex justify-between text-[13px]"><span>{c.label}</span><span className="text-paper/50">{c.meta}</span></p>
+              <p className="mt-3 flex justify-between text-[13px]"><span>{c.label}</span><span className="text-ink/50">{c.meta}</span></p>
             </li>
           ))}
         </ul>

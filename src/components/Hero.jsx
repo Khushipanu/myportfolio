@@ -62,7 +62,7 @@ export default function Hero({ ready }) {
     >
       <div className="grid grid-cols-12 gap-x-5 gap-y-8 pb-10 md:pb-14">
         <div className="col-span-12 md:col-span-5">
-          <p className="mask text-xs uppercase tracking-[0.2em] text-muted">
+          <p className="mask font-mono text-[11px] uppercase tracking-[0.12em] text-muted">
             <span data-hero-fade>(Portfolio — 2026)</span>
           </p>
           <p className="mt-5 max-w-md text-[17px] leading-snug md:text-xl">
@@ -72,12 +72,12 @@ export default function Hero({ ready }) {
           </p>
         </div>
         <div className="col-span-6 md:col-span-3 md:col-start-8">
-          <p className="mask text-xs uppercase tracking-[0.2em] text-muted"><span data-hero-fade>Currently</span></p>
+          <p className="mask font-mono text-[11px] uppercase tracking-[0.12em] text-muted"><span data-hero-fade>Currently</span></p>
           <p className="mask mt-2 text-[15px]"><span data-hero-fade>Full Stack Developer</span></p>
           <p className="mask text-[15px] text-muted"><span data-hero-fade>Ruhanix OPC Pvt. Ltd.</span></p>
         </div>
         <div className="col-span-6 md:col-span-2">
-          <p className="mask text-xs uppercase tracking-[0.2em] text-muted"><span data-hero-fade>Stack</span></p>
+          <p className="mask font-mono text-[11px] uppercase tracking-[0.12em] text-muted"><span data-hero-fade>Stack</span></p>
           <p className="mask mt-2 text-[15px]"><span data-hero-fade>React.js · Node.js</span></p>
           <p className="mask text-[15px] text-muted"><span data-hero-fade>Express.js · MongoDB</span></p>
         </div>
@@ -105,7 +105,7 @@ export default function Hero({ ready }) {
         </h1>
       </div>
 
-      <div className="mt-4 flex items-center justify-between text-xs uppercase tracking-[0.2em] text-muted">
+      <div className="mt-4 flex items-center justify-between font-mono text-[11px] uppercase tracking-[0.12em] text-muted">
         <span className="mask"><span data-hero-fade>{profile.location}</span></span>
         <span className="mask max-md:hidden"><span data-hero-fade>Scroll ↓</span></span>
       </div>
