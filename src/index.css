@@ -57,6 +57,27 @@ html.lenis body {
     display: block;
     will-change: transform;
   }
+
+  /* Letter-by-letter roll used on menu links (see RollText.jsx). */
+  .roll {
+    display: inline-block;
+    overflow: hidden;
+    vertical-align: bottom;
+    line-height: 1.25;
+  }
+  .roll-chars {
+    display: inline-flex;
+  }
+  .roll-char {
+    display: inline-block;
+    text-shadow: 0 1.25em currentColor;
+    transition: transform 0.55s cubic-bezier(0.7, 0, 0.2, 1);
+    transition-delay: calc(var(--i) * 22ms);
+  }
+  .roll-trigger:hover .roll-char,
+  .roll-trigger:focus-visible .roll-char {
+    transform: translateY(-1.25em);
+  }
 }
 
 /* Subtle film grain over the whole site */

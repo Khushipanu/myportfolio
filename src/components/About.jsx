@@ -89,7 +89,7 @@ export default function About() {
         </div>
       </div>
 
-      <div className="mt-24 md:mt-36">
+      <div id="services" className="mt-24 scroll-mt-24 md:mt-36">
         <div className="mb-8 flex items-end justify-between">
           <h2 className="font-display text-[15vw] uppercase leading-[0.85] md:text-[8vw]">Services</h2>
           <p className="hidden text-xs uppercase tracking-[0.2em] text-muted md:block">(Hover to explore)</p>

@@ -3,6 +3,7 @@ import { gsap, useGSAP, MOTION_OK } from '../lib/gsap'
 import { scrollToTarget } from '../hooks/useLenis'
 import { useLocalTime } from '../hooks/useLocalTime'
 import { profile, socials } from '../data/content'
+import RollText from './RollText'
 
 // Visuvate-inspired closing section: oversized "Let's Connect" type that
 // assembles as you arrive, a magnetic email link and the contact details.
@@ -92,9 +93,9 @@ export default function Connect() {
                   href={s.href}
                   target="_blank"
                   rel="noreferrer"
-                  className="group flex items-center justify-between py-4 text-lg transition-colors hover:text-accent"
+                  className="roll-trigger group flex items-center justify-between py-4 text-lg transition-colors hover:text-accent"
                 >
-                  <span>{s.label}</span>
+                  <RollText>{s.label}</RollText>
                   <span className="text-sm text-paper/50 transition-transform duration-500 group-hover:-translate-y-0.5 group-hover:translate-x-1 group-hover:text-accent">
                     @{s.handle} ↗
                   </span>
@@ -108,8 +109,8 @@ export default function Connect() {
       <div className="mt-24 flex flex-col gap-4 border-t border-paper/15 pt-6 text-xs uppercase tracking-[0.2em] text-paper/50 md:flex-row md:items-center md:justify-between">
         <span>© 2026 {profile.name}</span>
         <span>{profile.location} — <span className="tabular-nums">{time}</span> IST</span>
-        <button type="button" onClick={() => scrollToTarget('#top')} className="link-underline self-start uppercase tracking-[0.2em] md:self-auto">
-          Back to top ↑
+        <button type="button" onClick={() => scrollToTarget('#top')} className="roll-trigger self-start uppercase tracking-[0.2em] md:self-auto">
+          <RollText>Back to top ↑</RollText>
         </button>
       </div>
     </footer>

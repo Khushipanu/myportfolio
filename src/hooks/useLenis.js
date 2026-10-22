@@ -26,6 +26,8 @@ export function useLenis(enabled) {
 export function scrollToTarget(target) {
   const el = typeof target === 'string' ? document.querySelector(target) : target
   if (!el) return
-  if (lenisInstance) lenisInstance.scrollTo(el, { duration: 1.6 })
+  // Leave room for the fixed header, except when jumping back to the top.
+  const offset = el.id === 'top' ? 0 : -90
+  if (lenisInstance) lenisInstance.scrollTo(el, { duration: 1.6, offset })
   else el.scrollIntoView({ behavior: prefersReducedMotion() ? 'auto' : 'smooth' })
 }

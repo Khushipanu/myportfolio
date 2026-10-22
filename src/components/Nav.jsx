@@ -3,10 +3,12 @@ import { gsap, useGSAP } from '../lib/gsap'
 import { scrollToTarget } from '../hooks/useLenis'
 import { profile } from '../data/content'
 import { useLocalTime } from '../hooks/useLocalTime'
+import RollText from './RollText'
 
 const links = [
   { label: 'Work', href: '#work' },
   { label: 'About', href: '#about' },
+  { label: 'Services', href: '#services' },
   { label: 'Contact', href: '#contact' },
 ]
 
@@ -32,8 +34,8 @@ export default function Nav({ ready }) {
       ref={root}
       className="fixed inset-x-0 top-0 z-50 flex items-start justify-between px-5 pt-5 text-[13px] text-paper mix-blend-difference md:px-10 md:pt-7"
     >
-      <a href="#top" onClick={(e) => go(e, '#top')} className="mask whitespace-nowrap font-medium" aria-label="Khushi Panu — back to top">
-        <span data-nav-item>Khushi Panu<sup className="ml-0.5 text-[9px]">©</sup></span>
+      <a href="#top" onClick={(e) => go(e, '#top')} className="roll-trigger mask whitespace-nowrap font-medium" aria-label="Khushi Panu — back to top">
+        <span data-nav-item><RollText>Khushi Panu</RollText><sup className="ml-0.5 text-[9px]">©</sup></span>
       </a>
       <div className="mask hidden md:block">
         <span data-nav-item className="text-paper/70">
@@ -41,11 +43,11 @@ export default function Nav({ ready }) {
         </span>
       </div>
       <nav aria-label="Primary">
-        <ul className="flex gap-5 md:gap-8">
+        <ul className="flex gap-4 md:gap-8">
           {links.map((l) => (
             <li key={l.href} className="mask">
-              <a href={l.href} onClick={(e) => go(e, l.href)} className="link-underline" data-nav-item>
-                {l.label}
+              <a href={l.href} onClick={(e) => go(e, l.href)} className="roll-trigger" data-nav-item>
+                <RollText>{l.label}</RollText>
               </a>
             </li>
           ))}
