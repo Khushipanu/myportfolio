@@ -41,7 +41,7 @@ function Lms() {
       <div className="flex flex-1 flex-col gap-[5%] p-[5%]">
         <div className="text-[0.7em] font-semibold">Courses</div>
         <div className="grid flex-1 grid-cols-2 gap-[5%]">
-          {['#141210', '#ff4f1f', '#6d665d', '#141210'].map((c, i) => (
+          {['#131313', '#749dfb', '#6d665d', '#131313'].map((c, i) => (
             <div key={i} className="flex flex-col overflow-hidden rounded-[0.35em] bg-cream">
               <div className="flex-1" style={{ background: c }}>
                 <div className="m-[10%] flex h-[1.6em] w-[1.6em] items-center justify-center rounded-full bg-cream/90 text-[0.5em] text-coal">▶</div>
