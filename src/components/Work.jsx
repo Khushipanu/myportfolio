@@ -79,7 +79,7 @@ export default function Work() {
           </p>
         </div>
 
-        <h2 id="work-title" className="pointer-events-none absolute inset-0 flex items-center justify-center font-display text-[24vw] uppercase leading-none text-ink/[0.06] md:text-[17vw]">
+        <h2 id="work-title" className="pointer-events-none absolute inset-0 flex items-center justify-center font-display text-[20vw] uppercase leading-none text-ink/[0.05] md:text-[15vw]">
           Work
         </h2>
 

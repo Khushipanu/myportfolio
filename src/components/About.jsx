@@ -19,7 +19,7 @@ function ServiceRow({ s, i }) {
         <span className="relative col-span-2 text-xs tabular-nums text-muted transition-colors duration-500 group-hover:text-accent md:col-span-1">
           0{i + 1}
         </span>
-        <h3 className="relative col-span-10 font-display text-[9vw] uppercase leading-[0.95] transition-transform duration-[650ms] ease-[cubic-bezier(0.7,0,0.2,1)] group-hover:translate-x-3 md:col-span-6 md:text-[4.4vw] md:group-hover:translate-x-6">
+        <h3 className="relative col-span-10 font-display text-[7vw] uppercase leading-[0.95] transition-transform duration-[650ms] ease-[cubic-bezier(0.7,0,0.2,1)] group-hover:translate-x-3 md:col-span-6 md:text-[3.1vw] md:group-hover:translate-x-6">
           {s.title}
         </h3>
         <div className="relative col-span-12 mt-3 md:col-span-4 md:mt-0 md:translate-y-3 md:opacity-0 md:transition-all md:duration-500 md:group-hover:translate-y-0 md:group-hover:opacity-100 md:group-focus-within:translate-y-0 md:group-focus-within:opacity-100">
@@ -92,7 +92,7 @@ export default function About() {
 
       <div id="services" className="mt-24 scroll-mt-24 md:mt-36">
         <div className="mb-8 flex items-end justify-between">
-          <h2 className="font-display text-[15vw] uppercase leading-[0.85] md:text-[8vw]">Services</h2>
+          <h2 className="font-display text-[13vw] uppercase leading-[0.88] md:text-[6.4vw]">Services</h2>
           <p className="hidden font-mono text-[11px] uppercase tracking-[0.12em] text-muted md:block">(Hover to explore)</p>
         </div>
         <ul data-service-list>

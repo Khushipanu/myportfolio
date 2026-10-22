@@ -59,12 +59,12 @@ export default function Connect() {
       <p className="font-mono text-[11px] uppercase tracking-[0.12em] text-ink/50">(06) Contact</p>
 
       <h2 className="mt-10 font-display uppercase leading-[0.82] md:mt-14" aria-label="Let's connect">
-        <span aria-hidden="true" data-lc-a className="block text-[24vw] md:text-[17vw]">Let's</span>
+        <span aria-hidden="true" data-lc-a className="block text-[17vw] md:text-[13vw]">Let's</span>
         <span aria-hidden="true" className="flex items-center justify-end gap-[2vw]">
           <span data-lc-dot className="inline-flex h-[12vw] w-[12vw] shrink-0 items-center justify-center rounded-full bg-accent text-[6vw] text-coal md:h-[9vw] md:w-[9vw] md:text-[4.5vw]">
             ↗
           </span>
-          <span data-lc-b className="block text-[24vw] md:text-[17vw]">Connect</span>
+          <span data-lc-b className="block text-[14vw] md:text-[13vw]">Connect</span>
         </span>
       </h2>
 

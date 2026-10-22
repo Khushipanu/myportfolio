@@ -1,29 +1,68 @@
-import { useLayoutEffect, useRef } from 'react'
-import { gsap, useGSAP, MOTION_OK } from '../lib/gsap'
+import { useEffect, useRef } from 'react'
+import { gsap, useGSAP, MOTION_OK, prefersReducedMotion } from '../lib/gsap'
+import { scrollToTarget } from '../hooks/useLenis'
 import { profile } from '../data/content'
 
-// Scale a single line of text so it spans the full width of its container.
-function useFitText(ref) {
-  useLayoutEffect(() => {
-    const el = ref.current
-    if (!el) return
-    const fit = () => {
-      el.style.fontSize = '100px'
-      const ratio = el.parentElement.clientWidth / el.scrollWidth
-      el.style.fontSize = `${Math.floor(100 * ratio * 0.995 * 100) / 100}px`
+// Letters widen (font-stretch) as the pointer gets close, then ease back.
+// Runs on fine pointers only and stops when the hero is off screen.
+function useStretchLetters(root) {
+  useEffect(() => {
+    const fine = window.matchMedia('(hover: hover) and (pointer: fine)').matches
+    if (!fine || prefersReducedMotion()) return
+    const chars = [...root.current.querySelectorAll('[data-stretch]')]
+    const state = chars.map(() => ({ cur: 100, target: 100 }))
+    const pointer = { x: -9999, y: -9999 }
+    const RADIUS = 340
+    let raf = 0
+    let visible = true
+
+    const tick = () => {
+      raf = 0
+      let moving = false
+      chars.forEach((el, i) => {
+        const r = el.getBoundingClientRect()
+        const d = Math.hypot(pointer.x - (r.left + r.width / 2), pointer.y - (r.top + r.height / 2))
+        const t = Math.max(0, 1 - d / RADIUS)
+        state[i].target = 100 + 25 * t * t
+        state[i].cur += (state[i].target - state[i].cur) * 0.14
+        if (Math.abs(state[i].target - state[i].cur) > 0.05) moving = true
+        el.style.fontStretch = `${state[i].cur.toFixed(2)}%`
+      })
+      if (moving && visible) raf = requestAnimationFrame(tick)
     }
-    fit()
-    document.fonts?.ready.then(fit)
-    const ro = new ResizeObserver(fit)
-    ro.observe(el.parentElement)
-    return () => ro.disconnect()
-  }, [ref])
+    const kick = () => { if (!raf && visible) raf = requestAnimationFrame(tick) }
+    const move = (e) => { pointer.x = e.clientX; pointer.y = e.clientY; kick() }
+    const leave = () => { pointer.x = -9999; pointer.y = -9999; kick() }
+
+    const io = new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; if (visible) kick() })
+    io.observe(root.current)
+    window.addEventListener('pointermove', move, { passive: true })
+    document.documentElement.addEventListener('pointerleave', leave)
+    return () => {
+      io.disconnect()
+      cancelAnimationFrame(raf)
+      window.removeEventListener('pointermove', move)
+      document.documentElement.removeEventListener('pointerleave', leave)
+    }
+  }, [root])
+}
+
+function Line({ word, className = '' }) {
+  return (
+    <span aria-hidden="true" className={`block whitespace-nowrap ${className}`}>
+      {word.toUpperCase().split('').map((c, i) => (
+        <span key={i} className="inline-block overflow-hidden align-bottom">
+          <span data-char data-stretch className="inline-block">{c}</span>
+        </span>
+      ))}
+    </span>
+  )
 }
 
 export default function Hero({ ready }) {
   const root = useRef(null)
   const name = useRef(null)
-  useFitText(name)
+  useStretchLetters(name)
 
   useGSAP(
     () => {
@@ -31,83 +70,66 @@ export default function Hero({ ready }) {
       const mm = gsap.matchMedia()
       mm.add(MOTION_OK, () => {
         gsap.timeline({ delay: 0.1 })
-          .from('[data-char]', { yPercent: 105, duration: 1.4, ease: 'expo.out', stagger: 0.045 })
-          .from('[data-hero-fade]', { yPercent: 110, duration: 1.1, ease: 'expo.out', stagger: 0.06 }, 0.35)
-          .from('[data-hero-rule]', { scaleX: 0, duration: 1.4, ease: 'expo.inOut' }, 0.2)
+          .from('[data-char]', { yPercent: 105, duration: 1.4, ease: 'expo.out', stagger: 0.05 })
+          .from('[data-hero-fade]', { yPercent: 110, duration: 1.1, ease: 'expo.out', stagger: 0.05 }, 0.4)
 
-        // As the page scrolls away, the name drifts up and the letters spread apart slightly.
-        gsap.to(name.current, {
-          yPercent: -18,
-          ease: 'none',
-          scrollTrigger: { trigger: root.current, start: 'top top', end: 'bottom top', scrub: true },
-        })
-        gsap.to('[data-char]', {
-          yPercent: (i) => (i % 2 ? -14 : 8),
-          ease: 'none',
-          scrollTrigger: { trigger: root.current, start: 'top top', end: 'bottom top', scrub: true },
-        })
+        // On scroll away the two lines drift apart.
+        const st = { trigger: root.current, start: 'top top', end: 'bottom top', scrub: true }
+        gsap.to('[data-line="1"]', { xPercent: -8, ease: 'none', scrollTrigger: st })
+        gsap.to('[data-line="2"]', { xPercent: 8, ease: 'none', scrollTrigger: st })
+        gsap.to(name.current, { yPercent: -10, ease: 'none', scrollTrigger: st })
       })
       return () => mm.revert()
     },
     { scope: root, dependencies: [ready] },
   )
 
-  const words = [profile.firstName, profile.lastName].map((w) => w.toUpperCase().split(''))
-
   return (
     <section
       id="top"
       ref={root}
-      className="relative flex min-h-[100svh] flex-col justify-end overflow-hidden px-5 pb-6 pt-28 md:px-10 md:pb-8"
+      className="relative flex min-h-[100svh] flex-col overflow-hidden px-5 pb-6 pt-24 md:px-10 md:pb-8 md:pt-28"
     >
-      <div className="grid grid-cols-12 gap-x-5 gap-y-8 pb-10 md:pb-14">
-        <div className="col-span-12 md:col-span-5">
-          <p className="mask font-mono text-[11px] uppercase tracking-[0.12em] text-muted">
-            <span data-hero-fade>(Portfolio — 2026)</span>
-          </p>
-          <p className="mt-5 max-w-md text-[17px] leading-snug md:text-xl">
-            <span className="mask"><span data-hero-fade>Full Stack Developer building</span></span>
-            <span className="mask"><span data-hero-fade>web applications with the MERN stack —</span></span>
-            <span className="mask"><span data-hero-fade>from <em className="font-serif text-[1.15em] italic">interfaces</em> to <em className="font-serif text-[1.15em] italic">APIs</em>.</span></span>
-          </p>
-        </div>
-        <div className="col-span-6 md:col-span-3 md:col-start-8">
-          <p className="mask font-mono text-[11px] uppercase tracking-[0.12em] text-muted"><span data-hero-fade>Currently</span></p>
-          <p className="mask mt-2 text-[15px]"><span data-hero-fade>Full Stack Developer</span></p>
-          <p className="mask text-[15px] text-muted"><span data-hero-fade>Ruhanix OPC Pvt. Ltd.</span></p>
-        </div>
-        <div className="col-span-6 md:col-span-2">
-          <p className="mask font-mono text-[11px] uppercase tracking-[0.12em] text-muted"><span data-hero-fade>Stack</span></p>
-          <p className="mask mt-2 text-[15px]"><span data-hero-fade>React.js · Node.js</span></p>
-          <p className="mask text-[15px] text-muted"><span data-hero-fade>Express.js · MongoDB</span></p>
-        </div>
+      <div className="grid grid-cols-3 font-mono text-[11px] uppercase tracking-[0.12em] text-muted">
+        <span className="mask max-md:col-span-2"><span data-hero-fade>(Portfolio / 2026)</span></span>
+        <span className="mask text-center max-md:hidden"><span data-hero-fade>{profile.role}</span></span>
+        <span className="mask col-start-3 text-right"><span data-hero-fade>Haldwani, IN</span></span>
       </div>
 
-      <div className="h-px w-full origin-left bg-ink/25" data-hero-rule />
+      <h1
+        ref={name}
+        aria-label={profile.name}
+        className="my-auto py-10 font-display text-[23vw] uppercase leading-[0.84] md:text-[16.4vw]"
+      >
+        <span data-line="1" className="block">
+          <Line word={profile.firstName} />
+        </span>
+        <span data-line="2" className="block text-right">
+          <Line word={profile.lastName} />
+        </span>
+      </h1>
 
-      <div className="relative w-full pt-3">
-        <h1
-          ref={name}
-          aria-label={profile.name}
-          className="inline-block whitespace-nowrap font-display uppercase leading-[0.8] tracking-[-0.01em] will-change-transform"
-        >
-          {/* One line on desktop; on phones each word gets its own full-width line. */}
-          {words.map((word, w) => (
-            <span key={w} aria-hidden="true" className="max-md:block">
-              {word.map((c, i) => (
-                <span key={i} className="inline-block overflow-hidden align-bottom">
-                  <span data-char className="inline-block">{c}</span>
-                </span>
-              ))}
-              {w === 0 && <span className="max-md:hidden">{'\u00A0'}</span>}
-            </span>
-          ))}
-        </h1>
-      </div>
-
-      <div className="mt-4 flex items-center justify-between font-mono text-[11px] uppercase tracking-[0.12em] text-muted">
-        <span className="mask"><span data-hero-fade>{profile.location}</span></span>
-        <span className="mask max-md:hidden"><span data-hero-fade>Scroll ↓</span></span>
+      <div className="grid grid-cols-12 items-end gap-x-5 gap-y-6">
+        <p className="col-span-12 max-w-sm text-[16px] leading-snug md:col-span-5 md:text-[17px]">
+          <span className="mask"><span data-hero-fade>I design and build web applications with the</span></span>
+          <span className="mask"><span data-hero-fade>MERN stack — from <em className="font-serif text-[1.15em] italic">interfaces</em> to <em className="font-serif text-[1.15em] italic">APIs</em>.</span></span>
+          <span className="mask"><span data-hero-fade className="text-muted">Currently at Ruhanix OPC Pvt. Ltd.</span></span>
+        </p>
+        <p className="mask col-span-4 hidden text-center font-mono text-[11px] uppercase tracking-[0.12em] text-muted md:col-start-6 md:col-span-2 md:block">
+          <span data-hero-fade>↓ Scroll, gently</span>
+        </p>
+        <div className="mask col-span-12 md:col-span-3 md:col-start-10 md:text-right">
+          <span data-hero-fade>
+            <button
+              type="button"
+              onClick={() => scrollToTarget('#work')}
+              data-cursor-tone="dark"
+              className="inline-flex items-center gap-2 rounded-full border border-ink/40 px-5 py-2.5 font-mono text-[12px] uppercase tracking-[0.1em] transition-colors duration-300 hover:border-ink hover:bg-ink hover:text-paper"
+            >
+              See the work <span aria-hidden="true">→</span>
+            </button>
+          </span>
+        </div>
       </div>
     </section>
   )

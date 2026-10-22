@@ -1,7 +1,7 @@
-import { useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { gsap, useGSAP } from '../lib/gsap'
-import { scrollToTarget } from '../hooks/useLenis'
-import { profile } from '../data/content'
+import { scrollToTarget, getLenis } from '../hooks/useLenis'
+import { profile, socials } from '../data/content'
 import { useLocalTime } from '../hooks/useLocalTime'
 
 const links = [
@@ -15,6 +15,21 @@ const links = [
 export default function Nav({ ready }) {
   const root = useRef(null)
   const time = useLocalTime(profile.timeZone)
+  const [open, setOpen] = useState(false)
+
+  // Phone menu: lock scrolling while open and close on Escape.
+  useEffect(() => {
+    if (!open) return
+    getLenis()?.stop()
+    document.documentElement.style.overflow = 'hidden'
+    const onKey = (e) => e.key === 'Escape' && setOpen(false)
+    window.addEventListener('keydown', onKey)
+    return () => {
+      getLenis()?.start()
+      document.documentElement.style.overflow = ''
+      window.removeEventListener('keydown', onKey)
+    }
+  }, [open])
 
   useGSAP(
     () => {
@@ -26,7 +41,9 @@ export default function Nav({ ready }) {
 
   const go = (e, href) => {
     e.preventDefault()
-    scrollToTarget(href)
+    setOpen(false)
+    // Wait a frame so the scroll lock is released before scrolling.
+    requestAnimationFrame(() => scrollToTarget(href))
   }
 
   return (
@@ -66,6 +83,15 @@ export default function Nav({ ready }) {
             </li>
           ))}
         </ul>
+        <button
+          type="button"
+          onClick={() => setOpen((o) => !o)}
+          aria-expanded={open}
+          aria-controls="mobile-menu"
+          className="font-mono text-[12px] uppercase tracking-[0.1em] sm:hidden"
+        >
+          {open ? 'Close' : 'Menu'}
+        </button>
         <a
           href="#contact"
           onClick={(e) => go(e, '#contact')}
@@ -76,6 +102,32 @@ export default function Nav({ ready }) {
           Let's talk
         </a>
       </nav>
+
+      <div
+        id="mobile-menu"
+        hidden={!open}
+        className="fixed inset-0 -z-10 flex flex-col justify-between bg-paper px-5 pb-8 pt-24 sm:hidden"
+      >
+        <ul className="space-y-1">
+          {[...links, { label: 'Contact', href: '#contact' }].map((l, i) => (
+            <li key={l.href} className="border-b border-ink/15">
+              <a
+                href={l.href}
+                onClick={(e) => go(e, l.href)}
+                className="flex items-baseline justify-between py-3 font-display text-[13vw] uppercase leading-none transition-colors active:text-accent"
+              >
+                {l.label}
+                <span className="font-mono text-[11px] tracking-[0.12em] text-muted">0{i + 1}</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+        <div className="flex flex-wrap gap-x-6 gap-y-2 font-mono text-[11px] uppercase tracking-[0.12em] text-muted">
+          {socials.map((s) => (
+            <a key={s.label} href={s.href} target="_blank" rel="noreferrer" className="hover:text-accent">{s.label} ↗</a>
+          ))}
+        </div>
+      </div>
     </header>
   )
 }

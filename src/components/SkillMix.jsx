@@ -87,9 +87,9 @@ export default function SkillMix() {
     <section ref={root} aria-labelledby="skills-title" className="overflow-hidden px-5 py-24 md:px-10 md:py-40">
       <p className="font-mono text-[11px] uppercase tracking-[0.12em] text-muted">(05) Toolkit</p>
       <h2 id="skills-title" className="mt-8 text-center font-display uppercase leading-[0.9]">
-        <span className="mask text-[9vw] md:text-[5vw]"><span data-mix-head>I build with</span></span>
+        <span className="mask text-[7vw] md:text-[3.6vw]"><span data-mix-head>I build with</span></span>
         <span className="mask">
-          <span data-mix-head className="block min-h-[1em] whitespace-nowrap text-[14vw] text-accent md:text-[11vw]" aria-live="off">
+          <span data-mix-head className="block min-h-[1em] whitespace-nowrap text-[9vw] text-accent md:text-[7.4vw]" aria-live="off">
             {word}
           </span>
         </span>

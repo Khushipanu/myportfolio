@@ -50,7 +50,7 @@ export default function Statement() {
         ))}
 
         <div className="relative z-10 text-center">
-          <h2 id="statement-title" className="font-display text-[19vw] uppercase leading-[0.88] md:text-[11.5vw]">
+          <h2 id="statement-title" className="font-display text-[13vw] uppercase leading-[0.9] md:text-[8.6vw]">
             {lines.map((line, i) => (
               <span key={i} className="mask">
                 <span data-st-line>

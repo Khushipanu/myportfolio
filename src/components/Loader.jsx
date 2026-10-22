@@ -50,11 +50,11 @@ export default function Loader({ onDone }) {
         <span className="mask"><span data-loader-line>©2026</span></span>
       </div>
       <div className="flex items-end justify-between gap-6">
-        <div className="font-display text-[14vw] uppercase leading-[0.85] md:text-[9vw]">
+        <div className="font-display text-[13vw] uppercase leading-[0.88] md:text-[7vw]">
           <span className="mask"><span data-loader-line>Khushi</span></span>
           <span className="mask"><span data-loader-line>Panu</span></span>
         </div>
-        <span className="mask font-display text-[12vw] leading-[0.85] text-accent md:text-[7vw]">
+        <span className="mask font-display text-[11vw] leading-[0.88] text-accent md:text-[5.5vw]">
           <span data-loader-line data-count>000</span>
         </span>
       </div>

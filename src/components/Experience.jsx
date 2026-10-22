@@ -36,7 +36,7 @@ export default function Experience() {
   return (
     <section id="experience" ref={root} aria-labelledby="exp-title" className="bg-paper-2 px-5 py-24 md:px-10 md:py-36">
       <div className="mb-14 flex items-end justify-between md:mb-20">
-        <h2 id="exp-title" className="font-display text-[15vw] uppercase leading-[0.85] md:text-[8vw]">Experience</h2>
+        <h2 id="exp-title" className="font-display text-[12vw] uppercase leading-[0.88] md:text-[6.4vw]">Experience</h2>
         <p className="font-mono text-[11px] uppercase tracking-[0.12em] text-muted">(04)</p>
       </div>
 

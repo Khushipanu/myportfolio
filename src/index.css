@@ -14,7 +14,7 @@
   --color-cream-2: #d9d3cb;
   --color-coal: #131313;
 
-  --font-display: 'Anton', 'Impact', sans-serif;
+  --font-display: 'Archivo Variable', 'Archivo', 'Arial Black', sans-serif;
   --font-serif: 'Instrument Serif', Georgia, serif;
   --font-sans: 'Inter Variable', 'Inter', system-ui, sans-serif;
   --font-mono: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, monospace;
@@ -48,6 +48,15 @@ html.lenis body {
 }
 .lenis.lenis-stopped {
   overflow: hidden;
+}
+
+@layer base {
+  /* Wide, heavy grotesk for headlines, after the Mike Wilcock reference. */
+  .font-display {
+    font-weight: 800;
+    font-stretch: 100%;
+    letter-spacing: -0.03em;
+  }
 }
 
 /* Mask used for line / letter reveals. Kept in the components layer so

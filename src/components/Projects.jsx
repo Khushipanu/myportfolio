@@ -19,7 +19,7 @@ function Project({ p, flip }) {
           <span>({p.index})</span>
           <span>{p.kind}</span>
         </div>
-        <h3 className="mt-6 font-display text-[13vw] uppercase leading-[0.9] md:text-[4.6vw]">
+        <h3 className="mt-6 font-display text-[9.5vw] uppercase leading-[0.92] md:text-[3.5vw]">
           <span className="mask"><span data-proj-title>{p.title}</span></span>
         </h3>
         <p className="mt-6 max-w-lg text-[17px] leading-snug md:text-lg">{p.summary}</p>
@@ -79,7 +79,7 @@ export default function Projects() {
   return (
     <section ref={root} aria-labelledby="projects-title" className="px-5 pt-24 md:px-10 md:pt-36">
       <div className="mb-10 flex items-end justify-between md:mb-16">
-        <h2 id="projects-title" className="font-display text-[15vw] uppercase leading-[0.85] md:text-[8vw]">
+        <h2 id="projects-title" className="font-display text-[13vw] uppercase leading-[0.88] md:text-[6.4vw]">
           Projects<sup className="ml-2 align-top font-sans text-[0.18em] font-medium tracking-normal text-muted">(0{projects.length})</sup>
         </h2>
         <p className="hidden max-w-xs text-right text-sm text-muted md:block">
