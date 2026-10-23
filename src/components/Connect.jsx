@@ -1,8 +1,9 @@
-import { useRef } from 'react'
-import { gsap, useGSAP, MOTION_OK } from '../lib/gsap'
+import { useRef, useState } from 'react'
+import { gsap, useGSAP, ScrollTrigger, MOTION_OK } from '../lib/gsap'
 import { scrollToTarget } from '../hooks/useLenis'
 import { useLocalTime } from '../hooks/useLocalTime'
 import { profile, socials } from '../data/content'
+import SerenityBackdrop from './ui/SerenityBackdrop'
 
 // Visuvate-inspired closing section: oversized "Let's Connect" type that
 // assembles as you arrive, a magnetic email link and the contact details.
@@ -28,9 +29,11 @@ function Magnetic({ children, className = '', ...props }) {
 export default function Connect() {
   const root = useRef(null)
   const time = useLocalTime(profile.timeZone)
+  const [inView, setInView] = useState(false)
 
   useGSAP(
     () => {
+      ScrollTrigger.create({ trigger: root.current, start: 'top 75%', once: true, onEnter: () => setInView(true) })
       const mm = gsap.matchMedia()
       mm.add(MOTION_OK, () => {
         gsap.timeline({
@@ -55,7 +58,8 @@ export default function Connect() {
   )
 
   return (
-    <footer id="contact" ref={root} className="relative overflow-hidden bg-paper-2 px-5 pb-8 pt-24 text-ink md:px-10 md:pt-36">
+    <footer id="contact" ref={root} className="isolate relative overflow-hidden bg-paper-2 px-5 pb-8 pt-24 text-ink md:px-10 md:pt-36">
+      <SerenityBackdrop start={inView} id="contact-grid" className="-z-10" />
       <p className="font-mono text-[11px] uppercase tracking-[0.12em] text-ink/50">(06) Contact</p>
 
       <h2 className="mt-10 font-display uppercase leading-[0.82] md:mt-14" aria-label="Let's connect">

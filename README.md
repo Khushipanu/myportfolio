@@ -45,4 +45,7 @@ Add live/source links for a project by setting `live` and `code` in `content.js`
 Design follows a dark theme (#131313 / #E9E4DF / #749DFB) with Archivo for
 headlines, Inter for body text and JetBrains Mono for labels and the menu.
 
+Decorative effects (grid backdrop, pointer glow, click ripple, word reveal) live in
+`src/components/ui/` and are adapted from the "Digital Serenity" component.
+
 Animations respect `prefers-reduced-motion`.

@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react'
 import { gsap, useGSAP, MOTION_OK, prefersReducedMotion } from '../lib/gsap'
 import { scrollToTarget } from '../hooks/useLenis'
 import { profile } from '../data/content'
-import Orb3D from './Orb3D'
+import SerenityBackdrop from './ui/SerenityBackdrop'
 
 const Sparkle = ({ className = '' }) => (
   <svg viewBox="0 0 24 24" aria-hidden="true" className={className}><path fill="currentColor" d="M12 0c.6 6.3 5.7 11.4 12 12-6.3.6-11.4 5.7-12 12-.6-6.3-5.7-11.4-12-12C6.3 11.4 11.4 6.3 12 0Z" /></svg>
@@ -85,6 +85,7 @@ export default function Hero({ ready }) {
         gsap.timeline({ delay: 0.35 })
           .from('[data-char]', { yPercent: 105, duration: 1.4, ease: 'expo.out', stagger: 0.06 })
           .from('[data-hero-fade]', { yPercent: 110, duration: 1.1, ease: 'expo.out', stagger: 0.05 }, 0.4)
+          .from('[data-word]', { autoAlpha: 0, y: 30, scale: 0.85, filter: 'blur(10px)', duration: 0.9, ease: 'power3.out', stagger: 0.09, clearProps: 'filter,transform' }, 0.7)
           .from('[data-hero-rule]', { scaleX: 0, duration: 1.6, ease: 'expo.inOut' }, 0.3)
           .from('[data-sparkle]', { scale: 0, rotate: -180, duration: 1.2, ease: 'back.out(2)' }, 0.6)
 
@@ -103,8 +104,10 @@ export default function Hero({ ready }) {
     <section
       id="top"
       ref={root}
-      className="relative flex min-h-[100svh] flex-col overflow-hidden px-5 pb-6 pt-24 md:px-10 md:pb-8 md:pt-28"
+      className="relative isolate flex min-h-[100svh] flex-col overflow-hidden px-5 pb-6 pt-24 md:px-10 md:pb-8 md:pt-28"
     >
+      <SerenityBackdrop start={ready} id="hero-grid" className="-z-10" />
+
       <div className="flex items-center gap-4 font-mono text-[11px] tracking-[0.12em] text-muted">
         <span className="mask"><span data-hero-fade>// 01</span></span>
         <span className="relative block h-px w-40 bg-ink/15">
@@ -129,12 +132,17 @@ export default function Hero({ ready }) {
           </span>
         </h1>
 
-        {ready && <Orb3D className="absolute right-[2%] top-[-46%] z-0 h-[52vw] w-[52vw] md:right-[13%] md:top-[-30%] md:h-[25vw] md:w-[25vw]" data-orb />}
 
         <div className="mt-8 max-w-xl md:absolute md:bottom-[-4%] md:left-[4.2%] md:mt-0">
-          <p className="mask text-[22px] leading-tight tracking-[-0.01em] md:text-[2.3vw]"><span data-hero-fade>I turn ideas into</span></p>
-          <p className="mask font-serif text-[26px] italic leading-tight text-accent md:text-[2.7vw]">
-            <span data-hero-fade>interactive digital experiences.</span>
+          <p className="text-[22px] leading-tight tracking-[-0.01em] md:text-[2.3vw]">
+            {'I turn ideas into'.split(' ').map((w, i) => (
+              <span key={i} data-word className="word mr-[0.25em]">{w}</span>
+            ))}
+          </p>
+          <p className="font-serif text-[26px] italic leading-tight text-accent md:text-[2.7vw]">
+            {'interactive digital experiences.'.split(' ').map((w, i) => (
+              <span key={i} data-word className="word mr-[0.22em]">{w}</span>
+            ))}
           </p>
           <div className="mask mt-6 border-l-2 border-accent/70 pl-4">
             <p data-hero-fade className="max-w-xs text-[13px] leading-relaxed text-ink/60">

@@ -137,3 +137,51 @@ html.lenis body {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* ---- Serenity backdrop (adapted from the Digital Serenity component) ---- */
+.serenity .s-line {
+  stroke: rgba(233, 228, 223, 0.5);
+  stroke-width: 0.5;
+  stroke-dasharray: 5 5;
+  stroke-dashoffset: 1000;
+  opacity: 0;
+}
+.serenity .s-faint { stroke: rgba(233, 228, 223, 0.25); }
+.serenity .s-dot { fill: var(--color-accent); opacity: 0; transform-box: fill-box; transform-origin: center; }
+.serenity .s-corner {
+  position: absolute; width: 36px; height: 36px; opacity: 0;
+  border-color: rgba(233, 228, 223, 0.22); border-style: solid; border-width: 0;
+}
+.serenity .s-c0 { border-top-width: 1px; border-left-width: 1px; }
+.serenity .s-c1 { border-top-width: 1px; border-right-width: 1px; }
+.serenity .s-c2 { border-bottom-width: 1px; border-left-width: 1px; }
+.serenity .s-c3 { border-bottom-width: 1px; border-right-width: 1px; }
+.serenity .s-float {
+  position: absolute; width: 3px; height: 3px; border-radius: 50%;
+  background: var(--color-accent); opacity: 0;
+}
+.serenity.is-on .s-line { animation: s-draw 2.2s ease-out forwards; }
+.serenity.is-on .s-dot { animation: s-pulse 3.2s ease-in-out infinite; }
+.serenity.is-on .s-corner { animation: s-appear 1s ease-out forwards; }
+.serenity.is-on .s-float { animation: s-float 5s ease-in-out infinite; }
+
+@keyframes s-draw { 0% { stroke-dashoffset: 1000; opacity: 0; } 50% { opacity: 0.7; } 100% { stroke-dashoffset: 0; opacity: 0.4; } }
+@keyframes s-pulse { 0%, 100% { opacity: 0.25; transform: scale(1); } 50% { opacity: 0.8; transform: scale(1.5); } }
+@keyframes s-appear { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
+@keyframes s-float {
+  0%, 100% { transform: translate(0, 0); opacity: 0.15; }
+  25% { transform: translate(5px, -10px); opacity: 0.6; }
+  50% { transform: translate(-3px, -5px); opacity: 0.35; }
+  75% { transform: translate(7px, -15px); opacity: 0.7; }
+}
+
+.s-ripple {
+  position: fixed; z-index: 95; width: 6px; height: 6px; border-radius: 50%;
+  border: 1px solid var(--color-accent); pointer-events: none;
+  transform: translate(-50%, -50%); animation: s-ripple 0.9s ease-out forwards;
+}
+@keyframes s-ripple { from { opacity: 0.9; width: 6px; height: 6px; } to { opacity: 0; width: 70px; height: 70px; } }
+
+/* Word reveal: words lift out of a blur; hover gives a soft glow. */
+.word { display: inline-block; transition: color 0.3s ease, transform 0.3s ease, text-shadow 0.3s ease; }
+.word:hover { transform: translateY(-2px); text-shadow: 0 0 18px rgba(245, 137, 75, 0.45); }
