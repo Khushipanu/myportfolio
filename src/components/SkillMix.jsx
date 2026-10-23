@@ -98,11 +98,15 @@ export default function SkillMix() {
         <span className="sr-only">{skillWords.join(', ')}</span>
       </h2>
 
-      <div data-groups className="mx-auto mt-20 grid max-w-6xl grid-cols-2 gap-x-5 gap-y-10 md:mt-28 md:grid-cols-3">
+      {/* One row: six columns on wide screens, a swipeable strip on smaller ones. */}
+      <div
+        data-groups
+        className="-mx-5 mt-20 flex snap-x snap-mandatory gap-5 overflow-x-auto px-5 pb-2 [scrollbar-width:none] md:-mx-10 md:mt-28 md:px-10 lg:mx-0 lg:grid lg:grid-cols-6 lg:gap-6 lg:overflow-visible lg:px-0 lg:pb-0"
+      >
         {skillGroups.map((g) => (
-          <div key={g.label} data-group className="border-t border-ink/20 pt-4">
+          <div key={g.label} data-group className="w-[46vw] shrink-0 snap-start border-t border-ink/20 pt-4 sm:w-[30vw] lg:w-auto">
             <h3 className="font-mono text-[11px] uppercase tracking-[0.12em] text-muted">{g.label}</h3>
-            <ul className="mt-3 space-y-1 text-[15px] md:text-base">
+            <ul className="mt-3 space-y-1 text-[15px] lg:text-[15px] xl:text-base">
               {g.items.map((it) => (
                 <li key={it}>{it}</li>
               ))}
