@@ -11,7 +11,7 @@ const links = [
 ]
 
 // Menu styled after the Mike Wilcock reference: monospaced uppercase links
-// that turn orange on hover, and an outlined pill that fills orange.
+// that turn green on hover, and an outlined pill that fills green.
 export default function Nav({ ready }) {
   const root = useRef(null)
   const [open, setOpen] = useState(false)

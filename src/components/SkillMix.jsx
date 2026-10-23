@@ -85,13 +85,13 @@ export default function SkillMix() {
 
   return (
     <section ref={root} aria-labelledby="skills-title" className="relative isolate overflow-hidden px-5 py-24 md:px-10 md:py-40">
-      <div aria-hidden="true" className="glow glow-violet -z-10 left-[10%] top-[8%] h-[50vh] w-[45vw]" />
-      <div aria-hidden="true" className="glow glow-orange -z-10 right-[5%] top-[20%] h-[40vh] w-[35vw]" />
+      <div aria-hidden="true" className="glow glow-deep -z-10 left-[10%] top-[8%] h-[50vh] w-[45vw]" />
+      <div aria-hidden="true" className="glow glow-mint -z-10 right-[5%] top-[20%] h-[40vh] w-[35vw]" />
       <p className="font-mono text-[11px] uppercase tracking-[0.12em] text-muted">(05) Toolkit</p>
       <h2 id="skills-title" className="mt-8 text-center font-display uppercase leading-[0.9]">
         <span className="mask text-[7vw] md:text-[3.6vw]"><span data-mix-head>I build with</span></span>
         <span className="mask">
-          <span data-mix-head className="text-gradient mx-auto block min-h-[1em] w-fit px-[0.05em] whitespace-nowrap text-[9vw] md:text-[7.4vw]" aria-live="off">
+          <span data-mix-head className="text-accent mx-auto block min-h-[1em] w-fit px-[0.05em] whitespace-nowrap text-[9vw] md:text-[7.4vw]" aria-live="off">
             {word}
           </span>
         </span>

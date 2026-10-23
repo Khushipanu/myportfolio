@@ -4,10 +4,6 @@ import { scrollToTarget } from '../hooks/useLenis'
 import { profile } from '../data/content'
 import SerenityBackdrop from './ui/SerenityBackdrop'
 
-const Sparkle = ({ className = '' }) => (
-  <svg viewBox="0 0 24 24" aria-hidden="true" className={className}><path fill="currentColor" d="M12 0c.6 6.3 5.7 11.4 12 12-6.3.6-11.4 5.7-12 12-.6-6.3-5.7-11.4-12-12C6.3 11.4 11.4 6.3 12 0Z" /></svg>
-)
-
 const dots = [
   { href: '#top', label: 'Intro' },
   { href: '#work', label: 'Work' },
@@ -15,46 +11,64 @@ const dots = [
   { href: '#experience', label: 'Experience' },
 ]
 
-// Letters widen (font-stretch) as the pointer gets close, then ease back.
-// Runs on fine pointers only and stops when the hero is off screen.
-function useStretchLetters(root) {
+// Letters near the pointer (or a finger) lift slightly and fade to green.
+// Each letter eases toward its target every frame, so motion stays smooth
+// whatever the pointer does; the loop sleeps once everything settles.
+function useLetterLift(root) {
   useEffect(() => {
-    const fine = window.matchMedia('(hover: hover) and (pointer: fine)').matches
-    if (!fine || prefersReducedMotion()) return
-    const chars = [...root.current.querySelectorAll('[data-stretch]')]
-    const BASE = 100
-    const state = chars.map(() => ({ cur: BASE, target: BASE }))
+    if (prefersReducedMotion()) return
+    const els = [...root.current.querySelectorAll('[data-lift]')]
+    const cur = els.map(() => 0)
     const pointer = { x: -9999, y: -9999 }
-    const RADIUS = 340
+    const RADIUS = 260
     let raf = 0
     let visible = true
+    let release = 0
 
     const tick = () => {
       raf = 0
       let moving = false
-      chars.forEach((el, i) => {
+      els.forEach((el, i) => {
         const r = el.getBoundingClientRect()
         const d = Math.hypot(pointer.x - (r.left + r.width / 2), pointer.y - (r.top + r.height / 2))
         const t = Math.max(0, 1 - d / RADIUS)
-        state[i].target = BASE + 22 * t * t
-        state[i].cur += (state[i].target - state[i].cur) * 0.14
-        if (Math.abs(state[i].target - state[i].cur) > 0.05) moving = true
-        el.style.fontStretch = `${state[i].cur.toFixed(2)}%`
+        const target = t * t * (3 - 2 * t)
+        cur[i] += (target - cur[i]) * 0.12
+        if (Math.abs(target - cur[i]) > 0.002) moving = true
+        el.style.transform = `translate3d(0, ${(-cur[i] * 7).toFixed(2)}%, 0)`
+        el.style.setProperty('--lift', cur[i].toFixed(3))
       })
       if (moving && visible) raf = requestAnimationFrame(tick)
     }
     const kick = () => { if (!raf && visible) raf = requestAnimationFrame(tick) }
-    const move = (e) => { pointer.x = e.clientX; pointer.y = e.clientY; kick() }
-    const leave = () => { pointer.x = -9999; pointer.y = -9999; kick() }
+    const set = (x, y) => { pointer.x = x; pointer.y = y; kick() }
+    const move = (e) => set(e.clientX, e.clientY)
+    const down = (e) => {
+      if (e.pointerType === 'mouse') return
+      clearTimeout(release)
+      set(e.clientX, e.clientY)
+    }
+    const up = (e) => {
+      if (e.pointerType === 'mouse') return
+      release = setTimeout(() => set(-9999, -9999), 450)
+    }
+    const leave = () => set(-9999, -9999)
 
     const io = new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; if (visible) kick() })
     io.observe(root.current)
     window.addEventListener('pointermove', move, { passive: true })
+    window.addEventListener('pointerdown', down, { passive: true })
+    window.addEventListener('pointerup', up, { passive: true })
+    window.addEventListener('pointercancel', up, { passive: true })
     document.documentElement.addEventListener('pointerleave', leave)
     return () => {
       io.disconnect()
       cancelAnimationFrame(raf)
+      clearTimeout(release)
       window.removeEventListener('pointermove', move)
+      window.removeEventListener('pointerdown', down)
+      window.removeEventListener('pointerup', up)
+      window.removeEventListener('pointercancel', up)
       document.documentElement.removeEventListener('pointerleave', leave)
     }
   }, [root])
@@ -64,8 +78,8 @@ function Line({ word, className = '' }) {
   return (
     <span aria-hidden="true" className={`block whitespace-nowrap ${className}`}>
       {word.toUpperCase().split('').map((c, i) => (
-        <span key={i} className="inline-block overflow-hidden align-bottom">
-          <span data-char data-stretch className="inline-block">{c}</span>
+        <span key={i} data-lift className="lift inline-block overflow-hidden align-bottom will-change-transform">
+          <span data-char className="inline-block">{c}</span>
         </span>
       ))}
     </span>
@@ -75,7 +89,7 @@ function Line({ word, className = '' }) {
 export default function Hero({ ready }) {
   const root = useRef(null)
   const name = useRef(null)
-  useStretchLetters(name)
+  useLetterLift(name)
 
   useGSAP(
     () => {
@@ -87,7 +101,6 @@ export default function Hero({ ready }) {
           .from('[data-hero-fade]', { yPercent: 110, duration: 1.1, ease: 'expo.out', stagger: 0.05 }, 0.4)
           .from('[data-word]', { autoAlpha: 0, y: 30, scale: 0.85, filter: 'blur(10px)', duration: 0.9, ease: 'power3.out', stagger: 0.09, clearProps: 'filter,transform' }, 0.7)
           .from('[data-hero-rule]', { scaleX: 0, duration: 1.6, ease: 'expo.inOut' }, 0.3)
-          .from('[data-sparkle]', { scale: 0, rotate: -180, duration: 1.2, ease: 'back.out(2)' }, 0.6)
 
         // On scroll away the two lines drift apart.
         const st = { trigger: root.current, start: 'top top', end: 'bottom top', scrub: true }
@@ -108,9 +121,9 @@ export default function Hero({ ready }) {
     >
       <SerenityBackdrop start={ready} id="hero-grid" className="-z-10" />
       <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10">
-        <div className="glow glow-violet drift right-[-10%] top-[2%] h-[70vh] w-[55vw]" />
-        <div className="glow glow-orange drift-slow bottom-[-25%] left-[-12%] h-[70vh] w-[50vw]" />
-        <div className="glow glow-rose drift bottom-[5%] right-[20%] h-[40vh] w-[30vw]" />
+        <div className="glow glow-deep drift right-[-10%] top-[2%] h-[70vh] w-[55vw]" />
+        <div className="glow glow-mint drift-slow bottom-[-25%] left-[-12%] h-[70vh] w-[50vw]" />
+        <div className="glow glow-soft drift bottom-[5%] right-[20%] h-[40vh] w-[30vw]" />
       </div>
 
       <div className="flex items-center gap-4 font-mono text-[11px] tracking-[0.12em] text-muted">
@@ -124,12 +137,9 @@ export default function Hero({ ready }) {
         <h1
           ref={name}
           aria-label={profile.name}
-          className="hero-name relative z-10 uppercase leading-[0.86] text-[21vw] md:text-[12.6vw]"
+          className="hero-name relative z-10 uppercase leading-[0.84] text-[30vw] md:text-[19vw]"
         >
-          <span data-line="1" className="relative block md:pl-[0.3em]">
-            <span data-sparkle className="absolute left-0 top-[0.1em] block w-[0.13em] text-accent max-md:hidden">
-              <Sparkle className="h-auto w-full" />
-            </span>
+          <span data-line="1" className="relative block">
             <Line word={profile.firstName} />
           </span>
           <span data-line="2" className="block text-right">
@@ -138,13 +148,13 @@ export default function Hero({ ready }) {
         </h1>
 
 
-        <div className="mt-8 max-w-xl md:absolute md:bottom-[-4%] md:left-[4.2%] md:mt-0">
+        <div className="mt-8 max-w-xl md:absolute md:bottom-[2%] md:left-0 md:mt-0">
           <p className="text-[22px] leading-tight tracking-[-0.01em] md:text-[2.3vw]">
             {'I turn ideas into'.split(' ').map((w, i) => (
               <span key={i} data-word className="word mr-[0.25em]">{w}</span>
             ))}
           </p>
-          <p className="text-gradient w-fit font-serif text-[26px] italic leading-tight md:text-[2.7vw]">
+          <p className="w-fit font-serif text-accent text-[26px] italic leading-tight md:text-[2.7vw]">
             {'interactive digital experiences.'.split(' ').map((w, i) => (
               <span key={i} data-word className="word mr-[0.22em]">{w}</span>
             ))}
@@ -164,7 +174,7 @@ export default function Hero({ ready }) {
             href={d.href}
             onClick={(e) => { e.preventDefault(); scrollToTarget(d.href) }}
             aria-label={d.label}
-            className={`block h-1.5 w-1.5 rounded-full transition-colors hover:bg-accent ${i === 0 ? 'bg-accent-gradient' : 'bg-ink/30'}`}
+            className={`block h-1.5 w-1.5 rounded-full transition-colors hover:bg-accent ${i === 0 ? 'bg-accent' : 'bg-ink/30'}`}
           />
         ))}
         <span className="mt-2 block h-40 w-px bg-ink/15" />

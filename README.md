@@ -33,16 +33,16 @@ Add live/source links for a project by setting `live` and `code` in `content.js`
 ## Sections
 
 1. Loader
-2. Hero — two-line name whose letters stretch as the cursor nears
+2. Hero — two-line name; letters near the cursor or finger lift and turn green
 3. Statement — "Turning ideas into impact", rising line by line
-4. Selected work — frames travelling along an S-curve
+4. Selected work — a 3D helix of project screens that turns on scroll and drag
 5. Projects — MovieThrill and the Learning Management System
 6. About + Services — hover-reveal service rows
 7. Experience + Education
 8. Toolkit — scrambling skill word and grouped skills
 9. Let's Connect — contact and footer
 
-Design follows a dark theme (#131313 / #E9E4DF / #749DFB) with Archivo for
+Design follows a dark theme (#131313 / #E9E4DF) with one green accent (#6FDC9B) with Archivo for
 headlines, Inter for body text and JetBrains Mono for labels and the menu.
 
 Decorative effects (grid backdrop, pointer glow, click ripple, word reveal) live in

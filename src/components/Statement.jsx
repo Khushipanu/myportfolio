@@ -2,14 +2,28 @@ import { useRef } from 'react'
 import { gsap, useGSAP, MOTION_OK } from '../lib/gsap'
 import Art from './Art'
 
-// Kota-inspired: a few images float up through the frame while the statement
-// rises into place line by line from below.
+// Kota-inspired: a few screens of the work and the stack it's built with float
+// up through the frame while the statement rises into place line by line.
 const tiles = [
-  { variant: 'code', className: 'left-[4%] w-[30vw] md:left-[6%] md:w-[17vw]', aspect: 'aspect-[4/5]', speed: 1.25, start: 0 },
-  { variant: 'ui', className: 'right-[3%] w-[34vw] md:right-[10%] md:w-[15vw]', aspect: 'aspect-square', speed: 1, start: 0.08 },
-  { variant: 'erp', className: 'left-[52%] w-[30vw] md:left-[30%] md:w-[13vw]', aspect: 'aspect-[3/4]', speed: 1.45, start: 0.25 },
-  { variant: 'mark', className: 'right-[30%] w-[22vw] md:right-[26%] md:w-[10vw]', aspect: 'aspect-square', speed: 0.85, start: 0.35 },
+  { kind: 'art', variant: 'movieDetail', className: 'left-[5%] w-[20vw]', speed: 1.2, start: 0 },
+  { kind: 'art', variant: 'lmsPlayer', className: 'right-[6%] w-[19vw]', speed: 1, start: 0.1 },
+  { kind: 'art', variant: 'erp', className: 'left-[28%] w-[15vw]', speed: 1.45, start: 0.3 },
+  { kind: 'tag', label: 'React.js', className: 'left-[14%]', speed: 0.9, start: 0.05 },
+  { kind: 'tag', label: 'Node.js', className: 'right-[28%]', speed: 1.3, start: 0.12 },
+  { kind: 'tag', label: 'MongoDB', className: 'right-[12%]', speed: 0.8, start: 0.24 },
+  { kind: 'tag', label: 'Express.js', className: 'left-[40%]', speed: 1.1, start: 0.36 },
+  { kind: 'tag', label: 'Redux Toolkit', className: 'left-[8%]', speed: 1.35, start: 0.42 },
+  { kind: 'tag', label: 'Tailwind CSS', className: 'right-[20%]', speed: 1.05, start: 0.5 },
 ]
+
+function Tag({ label }) {
+  return (
+    <span className="inline-flex items-center gap-2 whitespace-nowrap rounded-full border border-ink/15 bg-ink/[0.04] px-4 py-2 font-mono text-[12px] uppercase tracking-[0.12em] text-ink/80 backdrop-blur-md">
+      <span className="h-1.5 w-1.5 rounded-full bg-accent" />
+      {label}
+    </span>
+  )
+}
 
 const lines = [
   [{ t: 'Turning' }],
@@ -43,10 +57,14 @@ export default function Statement() {
   return (
     <section ref={root} aria-labelledby="statement-title" className="relative isolate">
       <div ref={stage} className="relative flex h-[100svh] items-center justify-center overflow-hidden px-5">
-        <div aria-hidden="true" className="glow glow-violet -z-10 left-1/2 top-1/2 h-[60vh] w-[60vw] -translate-x-1/2 -translate-y-1/2" />
+        <div aria-hidden="true" className="glow glow-deep -z-10 left-1/2 top-1/2 h-[60vh] w-[60vw] -translate-x-1/2 -translate-y-1/2" />
         {tiles.map((t, i) => (
-          <div key={i} data-tile className={`absolute top-0 z-0 text-[1.05vw] ${t.className} max-md:hidden md:block`} style={{ transform: 'translateY(110vh)' }}>
-            <Art variant={t.variant} className={`${t.aspect} w-full rounded-[4px] shadow-[0_30px_60px_-30px_rgba(20,18,16,0.5)]`} />
+          <div key={i} data-tile className={`absolute top-0 z-0 hidden md:block ${t.className}`} style={{ transform: 'translateY(110vh)' }}>
+            {t.kind === 'art' ? (
+              <Art variant={t.variant} className="aspect-[4/3] w-full rounded-[10px] text-[0.8vw] shadow-[0_40px_80px_-30px_rgba(0,0,0,0.8)] ring-1 ring-ink/10" />
+            ) : (
+              <Tag label={t.label} />
+            )}
           </div>
         ))}
 
@@ -57,7 +75,7 @@ export default function Statement() {
                 <span data-st-line>
                   {line.map((w, j) =>
                     w.serif ? (
-                      <em key={j} className="text-gradient pr-[0.06em] font-serif font-normal normal-case italic tracking-[-0.02em]">{w.t}</em>
+                      <em key={j} className="pr-[0.06em] font-serif font-normal normal-case italic tracking-[-0.02em] text-accent">{w.t}</em>
                     ) : (
                       <span key={j} className={w.accent ? 'text-accent' : ''}>{w.t}</span>
                     ),
@@ -71,11 +89,9 @@ export default function Statement() {
           </p>
         </div>
 
-        {/* On small screens the tiles sit in a simple row instead of floating. */}
-        <div className="absolute bottom-6 left-5 right-5 grid grid-cols-3 gap-3 md:hidden" aria-hidden="true">
-          {['code', 'ui', 'erp'].map((v) => (
-            <Art key={v} variant={v} className="aspect-[4/5] rounded-[4px] text-[9px]" />
-          ))}
+        {/* On small screens the stack tags sit in a simple row instead of floating. */}
+        <div className="absolute bottom-8 left-5 right-5 flex flex-wrap justify-center gap-2 md:hidden" aria-hidden="true">
+          {tiles.filter((t) => t.kind === 'tag').map((t) => <Tag key={t.label} label={t.label} />)}
         </div>
       </div>
     </section>

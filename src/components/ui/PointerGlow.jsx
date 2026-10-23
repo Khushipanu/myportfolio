@@ -38,7 +38,7 @@ export default function PointerGlow() {
         ref={glow}
         aria-hidden="true"
         className="pointer-events-none fixed left-0 top-0 z-[1] h-[28rem] w-[28rem] rounded-full opacity-0 blur-3xl transition-opacity duration-300 will-change-transform"
-        style={{ background: 'radial-gradient(circle, rgba(245,137,75,0.09), rgba(245,137,75,0.03) 45%, transparent 70%)' }}
+        style={{ background: 'radial-gradient(circle, rgba(111,220,155,0.07), rgba(111,220,155,0.025) 45%, transparent 70%)' }}
       />
       {ripples.map((r) => (
         <span key={r.id} aria-hidden="true" className="s-ripple" style={{ left: r.x, top: r.y }} />

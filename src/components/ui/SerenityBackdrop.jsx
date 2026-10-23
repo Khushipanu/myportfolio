@@ -4,7 +4,7 @@ import { prefersReducedMotion } from '../../lib/gsap'
 // Adapted from the "Digital Serenity" landing component: a faint 60px grid,
 // guide lines that draw themselves in, pulsing intersection dots, corner
 // brackets and a few drifting particles. Rewritten for this site's theme
-// (warm orange on near-black) and kept purely decorative.
+// (green on near-black) and kept purely decorative.
 //
 // `start` delays the draw-in so it can wait for the intro loader.
 export default function SerenityBackdrop({ start = true, id = 'grid', className = '' }) {

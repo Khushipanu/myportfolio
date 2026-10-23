@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { gsap } from '../lib/gsap'
 
-// Desktop-only cursor matching the reference: a small orange dot that tracks the
+// Desktop-only cursor matching the reference: a small green dot that tracks the
 // pointer closely and a thin grey ring that trails behind it. Over elements
 // marked data-cursor-tone="dark" (light buttons) the dot turns dark.
 export default function Cursor() {
@@ -32,7 +32,7 @@ export default function Cursor() {
     }
     const over = (e) => {
       const dark = e.target.closest('[data-cursor-tone="dark"]')
-      gsap.to(dot.current, { backgroundColor: dark ? '#131313' : '#f5894b', duration: 0.25 })
+      gsap.to(dot.current, { backgroundColor: dark ? '#131313' : '#6fdc9b', duration: 0.25 })
       gsap.to(ring.current, {
         borderColor: dark ? 'rgba(19,19,19,0.45)' : 'rgba(233,228,223,0.28)',
         duration: 0.4,

@@ -35,8 +35,8 @@ export default function Experience() {
 
   return (
     <section id="experience" ref={root} aria-labelledby="exp-title" className="relative isolate overflow-hidden bg-paper-2 px-5 py-24 md:px-10 md:py-36">
-      <div aria-hidden="true" className="glow glow-orange -z-10 -right-[10%] top-[-10%] h-[60vh] w-[45vw]" />
-      <div aria-hidden="true" className="glow glow-violet -z-10 -left-[15%] bottom-[0%] h-[60vh] w-[45vw]" />
+      <div aria-hidden="true" className="glow glow-mint -z-10 -right-[10%] top-[-10%] h-[60vh] w-[45vw]" />
+      <div aria-hidden="true" className="glow glow-deep -z-10 -left-[15%] bottom-[0%] h-[60vh] w-[45vw]" />
       <div className="mb-14 flex items-end justify-between md:mb-20">
         <h2 id="exp-title" className="font-display text-[12vw] uppercase leading-[0.88] md:text-[6.4vw]">Experience</h2>
         <p className="font-mono text-[11px] uppercase tracking-[0.12em] text-muted">(04)</p>
