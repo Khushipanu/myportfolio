@@ -70,21 +70,24 @@ export default function Hero({ ready }) {
       </div>
 
       <div className="relative my-auto py-6">
+        {/* The two lines are centred as one block, with PANU starting under the
+            second H of KHUSHI (an invisible "KHUS" spacer sets the indent). */}
         <h1
           ref={name}
           aria-label={profile.name}
-          className="hero-name relative z-10 uppercase leading-[0.84] text-[30vw] md:text-[19vw]"
+          className="hero-name relative z-10 mx-auto w-fit uppercase leading-[0.86] tracking-[0.035em] text-[21vw] md:text-[15.5vw]"
         >
           <span data-line="1" className="relative block">
             <Line word={profile.firstName} />
           </span>
-          <span data-line="2" className="block text-right">
-            <Line word={profile.lastName} />
+          <span data-line="2" className="block whitespace-nowrap">
+            <span aria-hidden="true" className="invisible">{profile.firstName.slice(0, 4).toUpperCase()}</span>
+            <Line word={profile.lastName} className="!inline-block" />
           </span>
         </h1>
 
 
-        <div className="mt-8 max-w-xl md:absolute md:bottom-[2%] md:left-0 md:mt-0">
+        <div className="mt-8 max-w-xl md:mt-12">
           <p className="text-[22px] leading-tight tracking-[-0.01em] md:text-[2.3vw]">
             {'I turn ideas into'.split(' ').map((w, i) => (
               <span key={i} data-word className="word mr-[0.25em]">{w}</span>

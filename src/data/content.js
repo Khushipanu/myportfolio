@@ -36,76 +36,6 @@ export const about = {
     'I work across the stack with JavaScript, React.js, Node.js, Express.js and MongoDB, with a strong foundation in Data Structures and Algorithms and Object-Oriented Programming. I care about clean component architecture, reliable data flow and code that stays easy to change.',
 }
 
-// "What I do" cards, in the order they stack. The last one is drawn in the accent colour.
-export const services = [
-  {
-    title: 'Frontend Development',
-    description:
-      'Responsive, component-based interfaces in React.js and Tailwind CSS that look right on every screen and stay easy to extend.',
-    points: [
-      'Reusable React.js components for pages, forms and data views',
-      'State handled with Redux Toolkit, Context API and React Hooks',
-      'Mobile-first layouts and interactive web animations',
-    ],
-    tags: ['React.js', 'Redux Toolkit', 'Tailwind CSS', 'JavaScript (ES6+)'],
-  },
-  {
-    title: 'Backend & REST APIs',
-    description:
-      'Secure, well-structured server code with Node.js and Express.js, so the data behind the interface is reliable.',
-    points: [
-      'RESTful APIs with clear routes and error handling',
-      'JWT authentication and role-based access control (RBAC)',
-      'MongoDB schema design for real application data',
-    ],
-    tags: ['Node.js', 'Express.js', 'MongoDB', 'JWT', 'RBAC'],
-  },
-  {
-    title: 'ERP Web Applications',
-    description:
-      'At Ruhanix I develop and maintain a production ERP web application that streamlines day-to-day business operations.',
-    points: [
-      'ERP modules, forms and data views built in React.js',
-      'Frontend connected to backend services through RESTful APIs',
-      'Debugging across the stack, new features and ongoing maintenance',
-    ],
-    tags: ['React.js', 'RESTful APIs', 'Debugging'],
-  },
-  {
-    title: 'Performance & Web Animations',
-    description:
-      'Fast, smooth websites that respond well on any device, with motion that adds to the experience instead of slowing it down.',
-    points: [
-      'Performance and responsiveness optimisation',
-      'Interactive web animations',
-      'Clean, maintainable code that is easy to hand over',
-    ],
-    tags: ['Optimisation', 'Responsive Design', 'Web Animations', 'Vite'],
-  },
-  {
-    title: 'Generative AI & System Design',
-    description:
-      'Working knowledge of Generative AI and the fundamentals of designing systems that scale.',
-    points: [
-      'LLMs, Retrieval-Augmented Generation (RAG) and prompt engineering',
-      'Client-server architecture, caching, load balancing and indexing',
-      'A strong foundation in Data Structures and Algorithms',
-    ],
-    tags: ['LLMs', 'RAG', 'Prompt Engineering', 'Scalability'],
-  },
-  {
-    title: 'Full-Stack MERN Apps',
-    description:
-      'End-to-end web applications on MongoDB, Express.js, React.js and Node.js — from the database schema to the final screen.',
-    points: [
-      'Learning Management System with course purchasing and video streaming',
-      'MovieThrill, a movie discovery app on the TMDB API',
-      'Multiple full-stack websites built at Sheryians Coding School',
-    ],
-    tags: ['MongoDB', 'Express.js', 'React.js', 'Node.js'],
-  },
-]
-
 export const resume = { href: 'Khushi_Panu_Resume.pdf', file: 'Khushi_Panu_Resume.pdf' }
 
 export const projects = [
@@ -146,28 +76,44 @@ export const projects = [
   },
 ]
 
+// Experience cards, newest first. The internship at Sheryians is shown as two
+// cards: the web development work and the technical content.
 export const experience = [
   {
     company: 'Ruhanix OPC Private Limited',
     role: 'Full Stack Developer',
     period: 'Apr 2026 — Present',
-    stack: ['React.js', 'JavaScript', 'RESTful APIs'],
+    summary: 'Building and maintaining a production ERP web application that streamlines day-to-day business operations.',
     points: [
-      'Develop and maintain an ERP (Enterprise Resource Planning) web application that streamlines business operations.',
-      'Build responsive, reusable React.js components for ERP modules, forms and data views.',
-      'Integrate the frontend with backend services through RESTful APIs, and debug across the stack.',
+      'Develop and maintain an ERP (Enterprise Resource Planning) web application',
+      'Build responsive, reusable React.js components for ERP modules, forms and data views',
+      'Integrate the React.js frontend with backend services through RESTful APIs for reliable data flow',
+      'Debug across the frontend and backend, and collaborate on new features and maintenance',
     ],
+    stack: ['React.js', 'JavaScript', 'RESTful APIs'],
   },
   {
     company: 'Sheryians Coding School',
     role: 'Web Developer Intern',
     period: 'Dec 2025 — Feb 2026',
-    stack: ['React.js', 'Node.js', 'Express.js', 'Tailwind CSS'],
+    summary: 'Full-stack web development internship — building, optimising and animating real websites.',
     points: [
-      'Built multiple full-stack websites with React.js, Tailwind CSS, Node.js and Express.js.',
-      'Optimized websites for performance and responsiveness, and implemented interactive web animations.',
-      'Created technical content on web development, explaining complex programming concepts clearly.',
+      'Built multiple full-stack websites with React.js, Tailwind CSS, Node.js and Express.js',
+      'Optimised websites for performance and responsiveness across devices',
+      'Implemented interactive web animations',
     ],
+    stack: ['React.js', 'Node.js', 'Express.js', 'Tailwind CSS'],
+  },
+  {
+    company: 'Sheryians Coding School',
+    role: 'Technical Content Creator',
+    period: 'Dec 2025 — Feb 2026',
+    summary: 'Creating technical content on web development for a developer audience.',
+    points: [
+      'Created technical content on web development',
+      'Explained complex programming concepts clearly for developers',
+    ],
+    stack: ['Web Development', 'JavaScript', 'Teaching'],
   },
 ]
 

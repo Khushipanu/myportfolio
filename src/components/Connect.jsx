@@ -55,7 +55,7 @@ export default function Connect() {
 
   return (
     <footer id="contact" ref={root} className="relative overflow-hidden bg-paper px-5 pb-8 pt-24 text-ink md:px-10 md:pt-36">
-      <p className="font-mono text-[11px] uppercase tracking-[0.12em] text-ink/50">(06) Contact</p>
+      <p className="font-mono text-[11px] uppercase tracking-[0.12em] text-ink/50">(07) Contact</p>
 
       <h2 className="mt-10 md:mt-14">
         <a
