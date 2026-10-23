@@ -5,6 +5,7 @@ import { profile, socials, resume } from '../data/content'
 
 // Visuvate-inspired closing section: oversized "Let's Connect" type that
 // assembles as you arrive, a magnetic email link and the contact details.
+const gmail = `https://mail.google.com/mail/?view=cm&fs=1&to=${profile.email}`
 function Magnetic({ children, className = '', ...props }) {
   const el = useRef(null)
   const onMove = (e) => {
@@ -34,9 +35,9 @@ export default function Connect() {
         gsap.timeline({
           scrollTrigger: { trigger: root.current, start: 'top 85%', end: 'top 15%', scrub: 1 },
         })
-          .fromTo('[data-lc-a]', { xPercent: -45 }, { xPercent: 0, ease: 'none' }, 0)
-          .fromTo('[data-lc-b]', { xPercent: 45 }, { xPercent: 0, ease: 'none' }, 0)
-          .fromTo('[data-lc-dot]', { scale: 0, rotate: -180 }, { scale: 1, rotate: 0, ease: 'none' }, 0.2)
+          .fromTo('[data-lc-a]', { xPercent: -30 }, { xPercent: 0, ease: 'none' }, 0)
+          .fromTo('[data-lc-b]', { xPercent: 30 }, { xPercent: 0, ease: 'none' }, 0)
+          .fromTo('[data-lc-dot]', { scale: 0.4, autoAlpha: 0 }, { scale: 1, autoAlpha: 1, ease: 'none' }, 0.2)
 
         gsap.from('[data-lc-fade]', {
           y: 40,
@@ -56,14 +57,27 @@ export default function Connect() {
     <footer id="contact" ref={root} className="relative overflow-hidden bg-paper px-5 pb-8 pt-24 text-ink md:px-10 md:pt-36">
       <p className="font-mono text-[11px] uppercase tracking-[0.12em] text-ink/50">(06) Contact</p>
 
-      <h2 className="font-tall mt-10 uppercase leading-[0.82] md:mt-14" aria-label="Let's connect">
-        <span aria-hidden="true" data-lc-a className="block text-[24vw] md:text-[17vw]">Let's</span>
-        <span aria-hidden="true" className="flex items-center justify-end gap-[2vw]">
-          <span data-lc-dot className="inline-flex h-[12vw] w-[12vw] shrink-0 items-center justify-center rounded-full bg-accent text-[6vw] text-coal md:h-[9vw] md:w-[9vw] md:text-[4.5vw]">
-            ↗
+      <h2 className="mt-10 md:mt-14">
+        <a
+          href={gmail}
+          target="_blank"
+          rel="noreferrer"
+          aria-label="Let's connect — write to me on Gmail"
+          className="group flex flex-wrap items-center gap-x-[2.2vw] gap-y-2 font-tall uppercase leading-[0.86]"
+        >
+          <span data-lc-a className="block text-[19vw] transition-colors duration-500 md:text-[10.5vw]">Let's</span>
+          <span
+            data-lc-dot
+            aria-hidden="true"
+            className="relative inline-flex h-[13vw] w-[13vw] shrink-0 items-center justify-center rounded-full border border-accent/70 text-accent transition-colors duration-500 group-hover:bg-accent group-hover:text-coal md:h-[7vw] md:w-[7vw]"
+          >
+            <span className="absolute inset-[18%] rounded-full bg-accent/10 transition-opacity duration-500 group-hover:opacity-0" />
+            <svg viewBox="0 0 24 24" className="relative h-[42%] w-[42%] transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:rotate-45" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M7 17 17 7M8 7h9v9" />
+            </svg>
           </span>
-          <span data-lc-b className="block text-[24vw] md:text-[17vw]">Connect</span>
-        </span>
+          <span data-lc-b className="block text-[19vw] transition-colors duration-500 group-hover:text-accent md:text-[10.5vw]">Connect</span>
+        </a>
       </h2>
 
       <div data-lc-details className="mt-16 grid grid-cols-12 gap-x-5 gap-y-12 md:mt-24">
@@ -84,6 +98,19 @@ export default function Connect() {
         <div className="col-span-12 md:col-span-4 md:col-start-9" data-lc-fade>
           <p className="font-mono text-[11px] uppercase tracking-[0.12em] text-ink/50">Elsewhere</p>
           <ul className="mt-4 border-t border-ink/15">
+            <li className="border-b border-ink/15">
+              <a
+                href={gmail}
+                target="_blank"
+                rel="noreferrer"
+                className="group flex items-center justify-between py-4 text-lg transition-colors hover:text-accent"
+              >
+                <span>Gmail</span>
+                <span className="truncate pl-4 text-sm text-ink/50 transition-transform duration-500 group-hover:-translate-y-0.5 group-hover:translate-x-1 group-hover:text-accent">
+                  {profile.email} ↗
+                </span>
+              </a>
+            </li>
             {socials.map((s) => (
               <li key={s.label} className="border-b border-ink/15">
                 <a

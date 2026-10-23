@@ -6,7 +6,6 @@ import Nav from './components/Nav'
 import Hero from './components/Hero'
 import Statement from './components/Statement'
 import Work from './components/Work'
-import Projects from './components/Projects'
 import About from './components/About'
 import Experience from './components/Experience'
 import SkillMix from './components/SkillMix'
@@ -31,7 +30,6 @@ export default function App() {
         <Hero ready={ready} />
         <Statement />
         <Work />
-        <Projects />
         <About />
         <Experience />
         <SkillMix />

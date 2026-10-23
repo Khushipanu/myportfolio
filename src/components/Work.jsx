@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
 import { gsap, useGSAP, ScrollTrigger, MOTION_OK, prefersReducedMotion } from '../lib/gsap'
-import { scrollToTarget } from '../hooks/useLenis'
 import Art from './Art'
 
 // Visuvate-style "works" ring: five project screens turn around the
@@ -9,11 +8,11 @@ import Art from './Art'
 // its own, turns one card per step of scroll and can be dragged; whichever
 // card faces front drives the highlight and lights up its skills.
 const CARDS = [
-  { variant: 'movie', label: 'MovieThrill — home', target: '#project-moviethrill', project: 'MovieThrill', highlight: 'Movie data from The Movie Database (TMDB) API, fetched with Axios.', skills: ['React.js', 'Tailwind CSS', 'JavaScript'] },
-  { variant: 'lms', label: 'LMS — courses', target: '#project-lms', project: 'Learning Management System', highlight: 'JWT authentication with student and instructor roles (RBAC).', skills: ['Node.js', 'Express.js', 'MongoDB'] },
-  { variant: 'erp', label: 'ERP — records', target: '#experience', project: 'ERP · Ruhanix', highlight: 'Reusable React.js components for ERP modules, forms and data views.', skills: ['React.js', 'JavaScript'] },
-  { variant: 'movieDetail', label: 'MovieThrill — details', target: '#project-moviethrill', project: 'MovieThrill', highlight: 'App-wide state managed with Redux Toolkit and React-Redux.', skills: ['React.js', 'Redux Toolkit'] },
-  { variant: 'lmsPlayer', label: 'LMS — lesson', target: '#project-lms', project: 'Learning Management System', highlight: 'Course purchasing and streaming on a full MERN stack.', skills: ['MongoDB', 'Express.js', 'React.js', 'Node.js'] },
+  { variant: 'movie', label: 'MovieThrill — home', project: 'MovieThrill', highlight: 'Movie data from The Movie Database (TMDB) API, fetched with Axios.', skills: ['React.js', 'Tailwind CSS', 'JavaScript'] },
+  { variant: 'lms', label: 'LMS — courses', project: 'Learning Management System', highlight: 'JWT authentication with student and instructor roles (RBAC).', skills: ['Node.js', 'Express.js', 'MongoDB'] },
+  { variant: 'erp', label: 'ERP — records', project: 'ERP · Ruhanix', highlight: 'Reusable React.js components for ERP modules, forms and data views.', skills: ['React.js', 'JavaScript'] },
+  { variant: 'movieDetail', label: 'MovieThrill — details', project: 'MovieThrill', highlight: 'App-wide state managed with Redux Toolkit and React-Redux.', skills: ['React.js', 'Redux Toolkit'] },
+  { variant: 'lmsPlayer', label: 'LMS — lesson', project: 'Learning Management System', highlight: 'Course purchasing and streaming on a full MERN stack.', skills: ['MongoDB', 'Express.js', 'React.js', 'Node.js'] },
 ]
 const SKILLS = ['React.js', 'Node.js', 'Express.js', 'MongoDB', 'Redux Toolkit', 'Tailwind CSS', 'JavaScript']
 const COUNT = CARDS.length
@@ -71,6 +70,51 @@ function useVortex(stageRef, ringRef, progressRef, onFront) {
     const up = () => { dragging = false }
     // A drag shouldn't also count as a click on the card under the pointer.
     const click = (e) => { if (travelled > 6) { e.preventDefault(); e.stopPropagation() } }
+    // Hovering (or clicking) a card turns the ring so that card faces front.
+    // A hover only counts once the pointer has rested on the card briefly and
+    // moved since the last turn, so the turn can't chain into the next card.
+    let hovering = false
+    let px = 0
+    let py = 0
+    let fromX = -999
+    let fromY = -999
+    let timer = 0
+    let hoverIdx = -1
+    const bring = (i) => {
+      const t = s.drift + s.scrollCur + s.drag
+      s.drag += wrap(i * STEP - t)
+      s.vel = 0
+      fromX = px
+      fromY = py
+    }
+    const indexOf = (e) => {
+      const el = e.target.closest('[data-index]')
+      return el ? Number(el.dataset.index) : -1
+    }
+    const track = (e) => {
+      px = e.clientX
+      py = e.clientY
+    }
+    const over = (e) => {
+      hovering = true
+      hoverIdx = indexOf(e)
+      clearTimeout(timer)
+      if (hoverIdx < 0 || dragging || e.pointerType === 'touch') return
+      timer = setTimeout(() => {
+        if (dragging || hoverIdx < 0) return
+        if (Math.hypot(px - fromX, py - fromY) < 30) return
+        bring(hoverIdx)
+      }, 160)
+    }
+    const out = () => { hovering = false; hoverIdx = -1; clearTimeout(timer) }
+    const pick = (e) => {
+      const i = indexOf(e)
+      if (i >= 0) bring(i)
+    }
+    stage.addEventListener('pointermove', track, { passive: true })
+    stage.addEventListener('pointerover', over)
+    stage.addEventListener('pointerleave', out)
+    stage.addEventListener('click', pick)
     stage.addEventListener('pointerdown', down)
     stage.addEventListener('click', click, true)
     window.addEventListener('pointermove', move, { passive: true })
@@ -95,7 +139,8 @@ function useVortex(stageRef, ringRef, progressRef, onFront) {
         s.drag += s.vel
         s.vel *= 0.94
       }
-      if (!still) s.drift += dt * 5
+      // The ring holds still while the pointer is over it.
+      if (!still && !hovering) s.drift += dt * 5
       // Over the pinned scroll each card comes to the front once.
       const scroll = progressRef.current * STEP * (COUNT - 1)
       s.scrollCur += (scroll - s.scrollCur) * 0.09
@@ -127,6 +172,11 @@ function useVortex(stageRef, ringRef, progressRef, onFront) {
       ro.disconnect()
       io.disconnect()
       stage.removeEventListener('pointerdown', down)
+      clearTimeout(timer)
+      stage.removeEventListener('pointermove', track)
+      stage.removeEventListener('pointerover', over)
+      stage.removeEventListener('pointerleave', out)
+      stage.removeEventListener('click', pick)
       stage.removeEventListener('click', click, true)
       window.removeEventListener('pointermove', move)
       window.removeEventListener('pointerup', up)
@@ -135,9 +185,9 @@ function useVortex(stageRef, ringRef, progressRef, onFront) {
   }, [stageRef, ringRef, progressRef, onFront])
 }
 
-function Card({ c }) {
+function Card({ c, i }) {
   return (
-    <div data-card className="absolute left-0 top-0 [transform-style:preserve-3d]">
+    <div data-card data-index={i} className="absolute left-0 top-0 [transform-style:preserve-3d]">
       {Array.from({ length: SLICES }).map((_, j) => (
         <div
           key={j}
@@ -230,8 +280,8 @@ export default function Work() {
               <span data-work-title className="block whitespace-nowrap font-serif text-[16vw] leading-none text-ink md:text-[11vw]">My Works</span>
             </h2>
             {CARDS.map((c, i) => (
-              <button key={i} type="button" onClick={() => scrollToTarget(c.target)} aria-label={c.label} className="contents">
-                <Card c={c} />
+              <button key={i} type="button" data-index={i} aria-label={`Show ${c.label}`} className="contents">
+                <Card c={c} i={i} />
               </button>
             ))}
           </div>
