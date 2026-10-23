@@ -43,18 +43,18 @@ export default function Orb3D({ className = '', ...rest }) {
       const knot = new THREE.Mesh(
         new THREE.TorusKnotGeometry(1.05, 0.34, 260, 48, 2, 3),
         new THREE.MeshPhysicalMaterial({
-          color: 0xb9c9ff,
+          color: 0xf2f2f2,
           metalness: 0,
           roughness: 0.06,
           transmission: 1,
           thickness: 1.4,
           ior: 1.45,
-          iridescence: 1,
+          iridescence: 0.35,
           iridescenceIOR: 1.3,
           clearcoat: 1,
           clearcoatRoughness: 0.05,
-          attenuationColor: new THREE.Color(0x3d5cff),
-          attenuationDistance: 2.2,
+          attenuationColor: new THREE.Color(0xd8dde8),
+          attenuationDistance: 6,
           envMapIntensity: 1.4,
         }),
       )
@@ -63,7 +63,7 @@ export default function Orb3D({ className = '', ...rest }) {
       // Glowing core seen through the glass
       const core = new THREE.Mesh(
         new THREE.IcosahedronGeometry(0.42, 4),
-        new THREE.MeshStandardMaterial({ color: 0x0b1240, emissive: 0x4f6bff, emissiveIntensity: 2.4, roughness: 0.3 }),
+        new THREE.MeshStandardMaterial({ color: 0x0b1240, emissive: 0x749dfb, emissiveIntensity: 1.2, roughness: 0.3 }),
       )
       group.add(core)
 
@@ -79,15 +79,15 @@ export default function Orb3D({ className = '', ...rest }) {
       }
       const pg = new THREE.BufferGeometry()
       pg.setAttribute('position', new THREE.BufferAttribute(pos, 3))
-      const dots = new THREE.Points(pg, new THREE.PointsMaterial({ color: 0x8fa8ff, size: 0.028, transparent: true, opacity: 0.85, depthWrite: false }))
+      const dots = new THREE.Points(pg, new THREE.PointsMaterial({ color: 0xe9e4df, size: 0.022, transparent: true, opacity: 0.85, depthWrite: false }))
       dots.rotation.set(1.15, 0, 0.35)
       group.add(dots)
 
-      const key = new THREE.PointLight(0x6f86ff, 40, 20)
+      const key = new THREE.PointLight(0xffffff, 30, 20)
       key.position.set(-3, 2, 4)
-      const rim = new THREE.PointLight(0x9fb4ff, 25, 20)
+      const rim = new THREE.PointLight(0xc9d6ff, 18, 20)
       rim.position.set(3, -2, -2)
-      scene.add(key, rim, new THREE.AmbientLight(0x223366, 0.6))
+      scene.add(key, rim, new THREE.AmbientLight(0x333333, 0.6))
 
       const resize = () => {
         const { clientWidth: w, clientHeight: h } = el

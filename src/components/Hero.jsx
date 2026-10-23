@@ -105,24 +105,6 @@ export default function Hero({ ready }) {
       ref={root}
       className="relative flex min-h-[100svh] flex-col overflow-hidden px-5 pb-6 pt-24 md:px-10 md:pb-8 md:pt-28"
     >
-      {/* Atmosphere: blue glow and a dark ridge along the bottom. */}
-      <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10">
-        <div className="absolute -bottom-40 -left-40 h-[70vh] w-[70vw] rounded-full bg-[radial-gradient(closest-side,rgba(79,107,255,0.35),transparent)] blur-2xl" />
-        <div className="absolute -right-20 top-[30%] h-[50vh] w-[40vw] rounded-full bg-[radial-gradient(closest-side,rgba(79,107,255,0.14),transparent)] blur-2xl" />
-        <svg className="absolute bottom-0 left-0 h-[30vh] w-full opacity-90" viewBox="0 0 1440 300" preserveAspectRatio="none">
-          <defs>
-            <linearGradient id="ridge" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0" stopColor="#2a2f45" stopOpacity="0.9" />
-              <stop offset="0.5" stopColor="#14151b" />
-              <stop offset="1" stopColor="#0d0d10" />
-            </linearGradient>
-            <filter id="rough"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" result="n" /><feDisplacementMap in="SourceGraphic" in2="n" scale="6" /></filter>
-          </defs>
-          <path filter="url(#rough)" fill="url(#ridge)" d="M0 150 L40 132 L75 140 L110 112 L150 120 L185 96 L215 104 L250 82 L290 101 L325 95 L360 120 L410 132 L455 150 L520 168 L600 190 L690 210 L800 228 L930 242 L1100 254 L1300 262 L1440 266 L1440 300 L0 300 Z" />
-          <path fill="#0c0c0f" d="M0 225 L70 205 L140 214 L210 196 L290 216 L380 228 L500 246 L660 262 L900 276 L1440 290 L1440 300 L0 300 Z" />
-        </svg>
-      </div>
-
       <div className="flex items-center gap-4 font-mono text-[11px] tracking-[0.12em] text-muted">
         <span className="mask"><span data-hero-fade>// 01</span></span>
         <span className="relative block h-px w-40 bg-ink/15">
