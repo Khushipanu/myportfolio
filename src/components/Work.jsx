@@ -198,7 +198,7 @@ export default function Work() {
 
   return (
     <section id="work" ref={root} aria-labelledby="work-title" className="relative isolate bg-[#0b0d0c] text-ink">
-      <div ref={stage} className="relative h-[100svh] cursor-grab touch-pan-y select-none overflow-hidden active:cursor-grabbing">
+      <div ref={stage} data-cursor="Drag" className="relative h-[100svh] cursor-grab touch-pan-y select-none overflow-hidden active:cursor-grabbing">
         {/* Glowing light ribbons behind the vortex. */}
         <svg aria-hidden="true" className="pointer-events-none absolute inset-0 h-full w-full" viewBox="0 0 1440 900" preserveAspectRatio="none">
           <defs>
