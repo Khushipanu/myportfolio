@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from 'react'
-import { gsap, useGSAP, ScrollTrigger, MOTION_OK, prefersReducedMotion } from '../lib/gsap'
+import { gsap, useGSAP, MOTION_OK, prefersReducedMotion } from '../lib/gsap'
 import Art from './Art'
 
-// Visuvate-style "works" ring: five project screens turn around the
-// "My Works" title, each card curved onto the cylinder (built from thin
-// vertical slices) with its back showing as it turns away. The ring drifts on
-// its own, turns one card per step of scroll and can be dragged; whichever
-// card faces front drives the highlight and lights up its skills.
+// Visuvate-style "works" ring: five project screens stand on a circle around
+// the "My Works" title, each card curved onto the cylinder (built from thin
+// vertical slices) with its back showing as it turns away. The page scrolls
+// past as normal; the arrow buttons turn the circle one card at a time, and
+// the card facing front drives the highlight and lights up its skills.
 const CARDS = [
   { variant: 'movie', label: 'MovieThrill — home', project: 'MovieThrill', highlight: 'Movie data from The Movie Database (TMDB) API, fetched with Axios.', skills: ['React.js', 'Tailwind CSS', 'JavaScript'] },
   { variant: 'lms', label: 'LMS — courses', project: 'Learning Management System', highlight: 'JWT authentication with student and instructor roles (RBAC).', skills: ['Node.js', 'Express.js', 'MongoDB'] },
@@ -19,7 +19,10 @@ const COUNT = CARDS.length
 const STEP = 360 / COUNT
 const SLICES = 5
 
-function useVortex(stageRef, ringRef, progressRef, onFront) {
+// The ring only turns when asked (arrow buttons or arrow keys): `turn(dir)`
+// moves it one card along the circle, eased per frame so it glides.
+function useRing(stageRef, ringRef, onFront) {
+  const turn = useRef(() => {})
   useEffect(() => {
     const stage = stageRef.current
     const ring = ringRef.current
@@ -38,115 +41,14 @@ function useVortex(stageRef, ringRef, progressRef, onFront) {
       ring.style.setProperty('--cw', `${g.cw}px`)
       ring.style.setProperty('--ch', `${g.ch}px`)
       ring.style.setProperty('--sw', `${g.cw / SLICES + 0.6}px`)
+      draw()
     }
-    layout()
-    const ro = new ResizeObserver(layout)
-    ro.observe(stage)
-
-    // offset (degrees along the helix) = idle drift + scroll + drag.
-    const s = { drift: 0, drag: 0, vel: 0, scrollCur: 0, offset: 0 }
-    let dragging = false
-    let lastX = 0
-    let lastY = 0
-    let travelled = 0
-    const down = (e) => {
-      dragging = true
-      lastX = e.clientX
-      lastY = e.clientY
-      travelled = 0
-      s.vel = 0
-    }
-    const move = (e) => {
-      if (!dragging) return
-      const dx = e.clientX - lastX
-      const dy = e.clientY - lastY
-      lastX = e.clientX
-      lastY = e.clientY
-      travelled += Math.abs(dx) + Math.abs(dy)
-      const d = (dx - dy * 0.5) * 0.3
-      s.drag += d
-      s.vel = d
-    }
-    const up = () => { dragging = false }
-    // A drag shouldn't also count as a click on the card under the pointer.
-    const click = (e) => { if (travelled > 6) { e.preventDefault(); e.stopPropagation() } }
-    // Hovering (or clicking) a card turns the ring so that card faces front.
-    // A hover only counts once the pointer has rested on the card briefly and
-    // moved since the last turn, so the turn can't chain into the next card.
-    let hovering = false
-    let px = 0
-    let py = 0
-    let fromX = -999
-    let fromY = -999
-    let timer = 0
-    let hoverIdx = -1
-    const bring = (i) => {
-      const t = s.drift + s.scrollCur + s.drag
-      s.drag += wrap(i * STEP - t)
-      s.vel = 0
-      fromX = px
-      fromY = py
-    }
-    const indexOf = (e) => {
-      const el = e.target.closest('[data-index]')
-      return el ? Number(el.dataset.index) : -1
-    }
-    const track = (e) => {
-      px = e.clientX
-      py = e.clientY
-    }
-    const over = (e) => {
-      hovering = true
-      hoverIdx = indexOf(e)
-      clearTimeout(timer)
-      if (hoverIdx < 0 || dragging || e.pointerType === 'touch') return
-      timer = setTimeout(() => {
-        if (dragging || hoverIdx < 0) return
-        if (Math.hypot(px - fromX, py - fromY) < 30) return
-        bring(hoverIdx)
-      }, 160)
-    }
-    const out = () => { hovering = false; hoverIdx = -1; clearTimeout(timer) }
-    const pick = (e) => {
-      const i = indexOf(e)
-      if (i >= 0) bring(i)
-    }
-    stage.addEventListener('pointermove', track, { passive: true })
-    stage.addEventListener('pointerover', over)
-    stage.addEventListener('pointerleave', out)
-    stage.addEventListener('click', pick)
-    stage.addEventListener('pointerdown', down)
-    stage.addEventListener('click', click, true)
-    window.addEventListener('pointermove', move, { passive: true })
-    window.addEventListener('pointerup', up)
-    window.addEventListener('pointercancel', up)
-
-    let visible = true
-    const io = new IntersectionObserver(([e]) => { visible = e.isIntersecting })
-    io.observe(stage)
 
     // Angle in [-180, 180); 0 is facing the viewer.
     const wrap = (v) => ((((v + 180) % 360) + 360) % 360) - 180
+    const s = { offset: 0, target: 0 }
     let front = -1
-    let raf = 0
-    let last = performance.now()
-    const tick = (now) => {
-      raf = requestAnimationFrame(tick)
-      const dt = Math.min(0.05, (now - last) / 1000)
-      last = now
-      if (!visible) return
-      if (!dragging) {
-        s.drag += s.vel
-        s.vel *= 0.94
-      }
-      // The ring holds still while the pointer is over it.
-      if (!still && !hovering) s.drift += dt * 5
-      // Over the pinned scroll each card comes to the front once.
-      const scroll = progressRef.current * STEP * (COUNT - 1)
-      s.scrollCur += (scroll - s.scrollCur) * 0.09
-      const target = s.drift + s.scrollCur + s.drag
-      s.offset += (target - s.offset) * 0.15
-
+    const draw = () => {
       let best = 0
       for (let i = 0; i < COUNT; i++) {
         const a = wrap(i * STEP - s.offset)
@@ -165,24 +67,42 @@ function useVortex(stageRef, ringRef, progressRef, onFront) {
         onFront(best)
       }
     }
-    raf = requestAnimationFrame(tick)
 
+    let raf = 0
+    let last = 0
+    const tick = (now) => {
+      const dt = last ? Math.min(64, now - last) : 16.7
+      last = now
+      s.offset += (s.target - s.offset) * (1 - Math.pow(1 - 0.09, dt / 16.7))
+      draw()
+      if (Math.abs(s.target - s.offset) > 0.02) {
+        raf = requestAnimationFrame(tick)
+      } else {
+        s.offset = s.target
+        draw()
+        raf = 0
+        last = 0
+      }
+    }
+    turn.current = (dir) => {
+      s.target += dir * STEP
+      if (still) {
+        s.offset = s.target
+        draw()
+      } else if (!raf) {
+        raf = requestAnimationFrame(tick)
+      }
+    }
+
+    layout()
+    const ro = new ResizeObserver(layout)
+    ro.observe(stage)
     return () => {
       cancelAnimationFrame(raf)
       ro.disconnect()
-      io.disconnect()
-      stage.removeEventListener('pointerdown', down)
-      clearTimeout(timer)
-      stage.removeEventListener('pointermove', track)
-      stage.removeEventListener('pointerover', over)
-      stage.removeEventListener('pointerleave', out)
-      stage.removeEventListener('click', pick)
-      stage.removeEventListener('click', click, true)
-      window.removeEventListener('pointermove', move)
-      window.removeEventListener('pointerup', up)
-      window.removeEventListener('pointercancel', up)
     }
-  }, [stageRef, ringRef, progressRef, onFront])
+  }, [stageRef, ringRef, onFront])
+  return turn
 }
 
 function Card({ c, i }) {
@@ -212,22 +132,14 @@ export default function Work() {
   const root = useRef(null)
   const stage = useRef(null)
   const ring = useRef(null)
-  const progress = useRef(0)
   const [front, setFront] = useState(0)
-  useVortex(stage, ring, progress, setFront)
+  const turn = useRing(stage, ring, setFront)
   const active = CARDS[front]
 
   useGSAP(
     () => {
       const mm = gsap.matchMedia()
       mm.add(MOTION_OK, () => {
-        ScrollTrigger.create({
-          trigger: root.current,
-          start: 'top top',
-          end: '+=200%',
-          pin: stage.current,
-          onUpdate: (self) => { progress.current = self.progress },
-        })
         gsap.from('[data-work-title]', {
           yPercent: 30,
           autoAlpha: 0,
@@ -243,7 +155,14 @@ export default function Work() {
 
   return (
     <section id="work" ref={root} aria-labelledby="work-title" className="relative isolate bg-[#0b0d0c] text-ink">
-      <div ref={stage} data-cursor="Drag" className="relative h-[100svh] cursor-grab touch-pan-y select-none overflow-hidden active:cursor-grabbing">
+      <div
+        ref={stage}
+        className="relative h-[100svh] select-none overflow-hidden"
+        onKeyDown={(e) => {
+          if (e.key === 'ArrowLeft') turn.current(-1)
+          if (e.key === 'ArrowRight') turn.current(1)
+        }}
+      >
         {/* Glowing light ribbons behind the vortex. */}
         <svg aria-hidden="true" className="pointer-events-none absolute inset-0 h-full w-full" viewBox="0 0 1440 900" preserveAspectRatio="none">
           <defs>
@@ -280,9 +199,7 @@ export default function Work() {
               <span data-work-title className="block whitespace-nowrap font-serif text-[16vw] leading-none text-ink md:text-[11vw]">My Works</span>
             </h2>
             {CARDS.map((c, i) => (
-              <button key={i} type="button" data-index={i} aria-label={`Show ${c.label}`} className="contents">
-                <Card c={c} i={i} />
-              </button>
+              <Card key={i} c={c} i={i} />
             ))}
           </div>
         </div>
@@ -305,7 +222,22 @@ export default function Work() {
           </div>
         </div>
 
-        <p className="pointer-events-none absolute bottom-6 right-5 z-20 font-mono text-[11px] uppercase tracking-[0.12em] text-ink/40 md:bottom-10 md:right-10">Drag ⟷</p>
+        <div className="absolute bottom-5 right-5 z-20 flex items-center gap-3 md:bottom-10 md:right-10">
+          {[
+            { dir: -1, label: 'Previous work', d: 'M15 6l-6 6 6 6' },
+            { dir: 1, label: 'Next work', d: 'M9 6l6 6-6 6' },
+          ].map((b) => (
+            <button
+              key={b.dir}
+              type="button"
+              onClick={() => turn.current(b.dir)}
+              aria-label={b.label}
+              className="flex h-12 w-12 items-center justify-center rounded-full border border-ink/30 bg-[#0b0d0c]/60 text-ink backdrop-blur-sm transition-colors duration-300 hover:border-accent hover:bg-accent hover:text-coal md:h-14 md:w-14"
+            >
+              <svg viewBox="0 0 24 24" aria-hidden="true" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d={b.d} /></svg>
+            </button>
+          ))}
+        </div>
       </div>
     </section>
   )

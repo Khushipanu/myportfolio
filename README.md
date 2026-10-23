@@ -35,8 +35,8 @@ Add live/source links for a project by setting `live` and `code` in `content.js`
 1. Loader
 2. Hero — two-line name in Anton with a word-by-word intro
 3. Statement — "Building digital experiences that matter", rising line by line
-4. Selected work — five project screens turning on a ring around "My Works"; hover or click a card to bring it to the front, drag or scroll to turn. The front card drives a project highlight and lights up its skills
-5. About + What I do — a deck of service cards; scroll or swipe on the deck to move through it
+4. Selected work — five project screens on a ring around "My Works", turned with the arrow buttons; the front card drives a project highlight and lights up its skills
+5. About + What I do — expanding panels (hover or click to open one); an accordion on phones
 6. Experience + Education
 7. Toolkit — scrambling skill word and grouped skills
 8. Let's Connect — Gmail, socials, resume download and footer
