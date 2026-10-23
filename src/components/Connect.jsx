@@ -86,10 +86,10 @@ export default function Connect() {
           Open to work
         </p>
         <h2 className="relative mt-6 max-w-5xl text-[10vw] font-semibold leading-[1.02] tracking-[-0.04em] md:text-[5.6vw]">
-          Looking for my next role as a <span className="mark" style={{ transitionDelay: '0.3s' }}>Full Stack Developer</span>.
+          Let&apos;s <span className="mark" style={{ transitionDelay: '0.3s' }}>work together</span>.
         </h2>
         <p className="relative mt-6 max-w-xl text-[16px] leading-relaxed text-ink/65 md:text-[18px]">
-          I&apos;m open to full-time opportunities in full stack and MERN development. If you&apos;re hiring, I&apos;d love to talk.
+          I&apos;m open to new opportunities. Feel free to reach out.
         </p>
 
         <div className="relative mt-10 flex flex-wrap items-center gap-4">
