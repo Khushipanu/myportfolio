@@ -75,12 +75,12 @@ export default function Hero({ ready }) {
         <h1
           ref={name}
           aria-label={profile.name}
-          className="hero-name relative z-10 mx-auto w-fit uppercase leading-[0.86] tracking-[0.035em] text-[21vw] md:text-[15.5vw]"
+          className="hero-name relative z-10 mx-auto w-fit pl-[0.1em] uppercase leading-[0.9] tracking-[0.1em] text-[19.5vw] md:text-[17vw]"
         >
           <span data-line="1" className="relative block">
             <Line word={profile.firstName} />
           </span>
-          <span data-line="2" className="block whitespace-nowrap">
+          <span data-line="2" className="mt-[0.07em] block whitespace-nowrap">
             <span aria-hidden="true" className="invisible">{profile.firstName.slice(0, 4).toUpperCase()}</span>
             <Line word={profile.lastName} className="!inline-block" />
           </span>
