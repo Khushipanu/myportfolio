@@ -35,7 +35,7 @@ Add live/source links for a project by setting `live` and `code` in `content.js`
 1. Loader
 2. Hero — two-line name; letters near the cursor or finger lift and turn green
 3. Statement — "Turning ideas into impact", rising line by line
-4. Selected work — a 3D helix of project screens that turns on scroll and drag
+4. Selected work — a Visuvate-style vortex: curved project screens streaming up a leaning helix (scroll, drag or touch)
 5. Projects — MovieThrill and the Learning Management System
 6. About + Services — hover-reveal service rows
 7. Experience + Education
