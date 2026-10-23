@@ -8,6 +8,10 @@
   --color-ink: #e9e4df;
   --color-muted: #8e8983;
   --color-accent: #f5894b;
+  /* Second accent: deep violet for glows, gradients and the contact section. */
+  --color-violet: #8b7cf6;
+  --color-violet-deep: #1a1530;
+  --color-rose: #ec6f8f;
 
   /* Fixed colours for the code-drawn artwork, independent of the theme. */
   --color-cream: #e9e4df;
@@ -147,7 +151,7 @@ html.lenis body {
   opacity: 0;
 }
 .serenity .s-faint { stroke: rgba(233, 228, 223, 0.25); }
-.serenity .s-dot { fill: var(--color-accent); opacity: 0; transform-box: fill-box; transform-origin: center; }
+.serenity .s-dot { fill: var(--color-violet); opacity: 0; transform-box: fill-box; transform-origin: center; }
 .serenity .s-corner {
   position: absolute; width: 36px; height: 36px; opacity: 0;
   border-color: rgba(233, 228, 223, 0.22); border-style: solid; border-width: 0;
@@ -185,3 +189,27 @@ html.lenis body {
 /* Word reveal: words lift out of a blur; hover gives a soft glow. */
 .word { display: inline-block; transition: color 0.3s ease, transform 0.3s ease, text-shadow 0.3s ease; }
 .word:hover { transform: translateY(-2px); text-shadow: 0 0 18px rgba(245, 137, 75, 0.45); }
+
+/* ---- Colour atmosphere: orange + violet glows and gradient text ---- */
+.text-gradient {
+  background: linear-gradient(95deg, var(--color-accent) 0%, var(--color-rose) 48%, var(--color-violet) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.glow {
+  position: absolute;
+  border-radius: 9999px;
+  pointer-events: none;
+  filter: blur(80px);
+}
+.glow-violet { background: radial-gradient(closest-side, rgba(139, 124, 246, 0.32), transparent); }
+.glow-orange { background: radial-gradient(closest-side, rgba(245, 137, 75, 0.22), transparent); }
+.glow-rose { background: radial-gradient(closest-side, rgba(236, 111, 143, 0.18), transparent); }
+@keyframes drift {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(4%, -6%) scale(1.08); }
+}
+.drift { animation: drift 16s ease-in-out infinite; }
+.drift-slow { animation: drift 22s ease-in-out infinite reverse; }
+.bg-accent-gradient { background: linear-gradient(135deg, var(--color-accent), var(--color-rose) 55%, var(--color-violet)); }

@@ -71,7 +71,8 @@ export default function About() {
   )
 
   return (
-    <section id="about" ref={root} aria-labelledby="about-title" className="px-5 py-24 md:px-10 md:py-40">
+    <section id="about" ref={root} aria-labelledby="about-title" className="relative isolate overflow-hidden px-5 py-24 md:px-10 md:py-40">
+      <div aria-hidden="true" className="glow glow-violet -z-10 -left-[10%] top-[5%] h-[55vh] w-[45vw]" />
       <div className="grid grid-cols-12 gap-x-5 gap-y-10">
         <h2 id="about-title" className="col-span-12 font-mono text-[11px] uppercase tracking-[0.12em] text-muted md:col-span-3">
           (03) About
@@ -80,7 +81,7 @@ export default function About() {
           <p data-about-lead className="text-[8.5vw] font-medium leading-[1.02] tracking-[-0.03em] md:text-[4.2vw]">
             {about.lead.map((part, i) =>
               part.serif ? (
-                <em key={i} className="font-serif font-normal italic tracking-[-0.01em] text-accent">{part.text}</em>
+                <em key={i} className="text-gradient pr-[0.05em] font-serif font-normal italic tracking-[-0.01em]">{part.text}</em>
               ) : (
                 <span key={i}>{part.text}</span>
               ),

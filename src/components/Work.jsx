@@ -70,7 +70,7 @@ export default function Work() {
   )
 
   return (
-    <section id="work" ref={root} aria-labelledby="work-title" className="relative bg-paper-2 text-ink">
+    <section id="work" ref={root} aria-labelledby="work-title" className="relative isolate bg-[linear-gradient(180deg,#131313_0%,#17142a_50%,#131313_100%)] text-ink">
       <div ref={stage} className="relative h-[100svh] overflow-hidden motion-reduce:hidden">
         <div className="absolute inset-x-5 top-24 flex items-start justify-between md:inset-x-10 md:top-28">
           <p className="font-mono text-[11px] uppercase tracking-[0.12em] text-ink/50">(02) Selected work</p>

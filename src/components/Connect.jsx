@@ -58,17 +58,22 @@ export default function Connect() {
   )
 
   return (
-    <footer id="contact" ref={root} className="isolate relative overflow-hidden bg-paper-2 px-5 pb-8 pt-24 text-ink md:px-10 md:pt-36">
+    <footer id="contact" ref={root} className="isolate relative overflow-hidden bg-[linear-gradient(180deg,#131313_0%,#1a1530_38%,#221a40_70%,#151225_100%)] px-5 pb-8 pt-24 text-ink md:px-10 md:pt-36">
       <SerenityBackdrop start={inView} id="contact-grid" className="-z-10" />
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10">
+        <div className="glow glow-violet drift left-[20%] top-[15%] h-[70vh] w-[70vw]" />
+        <div className="glow glow-orange drift-slow -right-[10%] top-[30%] h-[50vh] w-[40vw]" />
+        <div className="glow glow-rose drift -left-[10%] bottom-[0%] h-[45vh] w-[40vw]" />
+      </div>
       <p className="font-mono text-[11px] uppercase tracking-[0.12em] text-ink/50">(06) Contact</p>
 
       <h2 className="mt-10 font-display uppercase leading-[0.82] md:mt-14" aria-label="Let's connect">
         <span aria-hidden="true" data-lc-a className="block text-[17vw] md:text-[13vw]">Let's</span>
         <span aria-hidden="true" className="flex items-center justify-end gap-[2vw]">
-          <span data-lc-dot className="inline-flex h-[12vw] w-[12vw] shrink-0 items-center justify-center rounded-full bg-accent text-[6vw] text-coal md:h-[9vw] md:w-[9vw] md:text-[4.5vw]">
+          <span data-lc-dot className="inline-flex h-[12vw] w-[12vw] shrink-0 items-center justify-center rounded-full bg-accent-gradient text-[6vw] text-coal shadow-[0_0_60px_-10px_rgba(139,124,246,0.7)] md:h-[9vw] md:w-[9vw] md:text-[4.5vw]">
             ↗
           </span>
-          <span data-lc-b className="block text-[14vw] md:text-[13vw]">Connect</span>
+          <span data-lc-b className="text-gradient block pr-[0.04em] text-[14vw] md:text-[13vw]">Connect</span>
         </span>
       </h2>
 
@@ -78,7 +83,7 @@ export default function Connect() {
           <Magnetic
             href={`mailto:${profile.email}`}
             data-cursor="Email"
-            className="mt-4 font-serif text-[7.6vw] italic leading-none transition-colors hover:text-accent md:text-[4.6vw]"
+            className="mt-4 font-serif text-[7.6vw] italic leading-none transition-colors hover:text-violet md:text-[4.6vw]"
           >
             {profile.email}
           </Magnetic>

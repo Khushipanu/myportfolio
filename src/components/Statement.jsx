@@ -41,8 +41,9 @@ export default function Statement() {
   )
 
   return (
-    <section ref={root} aria-labelledby="statement-title" className="relative">
+    <section ref={root} aria-labelledby="statement-title" className="relative isolate">
       <div ref={stage} className="relative flex h-[100svh] items-center justify-center overflow-hidden px-5">
+        <div aria-hidden="true" className="glow glow-violet -z-10 left-1/2 top-1/2 h-[60vh] w-[60vw] -translate-x-1/2 -translate-y-1/2" />
         {tiles.map((t, i) => (
           <div key={i} data-tile className={`absolute top-0 z-0 text-[1.05vw] ${t.className} max-md:hidden md:block`} style={{ transform: 'translateY(110vh)' }}>
             <Art variant={t.variant} className={`${t.aspect} w-full rounded-[4px] shadow-[0_30px_60px_-30px_rgba(20,18,16,0.5)]`} />
@@ -56,7 +57,7 @@ export default function Statement() {
                 <span data-st-line>
                   {line.map((w, j) =>
                     w.serif ? (
-                      <em key={j} className="font-serif font-normal normal-case italic tracking-[-0.02em]">{w.t}</em>
+                      <em key={j} className="text-gradient pr-[0.06em] font-serif font-normal normal-case italic tracking-[-0.02em]">{w.t}</em>
                     ) : (
                       <span key={j} className={w.accent ? 'text-accent' : ''}>{w.t}</span>
                     ),

@@ -107,6 +107,11 @@ export default function Hero({ ready }) {
       className="relative isolate flex min-h-[100svh] flex-col overflow-hidden px-5 pb-6 pt-24 md:px-10 md:pb-8 md:pt-28"
     >
       <SerenityBackdrop start={ready} id="hero-grid" className="-z-10" />
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10">
+        <div className="glow glow-violet drift right-[-10%] top-[2%] h-[70vh] w-[55vw]" />
+        <div className="glow glow-orange drift-slow bottom-[-25%] left-[-12%] h-[70vh] w-[50vw]" />
+        <div className="glow glow-rose drift bottom-[5%] right-[20%] h-[40vh] w-[30vw]" />
+      </div>
 
       <div className="flex items-center gap-4 font-mono text-[11px] tracking-[0.12em] text-muted">
         <span className="mask"><span data-hero-fade>// 01</span></span>
@@ -139,7 +144,7 @@ export default function Hero({ ready }) {
               <span key={i} data-word className="word mr-[0.25em]">{w}</span>
             ))}
           </p>
-          <p className="font-serif text-[26px] italic leading-tight text-accent md:text-[2.7vw]">
+          <p className="text-gradient w-fit font-serif text-[26px] italic leading-tight md:text-[2.7vw]">
             {'interactive digital experiences.'.split(' ').map((w, i) => (
               <span key={i} data-word className="word mr-[0.22em]">{w}</span>
             ))}
@@ -159,7 +164,7 @@ export default function Hero({ ready }) {
             href={d.href}
             onClick={(e) => { e.preventDefault(); scrollToTarget(d.href) }}
             aria-label={d.label}
-            className={`block h-1.5 w-1.5 rounded-full transition-colors hover:bg-accent ${i === 0 ? 'bg-accent' : 'bg-ink/30'}`}
+            className={`block h-1.5 w-1.5 rounded-full transition-colors hover:bg-accent ${i === 0 ? 'bg-accent-gradient' : 'bg-ink/30'}`}
           />
         ))}
         <span className="mt-2 block h-40 w-px bg-ink/15" />

@@ -61,7 +61,7 @@ export default function Loader({ onDone }) {
         Full Stack Developer<br />Haldwani, IN
       </div>
       <span data-count className="absolute bottom-4 right-5 font-display text-[14vw] leading-none text-ink/85 md:bottom-6 md:right-10 md:text-[5.5vw]">000</span>
-      <div data-panel className="absolute inset-0 origin-center scale-x-0 bg-accent" />
+      <div data-panel className="absolute inset-0 origin-center scale-x-0 bg-accent-gradient" />
     </div>
   )
 }
