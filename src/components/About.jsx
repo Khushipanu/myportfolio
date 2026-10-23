@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react'
-import { gsap, useGSAP, SplitText, MOTION_OK } from '../lib/gsap'
+import { gsap, useGSAP, ScrollTrigger, MOTION_OK } from '../lib/gsap'
 import { about, experience } from '../data/content'
 
 // Stroke icons for the experience cards, in the same order as `experience`.
@@ -21,12 +21,16 @@ function Icon({ i, className = '' }) {
   )
 }
 
-function Detail({ e }) {
+function Detail({ e, on = true }) {
   return (
     <>
       <ul className="space-y-2.5 text-[14px] leading-snug text-ink/80 md:text-[15px]">
-        {e.points.map((pt) => (
-          <li key={pt} className="flex gap-3">
+        {e.points.map((pt, k) => (
+          <li
+            key={pt}
+            className={`flex gap-3 transition-[opacity,transform] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${on ? 'translate-x-0 opacity-100' : '-translate-x-3 opacity-0'}`}
+            style={{ transitionDelay: on ? `${0.35 + k * 0.08}s` : '0s' }}
+          >
             <span aria-hidden="true" className="mt-[0.5em] h-1 w-1 shrink-0 rounded-full bg-accent" />
             {pt}
           </li>
@@ -56,8 +60,13 @@ function ExperiencePanels() {
               key={e.role}
               data-panel
               onPointerEnter={(ev) => ev.pointerType === 'mouse' && setOpen(i)}
-              className={`relative min-w-0 overflow-hidden rounded-[18px] border transition-[flex-grow,border-color,background-color] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${
-                on ? 'grow-[3] border-accent/40 bg-[#151a17]' : 'grow border-ink/10 bg-[#161616] hover:border-ink/25'
+              onPointerMove={(ev) => {
+                const r = ev.currentTarget.getBoundingClientRect()
+                ev.currentTarget.style.setProperty('--mx', `${ev.clientX - r.left}px`)
+                ev.currentTarget.style.setProperty('--my', `${ev.clientY - r.top}px`)
+              }}
+              className={`group relative min-w-0 overflow-hidden rounded-[18px] border transition-[flex-grow,border-color,background-color,transform] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-1 ${
+                on ? 'grow-[3] border-accent/40 bg-[#151a17]' : 'grow border-ink/10 bg-[#161616] hover:border-accent/30'
               }`}
               style={{ flexBasis: 0 }}
             >
@@ -71,6 +80,10 @@ function ExperiencePanels() {
                 <span className="sr-only">{`${e.role} at ${e.company}`}</span>
               </button>
 
+              {/* Spotlight that follows the pointer. */}
+              <span aria-hidden="true" className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100 [background:radial-gradient(420px_circle_at_var(--mx,50%)_var(--my,50%),rgba(111,220,155,0.11),transparent_60%)]" />
+              {/* Green line that runs along the foot of the panel on hover. */}
+              <span aria-hidden="true" className="pointer-events-none absolute inset-x-6 bottom-0 h-px origin-left scale-x-0 bg-accent transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-x-100" />
               {/* Soft green light in the open panel. */}
               <span aria-hidden="true" className={`pointer-events-none absolute -right-24 -top-24 h-80 w-80 rounded-full bg-[radial-gradient(closest-side,rgba(111,220,155,0.18),transparent)] transition-opacity duration-700 ${on ? 'opacity-100' : 'opacity-0'}`} />
 
@@ -79,13 +92,21 @@ function ExperiencePanels() {
                 <Icon i={i} className={`h-5 w-5 transition-colors duration-500 ${on ? 'text-accent' : 'text-ink/50'}`} />
               </div>
 
+              {/* Closed: a big outlined number fills the panel and turns green on hover. */}
+              <span
+                aria-hidden="true"
+                className={`pointer-events-none absolute left-6 top-16 font-serif text-[9rem] italic leading-none text-transparent transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] [-webkit-text-stroke:1px_rgba(233,228,223,0.18)] group-hover:-translate-y-2 group-hover:[-webkit-text-stroke:1px_rgba(111,220,155,0.8)] ${on ? 'opacity-0' : 'opacity-100'}`}
+              >
+                {n(i)}
+              </span>
+
               {/* Closed: a short horizontal summary at the foot of the panel. */}
               <div
                 aria-hidden={on}
                 className={`pointer-events-none absolute bottom-6 left-6 right-6 transition-opacity duration-300 ${on ? 'opacity-0' : 'opacity-100 delay-300'}`}
               >
                 <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-muted">{e.period}</p>
-                <h3 className="mt-3 text-[22px] font-medium leading-[1.15] tracking-[-0.01em] text-ink/90">{e.role}</h3>
+                <h3 className="mt-3 text-[22px] font-medium leading-[1.15] tracking-[-0.01em] text-ink/90 transition-colors duration-500 group-hover:text-accent">{e.role}</h3>
                 <p className="mt-1.5 font-serif text-[18px] italic leading-snug text-ink/50">{e.company}</p>
               </div>
 
@@ -101,7 +122,7 @@ function ExperiencePanels() {
                 <p className="mt-1 font-serif text-[22px] italic leading-snug text-accent">at {e.company}</p>
                 <p className="mt-4 text-[15px] leading-relaxed text-ink/65">{e.summary}</p>
                 <div className="mt-5">
-                  <Detail e={e} />
+                  <Detail e={e} on={on} />
                 </div>
               </div>
             </li>
@@ -145,6 +166,87 @@ function ExperiencePanels() {
   )
 }
 
+// Sticky notes beside the About statement (after the reference the user
+// shared). They can be dragged around with a mouse or finger.
+const notes = [
+  { text: 'Full Stack Developer at Ruhanix — building an ERP right now.', tag: 'Now · 2026', bg: '#efe9e1', rot: -3 },
+  { text: 'Interned at Sheryians: full-stack sites, web animations & dev content.', tag: 'Dec 2025 — Feb 2026', bg: '#c6f2d8', rot: 2.5 },
+  { text: 'MERN all the way.', chips: ['React', 'Node', 'Express', 'MongoDB'], tag: 'Stack', bg: '#6fdc9b', rot: -1.5 },
+]
+
+function Note({ n, className = '' }) {
+  const el = useRef(null)
+  const onDown = (e) => {
+    const node = el.current
+    node.setPointerCapture(e.pointerId)
+    const sx = e.clientX - (Number(node.dataset.x) || 0)
+    const sy = e.clientY - (Number(node.dataset.y) || 0)
+    gsap.to(node, { scale: 1.05, rotate: 0, duration: 0.3, ease: 'power3.out' })
+    const move = (ev) => {
+      node.dataset.x = ev.clientX - sx
+      node.dataset.y = ev.clientY - sy
+      gsap.to(node, { x: node.dataset.x, y: node.dataset.y, duration: 0.25, ease: 'power3.out' })
+    }
+    const up = () => {
+      gsap.to(node, { scale: 1, rotate: n.rot, duration: 0.6, ease: 'elastic.out(1, 0.5)' })
+      node.removeEventListener('pointermove', move)
+      node.removeEventListener('pointerup', up)
+      node.removeEventListener('pointercancel', up)
+    }
+    node.addEventListener('pointermove', move)
+    node.addEventListener('pointerup', up)
+    node.addEventListener('pointercancel', up)
+  }
+  return (
+    <div
+      ref={el}
+      data-note
+      onPointerDown={onDown}
+      style={{ background: n.bg, rotate: `${n.rot}deg` }}
+      className={`relative w-[15.5rem] cursor-grab touch-none select-none rounded-[6px] px-5 pb-4 pt-6 text-coal shadow-[0_18px_40px_-12px_rgba(0,0,0,0.55)] active:cursor-grabbing ${className}`}
+    >
+      <span aria-hidden="true" className="absolute -top-2.5 left-1/2 h-5 w-20 -translate-x-1/2 rotate-[-2deg] bg-white/35 backdrop-blur-[1px]" />
+      <p className="font-serif text-[21px] italic leading-[1.2]">{n.text}</p>
+      {n.chips && (
+        <p className="mt-3 flex flex-wrap gap-1.5">
+          {n.chips.map((c) => (
+            <span key={c} className="rounded-full bg-coal/85 px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-[0.08em] text-accent">{c}</span>
+          ))}
+        </p>
+      )}
+      <p className="mt-3 font-mono text-[10px] uppercase tracking-[0.16em] text-coal/55">{n.tag}</p>
+    </div>
+  )
+}
+
+// Statement with hand-drawn marks: a circled word, green marker highlights
+// and a squiggle underline, drawn in once the paragraph scrolls into view.
+const Mark = ({ children, delay = 0 }) => (
+  <span className="mark" style={{ transitionDelay: `${delay}s` }}>{children}</span>
+)
+
+function Statement() {
+  return (
+    <p data-story className="text-[8vw] font-semibold leading-[1.12] tracking-[-0.035em] md:text-[4vw] lg:text-[3.6vw]">
+      I turn{' '}
+      <span className="relative inline-block">
+        ideas
+        <svg aria-hidden="true" viewBox="0 0 200 90" preserveAspectRatio="none" className="draw pointer-events-none absolute -left-[16%] -top-[22%] h-[150%] w-[132%] overflow-visible">
+          <path pathLength="1" d="M18 52 C 14 18, 182 6, 190 40 C 198 74, 40 86, 14 58 C 4 46, 26 26, 70 20" fill="none" stroke="var(--color-accent)" strokeWidth="2.5" strokeLinecap="round" vectorEffect="non-scaling-stroke" style={{ transitionDelay: '0.2s' }} />
+        </svg>
+      </span>{' '}
+      into <Mark delay={0.5}>fast, maintainable web apps</Mark> — from <Mark delay={0.9}>interfaces people enjoy</Mark> to the{' '}
+      <span className="relative inline-block">
+        APIs and data
+        <svg aria-hidden="true" viewBox="0 0 300 20" preserveAspectRatio="none" className="draw pointer-events-none absolute -bottom-[0.18em] left-0 h-[0.32em] w-full overflow-visible">
+          <path pathLength="1" d="M2 10 C 20 2, 30 18, 48 10 S 76 2, 94 10 S 122 18, 140 10 S 168 2, 186 10 S 214 18, 232 10 S 260 2, 278 10 S 292 14, 298 9" fill="none" stroke="var(--color-accent)" strokeWidth="2" strokeLinecap="round" vectorEffect="non-scaling-stroke" style={{ transitionDelay: '1.3s' }} />
+        </svg>
+      </span>{' '}
+      that power them.
+    </p>
+  )
+}
+
 export default function About() {
   const root = useRef(null)
 
@@ -152,19 +254,19 @@ export default function About() {
     () => {
       const mm = gsap.matchMedia()
       mm.add(MOTION_OK, () => {
-        // autoSplit re-splits once fonts load and on resize, so line breaks stay correct.
-        const split = SplitText.create('[data-about-lead]', {
-          type: 'words',
-          mask: 'words',
-          autoSplit: true,
-          onSplit: (self) =>
-            gsap.from(self.words, {
-              yPercent: 100,
-              duration: 1.1,
-              ease: 'expo.out',
-              stagger: 0.025,
-              scrollTrigger: { trigger: '[data-about-lead]', start: 'top 75%' },
-            }),
+        ScrollTrigger.create({
+          trigger: '[data-story]',
+          start: 'top 75%',
+          once: true,
+          onEnter: () => root.current.querySelector('[data-story]').classList.add('is-on'),
+        })
+        gsap.from('[data-note]', {
+          y: 80,
+          autoAlpha: 0,
+          duration: 1.2,
+          ease: 'expo.out',
+          stagger: 0.12,
+          scrollTrigger: { trigger: '[data-notes]', start: 'top 80%' },
         })
         gsap.from('#experience [data-focus-fade]', {
           y: 30,
@@ -183,8 +285,6 @@ export default function About() {
             scrollTrigger: { trigger: list, start: 'top 85%' },
           }),
         )
-        return () => split.revert()
-
       })
       return () => mm.revert()
     },
@@ -194,21 +294,22 @@ export default function About() {
   return (
     <section id="about" ref={root} aria-labelledby="about-title" className="relative isolate overflow-hidden px-5 py-24 md:px-10 md:py-40">
       <div aria-hidden="true" className="glow glow-deep -z-10 -left-[10%] top-[5%] h-[55vh] w-[45vw]" />
-      <div className="grid grid-cols-12 gap-x-5 gap-y-10">
-        <h2 id="about-title" className="col-span-12 font-mono text-[11px] uppercase tracking-[0.12em] text-muted md:col-span-3">
-          (03) About
-        </h2>
-        <div className="col-span-12 md:col-span-9">
-          <p data-about-lead className="text-[8.5vw] font-medium leading-[1.02] tracking-[-0.03em] md:text-[4.2vw]">
-            {about.lead.map((part, i) =>
-              part.serif ? (
-                <em key={i} className="pr-[0.05em] text-accent font-serif font-normal italic tracking-[-0.01em]">{part.text}</em>
-              ) : (
-                <span key={i}>{part.text}</span>
-              ),
-            )}
+      <div className="grid grid-cols-12 gap-x-5 gap-y-14">
+        <div className="col-span-12 lg:col-span-8">
+          <h2 id="about-title" className="font-mono text-[11px] uppercase tracking-[0.12em] text-muted">(03) How I build</h2>
+          <div className="mt-8 md:mt-10">
+            <Statement />
+          </div>
+          <p className="mt-10 max-w-xl text-[17px] leading-relaxed text-ink/70">{about.body}</p>
+        </div>
+
+        <div data-notes className="relative col-span-12 flex flex-wrap items-start justify-center gap-8 pt-2 sm:justify-start lg:col-span-4 lg:flex-col lg:items-end lg:gap-10 lg:pt-16">
+          <p className="hidden items-center gap-2 self-start rounded-full border border-ink/15 px-4 py-2 font-mono text-[11px] tracking-[0.06em] text-ink/70 lg:flex lg:self-auto lg:-mb-4 lg:mr-40">
+            these notes move ;) <span aria-hidden="true" className="text-accent">↷</span>
           </p>
-          <p className="mt-10 max-w-xl text-[17px] leading-relaxed text-ink/75">{about.body}</p>
+          {notes.map((n, i) => (
+            <Note key={n.tag} n={n} className={i === 1 ? 'lg:mr-10' : ''} />
+          ))}
         </div>
       </div>
 

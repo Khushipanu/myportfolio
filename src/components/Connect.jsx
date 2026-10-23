@@ -1,5 +1,5 @@
 import { useRef } from 'react'
-import { gsap, useGSAP, MOTION_OK } from '../lib/gsap'
+import { gsap, useGSAP, ScrollTrigger, MOTION_OK } from '../lib/gsap'
 import { scrollToTarget } from '../hooks/useLenis'
 import { profile, socials, resume } from '../data/content'
 
@@ -25,6 +25,11 @@ function Magnetic({ children, className = '', ...props }) {
   )
 }
 
+const links = [
+  { label: 'Gmail', handle: profile.email, href: gmail },
+  ...socials.map((s) => ({ label: s.label, handle: `@${s.handle}`, href: s.href })),
+]
+
 export default function Connect() {
   const root = useRef(null)
 
@@ -32,20 +37,31 @@ export default function Connect() {
     () => {
       const mm = gsap.matchMedia()
       mm.add(MOTION_OK, () => {
-        gsap.timeline({
-          scrollTrigger: { trigger: root.current, start: 'top 85%', end: 'top 15%', scrub: 1 },
+        ScrollTrigger.create({
+          trigger: '[data-lc-card]',
+          start: 'top 70%',
+          once: true,
+          onEnter: () => root.current.querySelector('[data-lc-card]').classList.add('is-on'),
         })
-          .fromTo('[data-lc-a]', { xPercent: -30 }, { xPercent: 0, ease: 'none' }, 0)
-          .fromTo('[data-lc-b]', { xPercent: 30 }, { xPercent: 0, ease: 'none' }, 0)
-          .fromTo('[data-lc-dot]', { scale: 0.4, autoAlpha: 0 }, { scale: 1, autoAlpha: 1, ease: 'none' }, 0.2)
-
-        gsap.from('[data-lc-fade]', {
+        gsap.from('[data-lc-card]', {
+          y: 80,
+          autoAlpha: 0,
+          duration: 1.3,
+          ease: 'expo.out',
+          scrollTrigger: { trigger: root.current, start: 'top 80%' },
+        })
+        gsap.from('[data-lc-tile]', {
           y: 40,
           autoAlpha: 0,
-          duration: 1.1,
+          duration: 1,
           ease: 'expo.out',
-          stagger: 0.08,
-          scrollTrigger: { trigger: '[data-lc-details]', start: 'top 90%' },
+          stagger: 0.07,
+          scrollTrigger: { trigger: '[data-lc-tiles]', start: 'top 90%' },
+        })
+        gsap.fromTo('[data-lc-word]', { yPercent: 40 }, {
+          yPercent: 0,
+          ease: 'none',
+          scrollTrigger: { trigger: '[data-lc-word]', start: 'top bottom', end: 'bottom bottom', scrub: true },
         })
       })
       return () => mm.revert()
@@ -57,92 +73,82 @@ export default function Connect() {
     <footer id="contact" ref={root} className="relative overflow-hidden bg-paper px-5 pb-8 pt-24 text-ink md:px-10 md:pt-36">
       <p className="font-mono text-[11px] uppercase tracking-[0.12em] text-ink/50">(06) Contact</p>
 
-      <h2 className="mt-10 md:mt-14">
-        <a
-          href={gmail}
-          target="_blank"
-          rel="noreferrer"
-          aria-label="Let's connect — write to me on Gmail"
-          className="group flex flex-wrap items-center gap-x-[2.2vw] gap-y-2 font-tall uppercase leading-[0.86]"
-        >
-          <span data-lc-a className="block text-[19vw] transition-colors duration-500 md:text-[10.5vw]">Let's</span>
-          <span
-            data-lc-dot
-            aria-hidden="true"
-            className="relative inline-flex h-[13vw] w-[13vw] shrink-0 items-center justify-center rounded-full border border-accent/70 text-accent transition-colors duration-500 group-hover:bg-accent group-hover:text-coal md:h-[7vw] md:w-[7vw]"
-          >
-            <span className="absolute inset-[18%] rounded-full bg-accent/10 transition-opacity duration-500 group-hover:opacity-0" />
-            <svg viewBox="0 0 24 24" className="relative h-[42%] w-[42%] transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:rotate-45" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M7 17 17 7M8 7h9v9" />
-            </svg>
-          </span>
-          <span data-lc-b className="block text-[19vw] transition-colors duration-500 group-hover:text-accent md:text-[10.5vw]">Connect</span>
-        </a>
-      </h2>
+      {/* Main call to action. */}
+      <div
+        data-lc-card
+        className="relative mt-8 overflow-hidden rounded-[28px] border border-accent/20 bg-[linear-gradient(140deg,#16201a_0%,#111412_55%,#0f1110_100%)] px-6 py-12 md:mt-10 md:px-14 md:py-20"
+      >
+        <span aria-hidden="true" className="pointer-events-none absolute -right-32 -top-32 h-[28rem] w-[28rem] rounded-full bg-[radial-gradient(closest-side,rgba(111,220,155,0.18),transparent)]" />
+        <span aria-hidden="true" className="pointer-events-none absolute inset-0 opacity-[0.07] [background-image:linear-gradient(rgba(233,228,223,1)_1px,transparent_1px),linear-gradient(90deg,rgba(233,228,223,1)_1px,transparent_1px)] [background-size:56px_56px] [mask-image:radial-gradient(ellipse_at_top_right,#000,transparent_70%)]" />
 
-      <div data-lc-details className="mt-16 grid grid-cols-12 gap-x-5 gap-y-12 md:mt-24">
-        <div className="col-span-12 md:col-span-7" data-lc-fade>
-          <p className="font-mono text-[11px] uppercase tracking-[0.12em] text-ink/50">Write to me</p>
+        <p className="relative flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.14em] text-accent">
+          <span className="h-1.5 w-1.5 rounded-full bg-accent shadow-[0_0_10px_2px_rgba(111,220,155,0.6)]" />
+          Let&apos;s connect
+        </p>
+        <h2 className="relative mt-6 max-w-5xl text-[10vw] font-semibold leading-[1.02] tracking-[-0.04em] md:text-[5.6vw]">
+          Got an idea? Let&apos;s <span className="mark" style={{ transitionDelay: '0.3s' }}>build it</span> together.
+        </h2>
+        <p className="relative mt-6 max-w-xl text-[16px] leading-relaxed text-ink/65 md:text-[18px]">
+          Full stack roles, collaborations or just a hello — my inbox is open.
+        </p>
+
+        <div className="relative mt-10 flex flex-wrap items-center gap-4">
           <Magnetic
-            href={`mailto:${profile.email}`}
+            href={gmail}
+            target="_blank"
+            rel="noreferrer"
             data-cursor="Email"
-            className="mt-4 font-serif text-[7.6vw] italic leading-none transition-colors hover:text-accent md:text-[4.6vw]"
+            className="group relative overflow-hidden rounded-full bg-accent px-7 py-4 font-mono text-[12px] font-medium uppercase tracking-[0.12em] text-coal md:px-9 md:py-5 md:text-[13px]"
           >
-            {profile.email}
+            <span aria-hidden="true" className="absolute inset-0 origin-bottom scale-y-0 rounded-full bg-cream transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-y-100" />
+            <span className="relative flex items-center gap-3">
+              Say hello on Gmail
+              <span aria-hidden="true" className="transition-transform duration-500 group-hover:rotate-45">↗</span>
+            </span>
           </Magnetic>
-          <p className="mt-6 text-ink/60">
-            or call <a className="link-underline text-ink" href={profile.phoneHref}>{profile.phone}</a>
-          </p>
+          <a
+            href={resume.href}
+            download={resume.file}
+            className="group flex items-center gap-3 rounded-full border border-ink/25 px-7 py-4 font-mono text-[12px] uppercase tracking-[0.12em] text-ink transition-colors duration-300 hover:border-accent hover:text-accent md:px-9 md:py-5 md:text-[13px]"
+          >
+            Download resume
+            <span aria-hidden="true" className="transition-transform duration-300 group-hover:translate-y-0.5">↓</span>
+          </a>
         </div>
-
-        <div className="col-span-12 md:col-span-4 md:col-start-9" data-lc-fade>
-          <p className="font-mono text-[11px] uppercase tracking-[0.12em] text-ink/50">Elsewhere</p>
-          <ul className="mt-4 border-t border-ink/15">
-            <li className="border-b border-ink/15">
-              <a
-                href={gmail}
-                target="_blank"
-                rel="noreferrer"
-                className="group flex items-center justify-between py-4 text-lg transition-colors hover:text-accent"
-              >
-                <span>Gmail</span>
-                <span className="truncate pl-4 text-sm text-ink/50 transition-transform duration-500 group-hover:-translate-y-0.5 group-hover:translate-x-1 group-hover:text-accent">
-                  {profile.email} ↗
-                </span>
-              </a>
-            </li>
-            {socials.map((s) => (
-              <li key={s.label} className="border-b border-ink/15">
-                <a
-                  href={s.href}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="group flex items-center justify-between py-4 text-lg transition-colors hover:text-accent"
-                >
-                  <span>{s.label}</span>
-                  <span className="text-sm text-ink/50 transition-transform duration-500 group-hover:-translate-y-0.5 group-hover:translate-x-1 group-hover:text-accent">
-                    @{s.handle} ↗
-                  </span>
-                </a>
-              </li>
-            ))}
-            <li className="border-b border-ink/15">
-              <a
-                href={resume.href}
-                download={resume.file}
-                className="group flex items-center justify-between py-4 text-lg transition-colors hover:text-accent"
-              >
-                <span>Resume</span>
-                <span className="text-sm text-ink/50 transition-transform duration-500 group-hover:translate-y-0.5 group-hover:text-accent">
-                  Download PDF ↓
-                </span>
-              </a>
-            </li>
-          </ul>
-        </div>
+        <p className="relative mt-8 text-[14px] text-ink/50">
+          or call <a className="link-underline text-ink/80 hover:text-accent" href={profile.phoneHref}>{profile.phone}</a>
+        </p>
       </div>
 
-      <div className="mt-24 flex flex-col gap-4 border-t border-ink/15 pt-6 font-mono text-[11px] uppercase tracking-[0.12em] text-ink/50 md:flex-row md:items-center md:justify-between">
+      {/* Links as tiles that fill green from the bottom on hover. */}
+      <ul data-lc-tiles className="mt-4 grid grid-cols-2 gap-4 lg:grid-cols-4">
+        {links.map((l) => (
+          <li key={l.label} data-lc-tile>
+            <a
+              href={l.href}
+              target="_blank"
+              rel="noreferrer"
+              className="group relative flex h-full min-h-[8.5rem] flex-col justify-between overflow-hidden rounded-[20px] border border-ink/12 bg-[#161616] p-5 transition-colors duration-500 hover:border-accent md:min-h-[10rem] md:p-6"
+            >
+              <span aria-hidden="true" className="absolute inset-0 origin-bottom scale-y-0 bg-accent transition-transform duration-[650ms] ease-[cubic-bezier(0.7,0,0.2,1)] group-hover:scale-y-100" />
+              <span className="relative flex items-start justify-between">
+                <span className="text-[20px] font-medium tracking-[-0.01em] transition-colors duration-500 group-hover:text-coal md:text-[24px]">{l.label}</span>
+                <span aria-hidden="true" className="flex h-9 w-9 items-center justify-center rounded-full border border-ink/20 text-ink transition-all duration-500 group-hover:rotate-45 group-hover:border-coal/30 group-hover:text-coal">↗</span>
+              </span>
+              <span className="relative truncate font-mono text-[11px] tracking-[0.04em] text-ink/50 transition-colors duration-500 group-hover:text-coal/70 md:text-[12px]">{l.handle}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+
+      {/* Oversized outlined wordmark. */}
+      <p aria-hidden="true" className="mt-20 overflow-hidden md:mt-28">
+        <span data-lc-word className="block whitespace-nowrap text-center font-tall text-[16.5vw] uppercase leading-[0.8] text-transparent [-webkit-text-stroke:1px_rgba(111,220,155,0.35)]">
+          Let&apos;s connect
+        </span>
+      </p>
+
+      <div className="mt-8 flex flex-col gap-4 border-t border-ink/15 pt-6 font-mono text-[11px] uppercase tracking-[0.12em] text-ink/50 md:flex-row md:items-center md:justify-between">
         <span>© 2026 {profile.name}</span>
         <span>{profile.location}</span>
         <button type="button" onClick={() => scrollToTarget('#top')} className="self-start uppercase tracking-[0.12em] transition-colors hover:text-accent md:self-auto">

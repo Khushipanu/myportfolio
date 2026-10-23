@@ -3,6 +3,7 @@ import { gsap, useGSAP, MOTION_OK } from '../lib/gsap'
 import { scrollToTarget } from '../hooks/useLenis'
 import { profile } from '../data/content'
 import SerenityBackdrop from './ui/SerenityBackdrop'
+import ScreenWall from './ui/ScreenWall'
 
 const dots = [
   { href: '#top', label: 'Intro' },
@@ -55,6 +56,7 @@ export default function Hero({ ready }) {
       ref={root}
       className="relative isolate flex min-h-[100svh] flex-col overflow-hidden px-5 pb-6 pt-24 md:px-10 md:pb-8 md:pt-28"
     >
+      <ScreenWall className="-z-10" />
       <SerenityBackdrop start={ready} id="hero-grid" className="-z-10" />
       <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10">
         <div className="glow glow-deep drift right-[-10%] top-[2%] h-[70vh] w-[55vw]" />

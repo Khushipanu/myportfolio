@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from 'react'
-import { gsap, useGSAP, MOTION_OK, prefersReducedMotion } from '../lib/gsap'
+import { gsap, useGSAP, ScrollTrigger, MOTION_OK, prefersReducedMotion } from '../lib/gsap'
 import Art from './Art'
 
 // Visuvate-style "works" ring: five project screens stand on a circle around
 // the "My Works" title, each card curved onto the cylinder (built from thin
-// vertical slices) with its back showing as it turns away. The page scrolls
-// past as normal; the arrow buttons turn the circle one card at a time, and
-// the card facing front drives the highlight and lights up its skills.
+// vertical slices) with its back showing as it turns away. The section is
+// held while scrolling turns the circle through every card, and the card
+// facing front drives the highlight and lights up its skills.
 const CARDS = [
   { variant: 'movie', label: 'MovieThrill — home', project: 'MovieThrill', highlight: 'Movie data from The Movie Database (TMDB) API, fetched with Axios.', skills: ['React.js', 'Tailwind CSS', 'JavaScript'] },
   { variant: 'lms', label: 'LMS — courses', project: 'Learning Management System', highlight: 'JWT authentication with student and instructor roles (RBAC).', skills: ['Node.js', 'Express.js', 'MongoDB'] },
@@ -19,10 +19,9 @@ const COUNT = CARDS.length
 const STEP = 360 / COUNT
 const SLICES = 5
 
-// The ring only turns when asked (arrow buttons or arrow keys): `turn(dir)`
-// moves it one card along the circle, eased per frame so it glides.
-function useRing(stageRef, ringRef, onFront) {
-  const turn = useRef(() => {})
+// The ring turns with scroll: while the section is pinned, its progress maps
+// to one full pass through the cards, eased per frame so it glides.
+function useRing(stageRef, ringRef, progressRef, onFront) {
   useEffect(() => {
     const stage = stageRef.current
     const ring = ringRef.current
@@ -71,29 +70,20 @@ function useRing(stageRef, ringRef, onFront) {
 
     let raf = 0
     let last = 0
+    let visible = true
+    const io = new IntersectionObserver(([e]) => { visible = e.isIntersecting })
+    io.observe(stage)
     const tick = (now) => {
+      raf = requestAnimationFrame(tick)
       const dt = last ? Math.min(64, now - last) : 16.7
       last = now
-      s.offset += (s.target - s.offset) * (1 - Math.pow(1 - 0.09, dt / 16.7))
+      if (!visible) return
+      s.target = progressRef.current * STEP * (COUNT - 1)
+      if (Math.abs(s.target - s.offset) < 0.01) return
+      s.offset = still ? s.target : s.offset + (s.target - s.offset) * (1 - Math.pow(1 - 0.1, dt / 16.7))
       draw()
-      if (Math.abs(s.target - s.offset) > 0.02) {
-        raf = requestAnimationFrame(tick)
-      } else {
-        s.offset = s.target
-        draw()
-        raf = 0
-        last = 0
-      }
     }
-    turn.current = (dir) => {
-      s.target += dir * STEP
-      if (still) {
-        s.offset = s.target
-        draw()
-      } else if (!raf) {
-        raf = requestAnimationFrame(tick)
-      }
-    }
+    raf = requestAnimationFrame(tick)
 
     layout()
     const ro = new ResizeObserver(layout)
@@ -101,9 +91,9 @@ function useRing(stageRef, ringRef, onFront) {
     return () => {
       cancelAnimationFrame(raf)
       ro.disconnect()
+      io.disconnect()
     }
-  }, [stageRef, ringRef, onFront])
-  return turn
+  }, [stageRef, ringRef, progressRef, onFront])
 }
 
 function Card({ c, i }) {
@@ -134,13 +124,21 @@ export default function Work() {
   const stage = useRef(null)
   const ring = useRef(null)
   const [front, setFront] = useState(0)
-  const turn = useRing(stage, ring, setFront)
+  const progress = useRef(0)
+  useRing(stage, ring, progress, setFront)
   const active = CARDS[front]
 
   useGSAP(
     () => {
       const mm = gsap.matchMedia()
       mm.add(MOTION_OK, () => {
+        ScrollTrigger.create({
+          trigger: root.current,
+          start: 'top top',
+          end: '+=220%',
+          pin: stage.current,
+          onUpdate: (self) => { progress.current = self.progress },
+        })
         gsap.from('[data-work-title]', {
           yPercent: 30,
           autoAlpha: 0,
@@ -159,10 +157,6 @@ export default function Work() {
       <div
         ref={stage}
         className="relative h-[100svh] select-none overflow-hidden"
-        onKeyDown={(e) => {
-          if (e.key === 'ArrowLeft') turn.current(-1)
-          if (e.key === 'ArrowRight') turn.current(1)
-        }}
       >
         {/* Glowing light ribbons behind the vortex. */}
         <svg aria-hidden="true" className="pointer-events-none absolute inset-0 h-full w-full" viewBox="0 0 1440 900" preserveAspectRatio="none">
@@ -223,22 +217,7 @@ export default function Work() {
           </div>
         </div>
 
-        <div className="absolute bottom-5 right-5 z-20 flex items-center gap-3 md:bottom-10 md:right-10">
-          {[
-            { dir: -1, label: 'Previous work', d: 'M15 6l-6 6 6 6' },
-            { dir: 1, label: 'Next work', d: 'M9 6l6 6-6 6' },
-          ].map((b) => (
-            <button
-              key={b.dir}
-              type="button"
-              onClick={() => turn.current(b.dir)}
-              aria-label={b.label}
-              className="flex h-12 w-12 items-center justify-center rounded-full border border-ink/30 bg-[#0b0d0c]/60 text-ink backdrop-blur-sm transition-colors duration-300 hover:border-accent hover:bg-accent hover:text-coal md:h-14 md:w-14"
-            >
-              <svg viewBox="0 0 24 24" aria-hidden="true" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d={b.d} /></svg>
-            </button>
-          ))}
-        </div>
+        <p className="pointer-events-none absolute bottom-6 right-5 z-20 font-mono text-[11px] uppercase tracking-[0.12em] text-ink/40 md:bottom-10 md:right-10">Scroll ↓</p>
       </div>
     </section>
   )

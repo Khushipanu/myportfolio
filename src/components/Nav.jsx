@@ -48,7 +48,7 @@ export default function Nav({ ready }) {
   return (
     <header
       ref={root}
-      className="fixed inset-x-0 top-0 z-50 flex items-center justify-between bg-gradient-to-b from-paper/80 to-transparent px-5 py-4 md:px-10 md:py-6"
+      className="absolute inset-x-0 top-0 z-50 flex items-center justify-between px-5 py-4 md:px-10 md:py-6"
     >
       <a
         href="#top"

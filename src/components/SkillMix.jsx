@@ -101,14 +101,22 @@ export default function SkillMix() {
       {/* One row: six columns on wide screens, a swipeable strip on smaller ones. */}
       <div
         data-groups
-        className="-mx-5 mt-20 flex snap-x snap-mandatory gap-5 overflow-x-auto px-5 pb-2 [scrollbar-width:none] md:-mx-10 md:mt-28 md:px-10 lg:mx-0 lg:grid lg:grid-cols-6 lg:gap-6 lg:overflow-visible lg:px-0 lg:pb-0"
+        className="-mx-5 mt-20 flex snap-x snap-mandatory gap-5 overflow-x-auto px-5 pb-2 [scrollbar-width:none] md:-mx-10 md:mt-28 md:px-10 lg:mx-0 lg:grid lg:grid-cols-6 lg:gap-3 xl:gap-4 lg:overflow-visible lg:px-0 lg:pb-0"
       >
         {skillGroups.map((g) => (
-          <div key={g.label} data-group className="w-[46vw] shrink-0 snap-start border-t border-ink/20 pt-4 sm:w-[30vw] lg:w-auto">
-            <h3 className="font-mono text-[11px] uppercase tracking-[0.12em] text-muted">{g.label}</h3>
-            <ul className="mt-3 space-y-1 text-[15px] lg:text-[15px] xl:text-base">
-              {g.items.map((it) => (
-                <li key={it}>{it}</li>
+          <div
+            key={g.label}
+            data-group
+            className="group relative w-[46vw] shrink-0 snap-start overflow-hidden rounded-[16px] border border-ink/10 bg-[#161616]/70 p-4 transition-[border-color,background-color,transform] duration-500 hover:-translate-y-1 hover:border-accent/30 hover:bg-[#151a17] sm:w-[30vw] lg:w-auto lg:p-5"
+          >
+            <span aria-hidden="true" className="absolute inset-x-0 top-0 h-px origin-left scale-x-0 bg-accent transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-x-100" />
+            <h3 className="flex items-center justify-between font-mono text-[11px] uppercase tracking-[0.12em] text-muted transition-colors duration-500 group-hover:text-accent">
+              {g.label}
+              <span className="text-ink/30 transition-colors duration-500 group-hover:text-accent">{String(g.items.length).padStart(2, '0')}</span>
+            </h3>
+            <ul className="mt-4 space-y-1.5 text-[15px] lg:text-[14px] xl:text-[15px]">
+              {g.items.map((it, k) => (
+                <li key={it} className="transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:translate-x-1" style={{ transitionDelay: `${k * 30}ms` }}>{it}</li>
               ))}
             </ul>
           </div>
