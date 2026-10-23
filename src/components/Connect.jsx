@@ -83,13 +83,13 @@ export default function Connect() {
 
         <p className="relative flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.14em] text-accent">
           <span className="h-1.5 w-1.5 rounded-full bg-accent shadow-[0_0_10px_2px_rgba(111,220,155,0.6)]" />
-          Let&apos;s connect
+          Open to work
         </p>
         <h2 className="relative mt-6 max-w-5xl text-[10vw] font-semibold leading-[1.02] tracking-[-0.04em] md:text-[5.6vw]">
-          Got an idea? Let&apos;s <span className="mark" style={{ transitionDelay: '0.3s' }}>build it</span> together.
+          Looking for my next role as a <span className="mark" style={{ transitionDelay: '0.3s' }}>Full Stack Developer</span>.
         </h2>
         <p className="relative mt-6 max-w-xl text-[16px] leading-relaxed text-ink/65 md:text-[18px]">
-          Full stack roles, collaborations or just a hello — my inbox is open.
+          I&apos;m open to full-time opportunities in full stack and MERN development. If you&apos;re hiring, I&apos;d love to talk.
         </p>
 
         <div className="relative mt-10 flex flex-wrap items-center gap-4">
