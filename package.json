@@ -12,6 +12,7 @@
     "@fontsource-variable/archivo": "^5.2.6",
     "@fontsource-variable/inter": "^5.2.6",
     "@fontsource-variable/jetbrains-mono": "^5.2.6",
+    "@fontsource/anton": "^5.2.6",
     "@fontsource/instrument-serif": "^5.2.6",
     "@gsap/react": "^2.1.2",
     "gsap": "^3.13.0",

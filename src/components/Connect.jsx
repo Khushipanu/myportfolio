@@ -1,9 +1,7 @@
-import { useRef, useState } from 'react'
-import { gsap, useGSAP, ScrollTrigger, MOTION_OK } from '../lib/gsap'
+import { useRef } from 'react'
+import { gsap, useGSAP, MOTION_OK } from '../lib/gsap'
 import { scrollToTarget } from '../hooks/useLenis'
-import { useLocalTime } from '../hooks/useLocalTime'
 import { profile, socials } from '../data/content'
-import SerenityBackdrop from './ui/SerenityBackdrop'
 
 // Visuvate-inspired closing section: oversized "Let's Connect" type that
 // assembles as you arrive, a magnetic email link and the contact details.
@@ -28,12 +26,9 @@ function Magnetic({ children, className = '', ...props }) {
 
 export default function Connect() {
   const root = useRef(null)
-  const time = useLocalTime(profile.timeZone)
-  const [inView, setInView] = useState(false)
 
   useGSAP(
     () => {
-      ScrollTrigger.create({ trigger: root.current, start: 'top 75%', once: true, onEnter: () => setInView(true) })
       const mm = gsap.matchMedia()
       mm.add(MOTION_OK, () => {
         gsap.timeline({
@@ -58,22 +53,16 @@ export default function Connect() {
   )
 
   return (
-    <footer id="contact" ref={root} className="isolate relative overflow-hidden bg-[linear-gradient(180deg,#131313_0%,#1a1530_38%,#221a40_70%,#151225_100%)] px-5 pb-8 pt-24 text-ink md:px-10 md:pt-36">
-      <SerenityBackdrop start={inView} id="contact-grid" className="-z-10" />
-      <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10">
-        <div className="glow glow-violet drift left-[20%] top-[15%] h-[70vh] w-[70vw]" />
-        <div className="glow glow-orange drift-slow -right-[10%] top-[30%] h-[50vh] w-[40vw]" />
-        <div className="glow glow-rose drift -left-[10%] bottom-[0%] h-[45vh] w-[40vw]" />
-      </div>
+    <footer id="contact" ref={root} className="relative overflow-hidden bg-paper px-5 pb-8 pt-24 text-ink md:px-10 md:pt-36">
       <p className="font-mono text-[11px] uppercase tracking-[0.12em] text-ink/50">(06) Contact</p>
 
-      <h2 className="mt-10 font-display uppercase leading-[0.82] md:mt-14" aria-label="Let's connect">
-        <span aria-hidden="true" data-lc-a className="block text-[17vw] md:text-[13vw]">Let's</span>
+      <h2 className="font-tall mt-10 uppercase leading-[0.82] md:mt-14" aria-label="Let's connect">
+        <span aria-hidden="true" data-lc-a className="block text-[24vw] md:text-[17vw]">Let's</span>
         <span aria-hidden="true" className="flex items-center justify-end gap-[2vw]">
-          <span data-lc-dot className="inline-flex h-[12vw] w-[12vw] shrink-0 items-center justify-center rounded-full bg-accent-gradient text-[6vw] text-coal shadow-[0_0_60px_-10px_rgba(139,124,246,0.7)] md:h-[9vw] md:w-[9vw] md:text-[4.5vw]">
+          <span data-lc-dot className="inline-flex h-[12vw] w-[12vw] shrink-0 items-center justify-center rounded-full bg-accent text-[6vw] text-coal md:h-[9vw] md:w-[9vw] md:text-[4.5vw]">
             ↗
           </span>
-          <span data-lc-b className="text-gradient block pr-[0.04em] text-[14vw] md:text-[13vw]">Connect</span>
+          <span data-lc-b className="block text-[24vw] md:text-[17vw]">Connect</span>
         </span>
       </h2>
 
@@ -83,7 +72,7 @@ export default function Connect() {
           <Magnetic
             href={`mailto:${profile.email}`}
             data-cursor="Email"
-            className="mt-4 font-serif text-[7.6vw] italic leading-none transition-colors hover:text-violet md:text-[4.6vw]"
+            className="mt-4 font-serif text-[7.6vw] italic leading-none transition-colors hover:text-accent md:text-[4.6vw]"
           >
             {profile.email}
           </Magnetic>
@@ -116,7 +105,7 @@ export default function Connect() {
 
       <div className="mt-24 flex flex-col gap-4 border-t border-ink/15 pt-6 font-mono text-[11px] uppercase tracking-[0.12em] text-ink/50 md:flex-row md:items-center md:justify-between">
         <span>© 2026 {profile.name}</span>
-        <span>{profile.location} — <span className="tabular-nums">{time}</span> IST</span>
+        <span>{profile.location}</span>
         <button type="button" onClick={() => scrollToTarget('#top')} className="self-start uppercase tracking-[0.12em] transition-colors hover:text-accent md:self-auto">
           Back to top ↑
         </button>

@@ -1,6 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import '@fontsource-variable/archivo/wdth.css'
+import '@fontsource/anton/400.css'
 import '@fontsource/instrument-serif/400.css'
 import '@fontsource/instrument-serif/400-italic.css'
 import '@fontsource-variable/inter'

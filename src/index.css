@@ -64,6 +64,12 @@ html.lenis body {
 }
 
 @layer base {
+  /* Tall condensed face used for the Let's Connect headline (as in the first design). */
+  .font-tall {
+    font-family: 'Anton', 'Impact', sans-serif;
+    font-weight: 400;
+    letter-spacing: -0.01em;
+  }
   /* Wide, heavy grotesk for headlines, after the Mike Wilcock reference. */
   .font-display {
     font-family: var(--font-display);
