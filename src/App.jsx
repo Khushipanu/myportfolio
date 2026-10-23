@@ -7,7 +7,6 @@ import Hero from './components/Hero'
 import Statement from './components/Statement'
 import Work from './components/Work'
 import About from './components/About'
-import Education from './components/Education'
 import SkillMix from './components/SkillMix'
 import Connect from './components/Connect'
 
@@ -31,7 +30,6 @@ export default function App() {
         <Statement />
         <Work />
         <About />
-        <Education />
         <SkillMix />
       </main>
       <Connect />

@@ -117,12 +117,6 @@ export const experience = [
   },
 ]
 
-export const education = [
-  { degree: 'Master of Computer Applications (MCA)', school: 'Graphic Era Deemed to be University', period: '2026 — 2028', note: 'Pursuing' },
-  { degree: 'Bachelor of Computer Applications (BCA)', school: 'Graphic Era Hill University, Haldwani', period: '2023 — 2026', note: 'CGPA 9.0 / 10' },
-  { degree: 'Class XII · Class X (CBSE)', school: "The Master's Sr. Sec. School", period: '2023 · 2021', note: '89.2% · 92.2%' },
-]
-
 export const skillWords = ['React.js', 'Node.js', 'Express.js', 'MongoDB', 'Redux Toolkit', 'Tailwind CSS', 'JavaScript', 'REST APIs']
 
 export const skillGroups = [

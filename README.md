@@ -37,9 +37,8 @@ Add live/source links for a project by setting `live` and `code` in `content.js`
 3. Statement — "Building digital experiences that matter", rising line by line
 4. Selected work — five project screens on a ring around "My Works", turned with the arrow buttons; the front card drives a project highlight and lights up its skills
 5. About + Experience — three roles as expanding panels (hover or click to open one); an accordion on phones
-6. Education
-7. Toolkit — scrambling skill word and grouped skills
-8. Let's Connect — Gmail, socials, resume download and footer
+6. Toolkit — scrambling skill word and grouped skills
+7. Let's Connect — Gmail, socials, resume download and footer
 
 The resume PDF lives in `public/Khushi_Panu_Resume.pdf`; replace that file to update the download.
 
