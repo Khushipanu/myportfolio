@@ -106,20 +106,22 @@ export const experience = [
     company: 'Ruhanix OPC Private Limited',
     role: 'Full Stack Developer',
     period: 'Apr 2026 — Present',
+    stack: ['React.js', 'JavaScript', 'RESTful APIs'],
     points: [
-      'Develop and maintain ERP (Enterprise Resource Planning) modules supporting business workflows, data management and operational processes.',
-      'Build RESTful APIs and application components, connecting frontend interfaces with backend services for reliable data flow.',
-      'Troubleshoot and debug application issues, and collaborate on feature implementation and maintenance.',
+      'Develop and maintain an ERP (Enterprise Resource Planning) web application that streamlines business operations.',
+      'Build responsive, reusable React.js components for ERP modules, forms and data views.',
+      'Integrate the frontend with backend services through RESTful APIs, and debug across the stack.',
     ],
   },
   {
     company: 'Sheryians Coding School',
     role: 'Web Developer Intern',
     period: 'Dec 2025 — Feb 2026',
+    stack: ['React.js', 'Node.js', 'Express.js', 'Tailwind CSS'],
     points: [
-      'Developed reusable React.js components and responsive user interfaces using Tailwind CSS.',
-      'Built and integrated Node.js and Express.js endpoints for dynamic web functionality.',
-      'Created technical and educational content on web development and programming fundamentals.',
+      'Built multiple full-stack websites with React.js, Tailwind CSS, Node.js and Express.js.',
+      'Optimized websites for performance and responsiveness, and implemented interactive web animations.',
+      'Created technical content on web development, explaining complex programming concepts clearly.',
     ],
   },
 ]
