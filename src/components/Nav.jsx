@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { gsap, useGSAP } from '../lib/gsap'
 import { scrollToTarget, getLenis } from '../hooks/useLenis'
-import { profile, socials } from '../data/content'
+import { profile, socials, resume } from '../data/content'
 import Logo from './Logo'
 
 const links = [
@@ -82,6 +82,16 @@ export default function Nav({ ready }) {
               </a>
             </li>
           ))}
+          <li className="mask">
+            <a
+              href={resume.href}
+              download={resume.file}
+              data-nav-item
+              className="font-mono text-[12px] uppercase tracking-[0.1em] text-ink transition-colors duration-200 ease-out hover:text-accent focus-visible:text-accent"
+            >
+              Resume <span aria-hidden="true" className="text-accent">↓</span>
+            </a>
+          </li>
         </ul>
         <button
           type="button"
@@ -122,6 +132,7 @@ export default function Nav({ ready }) {
           ))}
         </ul>
         <div className="flex flex-wrap gap-x-6 gap-y-2 font-mono text-[11px] uppercase tracking-[0.12em] text-muted">
+          <a href={resume.href} download={resume.file} className="text-ink hover:text-accent">Resume ↓</a>
           {socials.map((s) => (
             <a key={s.label} href={s.href} target="_blank" rel="noreferrer" className="hover:text-accent">{s.label} ↗</a>
           ))}

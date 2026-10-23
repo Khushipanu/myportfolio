@@ -1,7 +1,7 @@
 import { useRef } from 'react'
 import { gsap, useGSAP, MOTION_OK } from '../lib/gsap'
 import { scrollToTarget } from '../hooks/useLenis'
-import { profile, socials } from '../data/content'
+import { profile, socials, resume } from '../data/content'
 
 // Visuvate-inspired closing section: oversized "Let's Connect" type that
 // assembles as you arrive, a magnetic email link and the contact details.
@@ -99,6 +99,18 @@ export default function Connect() {
                 </a>
               </li>
             ))}
+            <li className="border-b border-ink/15">
+              <a
+                href={resume.href}
+                download={resume.file}
+                className="group flex items-center justify-between py-4 text-lg transition-colors hover:text-accent"
+              >
+                <span>Resume</span>
+                <span className="text-sm text-ink/50 transition-transform duration-500 group-hover:translate-y-0.5 group-hover:text-accent">
+                  Download PDF ↓
+                </span>
+              </a>
+            </li>
           </ul>
         </div>
       </div>

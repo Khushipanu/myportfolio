@@ -36,32 +36,77 @@ export const about = {
     'I work across the stack with JavaScript, React.js, Node.js, Express.js and MongoDB, with a strong foundation in Data Structures and Algorithms and Object-Oriented Programming. I care about clean component architecture, reliable data flow and code that stays easy to change.',
 }
 
+// "What I do" cards, in the order they stack. The last one is drawn in the accent colour.
 export const services = [
   {
     title: 'Frontend Development',
     description:
-      'Responsive, component-based interfaces with React.js and Tailwind CSS, with state managed through Redux Toolkit, Context API and React Hooks.',
-    tags: ['React.js', 'Redux Toolkit', 'Tailwind CSS', 'React Router'],
+      'Responsive, component-based interfaces in React.js and Tailwind CSS that look right on every screen and stay easy to extend.',
+    points: [
+      'Reusable React.js components for pages, forms and data views',
+      'State handled with Redux Toolkit, Context API and React Hooks',
+      'Mobile-first layouts and interactive web animations',
+    ],
+    tags: ['React.js', 'Redux Toolkit', 'Tailwind CSS', 'JavaScript (ES6+)'],
   },
   {
-    title: 'Backend & APIs',
+    title: 'Backend & REST APIs',
     description:
-      'RESTful APIs with Node.js and Express.js, JWT authentication, role-based access control and MongoDB schema design.',
-    tags: ['Node.js', 'Express.js', 'JWT', 'RBAC', 'MongoDB'],
+      'Secure, well-structured server code with Node.js and Express.js, so the data behind the interface is reliable.',
+    points: [
+      'RESTful APIs with clear routes and error handling',
+      'JWT authentication and role-based access control (RBAC)',
+      'MongoDB schema design for real application data',
+    ],
+    tags: ['Node.js', 'Express.js', 'MongoDB', 'JWT', 'RBAC'],
   },
   {
-    title: 'ERP Systems',
+    title: 'ERP Web Applications',
     description:
-      'Building and maintaining ERP modules that support business workflows, data management and operational processes.',
-    tags: ['ERP Modules', 'REST APIs', 'Debugging'],
+      'At Ruhanix I develop and maintain a production ERP web application that streamlines day-to-day business operations.',
+    points: [
+      'ERP modules, forms and data views built in React.js',
+      'Frontend connected to backend services through RESTful APIs',
+      'Debugging across the stack, new features and ongoing maintenance',
+    ],
+    tags: ['React.js', 'RESTful APIs', 'Debugging'],
   },
   {
-    title: 'Technical Content',
+    title: 'Performance & Web Animations',
     description:
-      'Explaining web development and programming fundamentals clearly — turning complex concepts into accessible content for developers.',
-    tags: ['Web Development', 'JavaScript', 'Teaching'],
+      'Fast, smooth websites that respond well on any device, with motion that adds to the experience instead of slowing it down.',
+    points: [
+      'Performance and responsiveness optimisation',
+      'Interactive web animations',
+      'Clean, maintainable code that is easy to hand over',
+    ],
+    tags: ['Optimisation', 'Responsive Design', 'Web Animations', 'Vite'],
+  },
+  {
+    title: 'Generative AI & System Design',
+    description:
+      'Working knowledge of Generative AI and the fundamentals of designing systems that scale.',
+    points: [
+      'LLMs, Retrieval-Augmented Generation (RAG) and prompt engineering',
+      'Client-server architecture, caching, load balancing and indexing',
+      'A strong foundation in Data Structures and Algorithms',
+    ],
+    tags: ['LLMs', 'RAG', 'Prompt Engineering', 'Scalability'],
+  },
+  {
+    title: 'Full-Stack MERN Apps',
+    description:
+      'End-to-end web applications on MongoDB, Express.js, React.js and Node.js — from the database schema to the final screen.',
+    points: [
+      'Learning Management System with course purchasing and video streaming',
+      'MovieThrill, a movie discovery app on the TMDB API',
+      'Multiple full-stack websites built at Sheryians Coding School',
+    ],
+    tags: ['MongoDB', 'Express.js', 'React.js', 'Node.js'],
   },
 ]
+
+export const resume = { href: 'Khushi_Panu_Resume.pdf', file: 'Khushi_Panu_Resume.pdf' }
 
 export const projects = [
   {
