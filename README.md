@@ -33,14 +33,15 @@ Add live/source links for a project by setting `live` and `code` in `content.js`
 ## Sections
 
 1. Loader
-2. Hero — two-line name; letters near the cursor or finger lift and turn green
-3. Statement — "Turning ideas into impact", rising line by line
-4. Selected work — a Visuvate-style vortex: curved project screens streaming up a leaning helix (scroll, drag or touch)
-5. Projects — MovieThrill and the Learning Management System
-6. About + Services — hover-reveal service rows
-7. Experience + Education
-8. Toolkit — scrambling skill word and grouped skills
-9. Let's Connect — contact and footer
+2. Hero — two-line name in Anton with a word-by-word intro
+3. Statement — "Building digital experiences that matter", rising line by line
+4. Selected work — five project screens turning on a ring around "My Works"; hover or click a card to bring it to the front, drag or scroll to turn. The front card drives a project highlight and lights up its skills
+5. About + What I do — a deck of service cards; scroll or swipe on the deck to move through it
+6. Experience + Education
+7. Toolkit — scrambling skill word and grouped skills
+8. Let's Connect — Gmail, socials, resume download and footer
+
+The resume PDF lives in `public/Khushi_Panu_Resume.pdf`; replace that file to update the download.
 
 Design follows a dark theme (#131313 / #E9E4DF) with one green accent (#6FDC9B) with Archivo for
 headlines, Inter for body text and JetBrains Mono for labels and the menu.
