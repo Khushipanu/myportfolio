@@ -28,7 +28,16 @@ html {
   text-rendering: optimizeLegibility;
 }
 
+/* Always dark: set on both html and body so a host page's own body
+   background (e.g. a white preview wrapper) can never show through. */
+:root {
+  color-scheme: dark;
+}
+
 body {
+  margin: 0;
+  background: var(--color-paper);
+  color: var(--color-ink);
   font-family: var(--font-sans);
   overflow-x: clip;
 }
