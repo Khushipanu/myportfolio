@@ -1,10 +1,12 @@
 import { useEffect, useRef } from 'react'
 
-// Desktop-only cursor: one dot that sits exactly on the pointer (no easing, so
-// it never lags) and inverts whatever is beneath it. Over links and buttons it
-// stays a plain dot (the link itself changes colour); over elements with
-// data-cursor="Label" it grows into a disc showing the label.
-// The native cursor is only hidden once this has received a real pointer move.
+// Desktop-only cursor follower, after aat-architecten.be: the system cursor
+// stays as it is, and a solid dot glides after it. The glide is a
+// frame-rate-independent ease, so it feels the same at 60 Hz and 120 Hz, and
+// the loop sleeps once the dot has caught up. Over elements with
+// data-cursor="Label" the dot grows into a disc showing the label.
+const FOLLOW = 0.16 // share of the remaining distance covered per 60 Hz frame
+
 export default function Cursor() {
   const root = useRef(null)
   const label = useRef(null)
@@ -14,23 +16,37 @@ export default function Cursor() {
     if (!fine) return
     const el = root.current
     const html = document.documentElement
-    let x = 0
-    let y = 0
+    const target = { x: 0, y: 0 }
+    const pos = { x: 0, y: 0 }
     let raf = 0
+    let last = 0
+    let started = false
     let state = ''
 
-    const paint = () => {
-      raf = 0
-      el.style.transform = `translate3d(${x}px, ${y}px, 0)`
+    const tick = (now) => {
+      const dt = last ? Math.min(64, now - last) : 16.7
+      last = now
+      const k = 1 - Math.pow(1 - FOLLOW, dt / 16.7)
+      pos.x += (target.x - pos.x) * k
+      pos.y += (target.y - pos.y) * k
+      el.style.transform = `translate3d(${pos.x.toFixed(2)}px, ${pos.y.toFixed(2)}px, 0)`
+      if (Math.abs(target.x - pos.x) > 0.1 || Math.abs(target.y - pos.y) > 0.1) {
+        raf = requestAnimationFrame(tick)
+      } else {
+        raf = 0
+        last = 0
+      }
     }
     const move = (e) => {
-      x = e.clientX
-      y = e.clientY
-      if (!html.classList.contains('has-cursor')) {
-        html.classList.add('has-cursor')
+      target.x = e.clientX
+      target.y = e.clientY
+      if (!started) {
+        started = true
+        pos.x = target.x
+        pos.y = target.y
         el.dataset.visible = 'true'
       }
-      if (!raf) raf = requestAnimationFrame(paint)
+      if (!raf) raf = requestAnimationFrame(tick)
     }
     const over = (e) => {
       const named = e.target.closest('[data-cursor]')
@@ -44,7 +60,7 @@ export default function Cursor() {
     const down = () => { el.dataset.pressed = 'true' }
     const up = () => { el.dataset.pressed = 'false' }
     const leave = () => { el.dataset.visible = 'false' }
-    const enter = () => { el.dataset.visible = 'true' }
+    const enter = () => { if (started) el.dataset.visible = 'true' }
 
     window.addEventListener('pointermove', move, { passive: true })
     document.addEventListener('pointerover', over, { passive: true })
@@ -54,7 +70,6 @@ export default function Cursor() {
     html.addEventListener('pointerenter', enter)
     return () => {
       cancelAnimationFrame(raf)
-      html.classList.remove('has-cursor')
       window.removeEventListener('pointermove', move)
       document.removeEventListener('pointerover', over)
       window.removeEventListener('pointerdown', down)

@@ -205,13 +205,7 @@ html.lenis body {
 .drift-slow { animation: drift 22s ease-in-out infinite reverse; }
 .bg-accent-gradient { background: linear-gradient(135deg, var(--color-accent-soft), var(--color-accent) 50%, var(--color-accent-deep)); }
 
-/* ---- Custom cursor (see Cursor.jsx) ---- */
-@media (hover: hover) and (pointer: fine) {
-  html.has-cursor,
-  html.has-cursor * {
-    cursor: none !important;
-  }
-}
+/* ---- Cursor follower (see Cursor.jsx) — the system cursor stays visible ---- */
 .kp-cursor {
   position: fixed;
   left: 0;
@@ -221,7 +215,7 @@ html.lenis body {
   mix-blend-mode: difference;
   will-change: transform;
   opacity: 0;
-  transition: opacity 0.2s ease;
+  transition: opacity 0.3s ease;
 }
 .kp-cursor[data-visible='true'] { opacity: 1; }
 .kp-cursor__disc {
@@ -235,16 +229,12 @@ html.lenis body {
   display: flex;
   align-items: center;
   justify-content: center;
-  transform: scale(0.16);
-  transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+  transform: scale(0.19);
+  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), background-color 0.3s ease;
 }
+.kp-cursor[data-pressed='true'] .kp-cursor__disc { transform: scale(0.13); }
 .kp-cursor[data-state='label'] { mix-blend-mode: normal; }
-.kp-cursor__disc { transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1), background-color 0.3s ease, box-shadow 0.3s ease; }
-.kp-cursor[data-state='label'] .kp-cursor__disc {
-  transform: scale(1.25);
-  background: #6fdc9b;
-}
-.kp-cursor[data-pressed='true'] .kp-cursor__disc { transform: scale(0.12); }
+.kp-cursor[data-state='label'] .kp-cursor__disc { transform: scale(1.25); background: #6fdc9b; }
 .kp-cursor[data-pressed='true'][data-state='label'] .kp-cursor__disc { transform: scale(1.05); }
 .kp-cursor__label {
   font-family: var(--font-mono);
