@@ -33,7 +33,7 @@ Add live/source links for a project by setting `live` and `code` in `content.js`
 ## Sections
 
 1. Loader
-2. Hero — KHUSHI / PANU in Anton, centred, with PANU starting under the second H
+2. Hero — KHUSHI in bold Anton on the left, PANU in light condensed Archivo starting under the second H
 3. Statement — "Building digital experiences that matter", rising line by line
 4. Selected work — five project screens on a ring around "My Works", turned with the arrow buttons; the front card drives a project highlight and lights up its skills
 5. About + Experience — three roles as expanding panels (hover or click to open one); an accordion on phones

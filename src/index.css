@@ -85,6 +85,12 @@ html.lenis body {
     letter-spacing: -0.005em;
     color: #efe9e1;
   }
+  /* Light, condensed partner for the surname under the bold first name. */
+  .hero-name-light {
+    font-family: var(--font-display);
+    font-weight: 250;
+    font-stretch: 62%;
+  }
 }
 
 /* Mask used for line / letter reveals. Kept in the components layer so

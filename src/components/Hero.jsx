@@ -70,19 +70,19 @@ export default function Hero({ ready }) {
       </div>
 
       <div className="relative my-auto py-6">
-        {/* The two lines are centred as one block, with PANU starting under the
-            second H of KHUSHI (an invisible "KHUS" spacer sets the indent). */}
+        {/* KHUSHI sits on the left in bold; PANU, in a light condensed face,
+            starts under the second H (an invisible "KHUS" spacer sets the indent). */}
         <h1
           ref={name}
           aria-label={profile.name}
-          className="hero-name relative z-10 mx-auto w-fit pl-[0.1em] uppercase leading-[0.9] tracking-[0.1em] text-[19.5vw] md:text-[17vw]"
+          className="hero-name relative z-10 uppercase leading-[0.9] tracking-[0.05em] text-[21vw] md:text-[16vw]"
         >
           <span data-line="1" className="relative block">
             <Line word={profile.firstName} />
           </span>
-          <span data-line="2" className="mt-[0.07em] block whitespace-nowrap">
+          <span data-line="2" className="mt-[0.08em] block whitespace-nowrap">
             <span aria-hidden="true" className="invisible">{profile.firstName.slice(0, 4).toUpperCase()}</span>
-            <Line word={profile.lastName} className="!inline-block" />
+            <Line word={profile.lastName} className="hero-name-light !inline-block" />
           </span>
         </h1>
 
