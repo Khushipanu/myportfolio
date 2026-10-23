@@ -1,33 +1,26 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { gsap, useGSAP, ScrollTrigger, MOTION_OK, prefersReducedMotion } from '../lib/gsap'
 import { scrollToTarget } from '../hooks/useLenis'
 import Art from './Art'
 
-// Visuvate-style "works" vortex: project screens ride a tilted helix like a
-// conveyor, curving around it (each card is built from thin vertical slices
-// placed on the cylinder), with their backs showing as they turn away. The
-// flow advances on its own, faster with scroll, and can be dragged with a
-// mouse or finger; every value eases per frame so motion stays smooth.
-const screens = [
-  { variant: 'movie', label: 'MovieThrill — home', target: '#project-moviethrill' },
-  { variant: 'lms', label: 'LMS — courses', target: '#project-lms' },
-  { variant: 'erp', label: 'ERP — records', target: '#experience' },
-  { variant: 'movieDetail', label: 'MovieThrill — details', target: '#project-moviethrill' },
-  { variant: 'lmsPlayer', label: 'LMS — lesson', target: '#project-lms' },
-  { variant: 'ui', label: 'Reusable components', target: '#project-moviethrill' },
-  { variant: 'lmsRoles', label: 'LMS — roles', target: '#project-lms' },
-  { variant: 'erpForm', label: 'ERP — forms', target: '#experience' },
+// Visuvate-style "works" ring: five project screens turn around the
+// "My Works" title, each card curved onto the cylinder (built from thin
+// vertical slices) with its back showing as it turns away. The ring drifts on
+// its own, turns one card per step of scroll and can be dragged; whichever
+// card faces front drives the highlight and lights up its skills.
+const CARDS = [
+  { variant: 'movie', label: 'MovieThrill — home', target: '#project-moviethrill', project: 'MovieThrill', highlight: 'Movie data from The Movie Database (TMDB) API, fetched with Axios.', skills: ['React.js', 'Tailwind CSS', 'JavaScript'] },
+  { variant: 'lms', label: 'LMS — courses', target: '#project-lms', project: 'Learning Management System', highlight: 'JWT authentication with student and instructor roles (RBAC).', skills: ['Node.js', 'Express.js', 'MongoDB'] },
+  { variant: 'erp', label: 'ERP — records', target: '#experience', project: 'ERP · Ruhanix', highlight: 'Reusable React.js components for ERP modules, forms and data views.', skills: ['React.js', 'JavaScript'] },
+  { variant: 'movieDetail', label: 'MovieThrill — details', target: '#project-moviethrill', project: 'MovieThrill', highlight: 'App-wide state managed with Redux Toolkit and React-Redux.', skills: ['React.js', 'Redux Toolkit'] },
+  { variant: 'lmsPlayer', label: 'LMS — lesson', target: '#project-lms', project: 'Learning Management System', highlight: 'Course purchasing and streaming on a full MERN stack.', skills: ['MongoDB', 'Express.js', 'React.js', 'Node.js'] },
 ]
-const COUNT = 17
-const CARDS = Array.from({ length: COUNT }, (_, i) => screens[i % screens.length])
-const PER_TURN = 6
-const STEP = 360 / PER_TURN
-const SPAN = COUNT * STEP
+const SKILLS = ['React.js', 'Node.js', 'Express.js', 'MongoDB', 'Redux Toolkit', 'Tailwind CSS', 'JavaScript']
+const COUNT = CARDS.length
+const STEP = 360 / COUNT
 const SLICES = 5
-// The helix axis leans to the right as it rises; cards stay upright.
-const LEAN = 1.25
 
-function useVortex(stageRef, ringRef, progressRef) {
+function useVortex(stageRef, ringRef, progressRef, onFront) {
   useEffect(() => {
     const stage = stageRef.current
     const ring = ringRef.current
@@ -36,13 +29,12 @@ function useVortex(stageRef, ringRef, progressRef) {
     const shades = cards.map((c) => [...c.querySelectorAll('[data-shade]')])
     const still = prefersReducedMotion()
 
-    const g = { cw: 260, ch: 195, r: 300, pitch: 240, dSlice: 0 }
+    const g = { cw: 260, ch: 187, r: 340, dSlice: 0 }
     const layout = () => {
       const w = stage.clientWidth
-      g.cw = Math.max(150, Math.min(320, w * (w < 768 ? 0.42 : 0.165)))
+      g.cw = Math.max(170, Math.min(340, w * (w < 768 ? 0.5 : 0.2)))
       g.ch = g.cw * 0.72
-      g.r = (PER_TURN * g.cw * 1.04) / (2 * Math.PI)
-      g.pitch = g.ch * 1.15
+      g.r = g.cw * 1.5
       g.dSlice = ((g.cw / SLICES) / g.r) * (180 / Math.PI)
       ring.style.setProperty('--cw', `${g.cw}px`)
       ring.style.setProperty('--ch', `${g.ch}px`)
@@ -89,7 +81,9 @@ function useVortex(stageRef, ringRef, progressRef) {
     const io = new IntersectionObserver(([e]) => { visible = e.isIntersecting })
     io.observe(stage)
 
-    const wrap = (v) => ((v % SPAN) + SPAN) % SPAN
+    // Angle in [-180, 180); 0 is facing the viewer.
+    const wrap = (v) => ((((v + 180) % 360) + 360) % 360) - 180
+    let front = -1
     let raf = 0
     let last = performance.now()
     const tick = (now) => {
@@ -101,30 +95,29 @@ function useVortex(stageRef, ringRef, progressRef) {
         s.drag += s.vel
         s.vel *= 0.94
       }
-      if (!still) s.drift += dt * 9
-      const scroll = progressRef.current * SPAN * 0.9
+      if (!still) s.drift += dt * 5
+      // Over the pinned scroll each card comes to the front once.
+      const scroll = progressRef.current * STEP * (COUNT - 1)
       s.scrollCur += (scroll - s.scrollCur) * 0.09
       const target = s.drift + s.scrollCur + s.drag
       s.offset += (target - s.offset) * 0.15
 
+      let best = 0
       for (let i = 0; i < COUNT; i++) {
-        // Position along the helix, centred so the middle sits in view.
-        const a = wrap(i * STEP + s.offset) - SPAN / 2
-        const y = (-a / 360) * g.pitch
-        const edge = Math.min(1, (470 - Math.abs(a)) / (STEP * 1.1))
-        const x = -y * LEAN
-        // Opacity/filter go on the slices: on the card they would flatten its 3D curve.
-        cards[i].style.visibility = edge <= 0 ? 'hidden' : 'visible'
-        const op = Math.max(0, edge).toFixed(3)
+        const a = wrap(i * STEP - s.offset)
+        if (Math.abs(a) < Math.abs(wrap(best * STEP - s.offset))) best = i
+        // Shading goes on the slices: on the card it would flatten its 3D curve.
         const sl = slices[i]
         for (let j = 0; j < SLICES; j++) {
           const sa = a + (j - (SLICES - 1) / 2) * g.dSlice
           const ks = (Math.cos((sa * Math.PI) / 180) + 1) / 2
-          const el = sl[j]
-          el.style.opacity = op
           shades[i][j].style.opacity = ((1 - ks) * 0.78).toFixed(3)
-          el.style.transform = `translate3d(calc(-50% + ${x.toFixed(2)}px), calc(-50% + ${y.toFixed(2)}px), 0) rotateY(${sa.toFixed(3)}deg) translateZ(${g.r.toFixed(1)}px)`
+          sl[j].style.transform = `translate3d(-50%, -50%, 0) rotateY(${sa.toFixed(3)}deg) translateZ(${g.r.toFixed(1)}px)`
         }
+      }
+      if (best !== front) {
+        front = best
+        onFront(best)
       }
     }
     raf = requestAnimationFrame(tick)
@@ -139,7 +132,7 @@ function useVortex(stageRef, ringRef, progressRef) {
       window.removeEventListener('pointerup', up)
       window.removeEventListener('pointercancel', up)
     }
-  }, [stageRef, ringRef, progressRef])
+  }, [stageRef, ringRef, progressRef, onFront])
 }
 
 function Card({ c }) {
@@ -170,7 +163,9 @@ export default function Work() {
   const stage = useRef(null)
   const ring = useRef(null)
   const progress = useRef(0)
-  useVortex(stage, ring, progress)
+  const [front, setFront] = useState(0)
+  useVortex(stage, ring, progress, setFront)
+  const active = CARDS[front]
 
   useGSAP(
     () => {
@@ -221,20 +216,19 @@ export default function Work() {
 
         <p className="pointer-events-none absolute left-5 top-24 z-20 font-mono text-[11px] uppercase tracking-[0.12em] text-muted md:left-10 md:top-28">(02) Selected work</p>
 
-        <h2
-          id="work-title"
-          data-work-title
-          className="pointer-events-none absolute inset-0 flex items-center justify-center whitespace-nowrap font-serif text-[16vw] leading-none text-ink md:text-[11vw]"
-        >
-          My Works
-        </h2>
-
         <div className="absolute inset-0 [perspective:1500px] [perspective-origin:50%_50%]">
           <div
             ref={ring}
             className="absolute left-1/2 top-1/2 h-0 w-0 [transform-style:preserve-3d]"
-            style={{ transform: 'rotateX(-8deg)' }}
+            style={{ transform: 'rotateX(-18deg)' }}
           >
+            {/* The title sits at the ring's centre: back cards pass behind it, front cards over it. */}
+            <h2
+              id="work-title"
+              className="pointer-events-none absolute left-0 top-0 [transform:translate(-50%,-50%)_rotateX(18deg)]"
+            >
+              <span data-work-title className="block whitespace-nowrap font-serif text-[16vw] leading-none text-ink md:text-[11vw]">My Works</span>
+            </h2>
             {CARDS.map((c, i) => (
               <button key={i} type="button" onClick={() => scrollToTarget(c.target)} aria-label={c.label} className="contents">
                 <Card c={c} />
@@ -243,7 +237,25 @@ export default function Work() {
           </div>
         </div>
 
-        <p className="pointer-events-none absolute bottom-6 right-5 z-20 font-mono text-[11px] uppercase tracking-[0.12em] text-ink/40 md:right-10">Drag ⟷</p>
+        {/* Core skills; the ones used in the front card light up. */}
+        <ul aria-label="Core skills" className="pointer-events-none absolute left-5 right-5 top-32 z-20 flex flex-wrap gap-x-4 gap-y-1.5 font-mono text-[10px] uppercase tracking-[0.14em] md:left-auto md:right-10 md:top-28 md:flex-col md:items-end md:gap-2 md:text-[11px]">
+          {SKILLS.map((k) => (
+            <li key={k} className={`transition-colors duration-500 ${active.skills.includes(k) ? 'text-accent' : 'text-ink/35'}`}>{k}</li>
+          ))}
+        </ul>
+
+        {/* Highlight of the card facing front. */}
+        <div aria-live="polite" className="pointer-events-none absolute bottom-14 left-5 right-5 z-20 md:bottom-10 md:left-10 md:right-auto md:max-w-sm">
+          <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-muted">
+            <span className="text-accent">{String(front + 1).padStart(2, '0')}</span> / {String(COUNT).padStart(2, '0')} · Highlight
+          </p>
+          <div key={front} className="animate-[work-in_0.7s_cubic-bezier(0.22,1,0.36,1)]">
+            <p className="mt-3 font-serif text-[26px] italic leading-none text-ink md:text-[30px]">{active.project}</p>
+            <p className="mt-2 text-[14px] font-light leading-relaxed text-ink/65 md:text-[15px]">{active.highlight}</p>
+          </div>
+        </div>
+
+        <p className="pointer-events-none absolute bottom-6 right-5 z-20 font-mono text-[11px] uppercase tracking-[0.12em] text-ink/40 md:bottom-10 md:right-10">Drag ⟷</p>
       </div>
     </section>
   )

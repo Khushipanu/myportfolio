@@ -26,9 +26,9 @@ function Tag({ label }) {
 }
 
 const lines = [
-  [{ t: 'Turning' }],
-  [{ t: 'ideas', serif: true }, { t: ' into' }],
-  [{ t: 'impact' }, { t: '.', accent: true }],
+  [{ t: 'Building' }, { t: ' digital', serif: true }],
+  [{ t: 'experiences' }],
+  [{ t: 'that matter' }, { t: '.', accent: true }],
 ]
 
 export default function Statement() {

@@ -246,3 +246,6 @@ html.lenis body {
   transition: opacity 0.2s ease;
 }
 .kp-cursor[data-state='label'] .kp-cursor__label { opacity: 1; transition-delay: 0.1s; }
+
+/* Work highlight swap */
+@keyframes work-in { from { opacity: 0; transform: translateY(10px); filter: blur(6px); } to { opacity: 1; transform: none; filter: none; } }
