@@ -9,7 +9,6 @@ function ServiceRow({ s, i }) {
     <li className="group relative border-t border-ink/20 last:border-b">
       <div
         tabIndex={0}
-        data-cursor-tone="dark"
         className="relative grid grid-cols-12 items-center gap-x-5 overflow-hidden px-1 py-6 outline-none transition-colors duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:text-paper focus-visible:text-paper md:px-4 md:py-9"
       >
         <span

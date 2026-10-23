@@ -76,7 +76,7 @@ export default function Nav({ ready }) {
                 href={l.href}
                 onClick={(e) => go(e, l.href)}
                 data-nav-item
-                className="font-mono text-[12px] uppercase tracking-[0.1em] text-ink hover:text-accent focus-visible:text-accent"
+                className="font-mono text-[12px] uppercase tracking-[0.1em] text-ink transition-colors duration-200 ease-out hover:text-accent focus-visible:text-accent"
               >
                 {l.label}
               </a>

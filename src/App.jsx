@@ -1,8 +1,6 @@
 import { useState } from 'react'
 import { useLenis } from './hooks/useLenis'
 import Loader from './components/Loader'
-import Cursor from './components/Cursor'
-import PointerGlow from './components/ui/PointerGlow'
 import Nav from './components/Nav'
 import Hero from './components/Hero'
 import Statement from './components/Statement'
@@ -26,8 +24,6 @@ export default function App() {
         Skip to content
       </a>
       <Loader onDone={() => setReady(true)} />
-      <Cursor />
-      <PointerGlow />
       <Nav ready={ready} />
       <main id="main">
         <Hero ready={ready} />

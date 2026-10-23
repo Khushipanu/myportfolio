@@ -131,13 +131,6 @@ html.lenis body {
   border-radius: 2px;
 }
 
-@media (hover: hover) and (pointer: fine) {
-  .has-cursor,
-  .has-cursor * {
-    cursor: none !important;
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -184,16 +177,9 @@ html.lenis body {
   75% { transform: translate(7px, -15px); opacity: 0.7; }
 }
 
-.s-ripple {
-  position: fixed; z-index: 95; width: 6px; height: 6px; border-radius: 50%;
-  border: 1px solid var(--color-accent); pointer-events: none;
-  transform: translate(-50%, -50%); animation: s-ripple 0.9s ease-out forwards;
-}
-@keyframes s-ripple { from { opacity: 0.9; width: 6px; height: 6px; } to { opacity: 0; width: 70px; height: 70px; } }
 
-/* Word reveal: words lift out of a blur; hover gives a soft glow. */
+/* Word reveal: words lift out of a blur. */
 .word { display: inline-block; transition: color 0.3s ease, transform 0.3s ease, text-shadow 0.3s ease; }
-.word:hover { transform: translateY(-2px); text-shadow: 0 0 18px rgba(111, 220, 155, 0.45); }
 
 /* ---- Colour atmosphere: orange + violet glows and gradient text ---- */
 .text-gradient {
