@@ -1,8 +1,8 @@
 import { useRef, useState } from 'react'
 import { gsap, useGSAP, prefersReducedMotion } from '../lib/gsap'
 
-// Intro after the Mike Wilcock reference: the name rises in letter by letter
-// (bold KHUSHI, light PANU, as in the hero) over three pulsing loading dots,
+// Intro after the Mike Wilcock reference: the name rises in letter by letter,
+// set evenly in Instrument Serif, over three pulsing loading dots,
 // then a green column opens from the centre to fill the screen and folds away
 // into the top-left corner to reveal the hero.
 const Chars = ({ word, className = '' }) => (
@@ -57,9 +57,9 @@ export default function Loader({ onDone }) {
       <div data-loader-bg className="absolute inset-0 bg-paper" />
       <div className="absolute inset-0 flex items-center justify-center text-ink">
         <div className="flex flex-col items-center">
-          <p aria-hidden="true" className="flex items-baseline gap-[0.28em] text-[15vw] uppercase leading-none tracking-[0.04em] md:text-[7.5vw]">
-            <Chars word="Khushi" className="hero-name" />
-            <Chars word="Panu" className="hero-name-light text-ink" />
+          <p aria-hidden="true" className="flex items-baseline gap-[0.22em] font-serif text-[17vw] leading-none tracking-[-0.01em] text-ink md:text-[8.5vw]">
+            <Chars word="Khushi" />
+            <Chars word="Panu" />
           </p>
           <span data-dots aria-hidden="true" className="mt-8 flex gap-2.5 md:mt-10">
             {[0, 1, 2].map((i) => (
