@@ -53,9 +53,17 @@ html.lenis body {
 @layer base {
   /* Wide, heavy grotesk for headlines, after the Mike Wilcock reference. */
   .font-display {
-    font-weight: 800;
-    font-stretch: 100%;
-    letter-spacing: -0.03em;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-stretch: 84%;
+    letter-spacing: -0.02em;
+  }
+  /* Condensed, heavy grotesk for the hero name, matching the reference. */
+  .hero-name {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-stretch: 78%;
+    letter-spacing: -0.035em;
   }
 }
 

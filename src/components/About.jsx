@@ -90,9 +90,9 @@ export default function About() {
         </div>
       </div>
 
-      <div id="services" className="mt-24 scroll-mt-24 md:mt-36">
+      <div id="focus" className="mt-24 scroll-mt-24 md:mt-36">
         <div className="mb-8 flex items-end justify-between">
-          <h2 className="font-display text-[13vw] uppercase leading-[0.88] md:text-[6.4vw]">Services</h2>
+          <h2 className="font-display text-[13vw] uppercase leading-[0.88] md:text-[6.4vw]">What I do</h2>
           <p className="hidden font-mono text-[11px] uppercase tracking-[0.12em] text-muted md:block">(Hover to explore)</p>
         </div>
         <ul data-service-list>

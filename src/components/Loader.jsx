@@ -1,6 +1,10 @@
 import { useRef, useState } from 'react'
 import { gsap, useGSAP, prefersReducedMotion } from '../lib/gsap'
+import Logo from './Logo'
 
+// Intro after the Mike Wilcock reference: the wordmark rises in letter by
+// letter while a counter runs to 100, a blue column opens from the centre to
+// fill the screen, then folds away into the top-left corner to reveal the hero.
 export default function Loader({ onDone }) {
   const root = useRef(null)
   const [hidden, setHidden] = useState(false)
@@ -8,30 +12,38 @@ export default function Loader({ onDone }) {
   useGSAP(
     () => {
       document.documentElement.style.overflow = 'hidden'
-      const finish = () => {
+      let released = false
+      const release = () => {
+        if (released) return
+        released = true
         document.documentElement.style.overflow = ''
-        setHidden(true)
         onDone()
       }
 
       if (prefersReducedMotion()) {
-        gsap.to(root.current, { autoAlpha: 0, duration: 0.3, onComplete: finish })
+        gsap.to(root.current, { autoAlpha: 0, duration: 0.3, onComplete: () => { release(); setHidden(true) } })
         return
       }
 
       const counter = { v: 0 }
       const num = root.current.querySelector('[data-count]')
-      const tl = gsap.timeline({ onComplete: finish })
-      tl.from('[data-loader-line]', { yPercent: 110, duration: 0.8, ease: 'expo.out', stagger: 0.08 })
+      gsap.timeline({ onComplete: () => setHidden(true) })
+        .from('[data-logo-char]', { yPercent: 110, duration: 0.9, ease: 'expo.out', stagger: 0.045 }, 0.15)
+        .from('[data-loader-meta]', { autoAlpha: 0, duration: 0.6 }, 0.3)
         .to(counter, {
           v: 100,
-          duration: 1.3,
+          duration: 1.8,
           ease: 'power2.inOut',
           onUpdate: () => (num.textContent = String(Math.round(counter.v)).padStart(3, '0')),
-        }, 0.1)
-        .to('[data-loader-bar]', { scaleX: 1, duration: 1.3, ease: 'power2.inOut' }, 0.1)
-        .to('[data-loader-line]', { yPercent: -110, duration: 0.6, ease: 'expo.in', stagger: 0.04 }, '+=0.1')
-        .to(root.current, { yPercent: -100, duration: 0.9, ease: 'expo.inOut' }, '-=0.2')
+        }, 0)
+        .to('[data-logo-char]', { yPercent: -110, duration: 0.5, ease: 'expo.in', stagger: 0.02 }, 2.05)
+        .to('[data-loader-meta], [data-count]', { autoAlpha: 0, duration: 0.3 }, 2.1)
+        .fromTo('[data-panel]', { scaleX: 0 }, { scaleX: 0.25, duration: 0.45, ease: 'power3.out' }, 2.3)
+        .to('[data-panel]', { scaleX: 1, duration: 0.55, ease: 'expo.inOut' }, 2.7)
+        .set('[data-loader-bg]', { autoAlpha: 0 }, 3.3)
+        .call(release, null, 3.3)
+        .to('[data-panel]', { scaleX: 0.3, scaleY: 0.45, transformOrigin: '0% 0%', duration: 0.55, ease: 'expo.in' }, 3.35)
+        .to('[data-panel]', { scaleX: 0, scaleY: 0, duration: 0.35, ease: 'expo.out' }, 3.9)
     },
     { scope: root },
   )
@@ -39,26 +51,16 @@ export default function Loader({ onDone }) {
   if (hidden) return null
 
   return (
-    <div
-      ref={root}
-      className="fixed inset-0 z-[80] flex flex-col justify-between bg-paper-2 px-5 py-6 text-ink md:px-10 md:py-8"
-      role="status"
-      aria-label="Loading"
-    >
-      <div className="flex justify-between font-mono text-[11px] uppercase tracking-[0.12em] text-ink/60">
-        <span className="mask"><span data-loader-line>Portfolio</span></span>
-        <span className="mask"><span data-loader-line>©2026</span></span>
+    <div ref={root} className="fixed inset-0 z-[80]" role="status" aria-label="Loading">
+      <div data-loader-bg className="absolute inset-0 bg-paper" />
+      <div className="absolute inset-0 flex items-center justify-center text-ink">
+        <Logo split className="text-[11vw] leading-none md:text-[6.4vw]" />
       </div>
-      <div className="flex items-end justify-between gap-6">
-        <div className="font-display text-[13vw] uppercase leading-[0.88] md:text-[7vw]">
-          <span className="mask"><span data-loader-line>Khushi</span></span>
-          <span className="mask"><span data-loader-line>Panu</span></span>
-        </div>
-        <span className="mask font-display text-[11vw] leading-[0.88] text-accent md:text-[5.5vw]">
-          <span data-loader-line data-count>000</span>
-        </span>
+      <div data-loader-meta className="absolute bottom-6 left-5 font-mono text-[10px] uppercase leading-relaxed tracking-[0.12em] text-muted md:bottom-8 md:left-10">
+        Full Stack Developer<br />Haldwani, IN
       </div>
-      <div className="absolute bottom-0 left-0 h-[3px] w-full origin-left scale-x-0 bg-accent" data-loader-bar />
+      <span data-count className="absolute bottom-4 right-5 font-display text-[14vw] leading-none text-ink/85 md:bottom-6 md:right-10 md:text-[5.5vw]">000</span>
+      <div data-panel className="absolute inset-0 origin-center scale-x-0 bg-accent" />
     </div>
   )
 }

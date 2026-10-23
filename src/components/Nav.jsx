@@ -3,11 +3,12 @@ import { gsap, useGSAP } from '../lib/gsap'
 import { scrollToTarget, getLenis } from '../hooks/useLenis'
 import { profile, socials } from '../data/content'
 import { useLocalTime } from '../hooks/useLocalTime'
+import Logo from './Logo'
 
 const links = [
   { label: 'Work', href: '#work' },
   { label: 'About', href: '#about' },
-  { label: 'Services', href: '#services' },
+  { label: 'Experience', href: '#experience' },
 ]
 
 // Menu styled after the Mike Wilcock reference: monospaced uppercase links
@@ -57,9 +58,7 @@ export default function Nav({ ready }) {
         className="mask whitespace-nowrap text-[15px] font-semibold tracking-[-0.01em] transition-colors hover:text-accent"
         aria-label="Khushi Panu — back to top"
       >
-        <span data-nav-item className="flex items-center gap-1">
-          KHUSHI<span className="rounded-[3px] bg-accent px-1 text-[13px] font-medium leading-[1.35] text-coal">panu</span>
-        </span>
+        <span data-nav-item className="block"><Logo className="text-[17px]" /></span>
       </a>
 
       <p className="mask hidden font-mono text-[11px] uppercase tracking-[0.12em] text-muted lg:block">
@@ -76,7 +75,7 @@ export default function Nav({ ready }) {
                 href={l.href}
                 onClick={(e) => go(e, l.href)}
                 data-nav-item
-                className="font-mono text-[12px] uppercase tracking-[0.1em] text-ink transition-colors duration-300 hover:text-accent focus-visible:text-accent"
+                className="font-mono text-[12px] uppercase tracking-[0.1em] text-ink hover:text-accent focus-visible:text-accent"
               >
                 {l.label}
               </a>
