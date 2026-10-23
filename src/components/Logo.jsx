@@ -1,4 +1,4 @@
-// Wordmark from the mockup: "KHUSHI" in heavy caps, a blue sparkle, and
+// Wordmark from the mockup: "KHUSHI" in heavy caps, an orange sparkle, and
 // "Panu" in light italic serif. `split` wraps each glyph for reveal animations.
 const Sparkle = () => (
   <svg viewBox="0 0 24 24" className="h-[0.62em] w-[0.62em] text-accent" aria-hidden="true">

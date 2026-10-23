@@ -3,7 +3,7 @@ import { gsap, useGSAP, prefersReducedMotion } from '../lib/gsap'
 import Logo from './Logo'
 
 // Intro after the Mike Wilcock reference: the wordmark rises in letter by
-// letter while a counter runs to 100, a blue column opens from the centre to
+// letter while a counter runs to 100, an orange column opens from the centre to
 // fill the screen, then folds away into the top-left corner to reveal the hero.
 export default function Loader({ onDone }) {
   const root = useRef(null)
@@ -37,6 +37,7 @@ export default function Loader({ onDone }) {
           onUpdate: () => (num.textContent = String(Math.round(counter.v)).padStart(3, '0')),
         }, 0)
         .to('[data-logo-char]', { yPercent: -110, duration: 0.5, ease: 'expo.in', stagger: 0.02 }, 2.05)
+        .to('[data-logo-mark]', { scale: 0, rotate: 90, duration: 0.4, ease: 'expo.in' }, 2.1)
         .to('[data-loader-meta], [data-count]', { autoAlpha: 0, duration: 0.3 }, 2.1)
         .fromTo('[data-panel]', { scaleX: 0 }, { scaleX: 0.25, duration: 0.45, ease: 'power3.out' }, 2.3)
         .to('[data-panel]', { scaleX: 1, duration: 0.55, ease: 'expo.inOut' }, 2.7)

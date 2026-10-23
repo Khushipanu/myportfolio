@@ -2,7 +2,7 @@
 // project screenshots by passing an `src` to <Art> — the frame stays the same.
 
 const posters = [
-  ['#749dfb', '#0b1a3d'],
+  ['#f5894b', '#3a1606'],
   ['#e9c46a', '#3b2a07'],
   ['#5b7cfa', '#0c1235'],
   ['#d9d2c5', '#2b2723'],
@@ -41,7 +41,7 @@ function Lms() {
       <div className="flex flex-1 flex-col gap-[5%] p-[5%]">
         <div className="text-[0.7em] font-semibold">Courses</div>
         <div className="grid flex-1 grid-cols-2 gap-[5%]">
-          {['#131313', '#749dfb', '#6d665d', '#131313'].map((c, i) => (
+          {['#131313', '#f5894b', '#6d665d', '#131313'].map((c, i) => (
             <div key={i} className="flex flex-col overflow-hidden rounded-[0.35em] bg-cream">
               <div className="flex-1" style={{ background: c }}>
                 <div className="m-[10%] flex h-[1.6em] w-[1.6em] items-center justify-center rounded-full bg-cream/90 text-[0.5em] text-coal">▶</div>

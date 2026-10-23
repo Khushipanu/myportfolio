@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react'
 import { prefersReducedMotion } from '../lib/gsap'
 
 // Glass "knot" sculpture rendered with Three.js: a refractive torus knot with a
-// glowing core and a slow blue orbit of particles. Tilts toward the pointer,
+// glowing core and a slow warm orbit of particles. Tilts toward the pointer,
 // pauses when off screen, and loads three.js lazily so the page paints first.
 export default function Orb3D({ className = '', ...rest }) {
   const host = useRef(null)
@@ -63,7 +63,7 @@ export default function Orb3D({ className = '', ...rest }) {
       // Glowing core seen through the glass
       const core = new THREE.Mesh(
         new THREE.IcosahedronGeometry(0.42, 4),
-        new THREE.MeshStandardMaterial({ color: 0x0b1240, emissive: 0x749dfb, emissiveIntensity: 1.2, roughness: 0.3 }),
+        new THREE.MeshStandardMaterial({ color: 0x0b1240, emissive: 0xf5894b, emissiveIntensity: 1.2, roughness: 0.3 }),
       )
       group.add(core)
 
@@ -85,7 +85,7 @@ export default function Orb3D({ className = '', ...rest }) {
 
       const key = new THREE.PointLight(0xffffff, 30, 20)
       key.position.set(-3, 2, 4)
-      const rim = new THREE.PointLight(0xc9d6ff, 18, 20)
+      const rim = new THREE.PointLight(0xffd2b5, 18, 20)
       rim.position.set(3, -2, -2)
       scene.add(key, rim, new THREE.AmbientLight(0x333333, 0.6))
 
