@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from 'react'
 import { gsap, useGSAP } from '../lib/gsap'
 import { scrollToTarget, getLenis } from '../hooks/useLenis'
 import { profile, socials } from '../data/content'
-import { useLocalTime } from '../hooks/useLocalTime'
 import Logo from './Logo'
 
 const links = [
@@ -15,7 +14,6 @@ const links = [
 // that turn blue on hover, and a pill button that flips from blue to cream.
 export default function Nav({ ready }) {
   const root = useRef(null)
-  const time = useLocalTime(profile.timeZone)
   const [open, setOpen] = useState(false)
 
   // Phone menu: lock scrolling while open and close on Escape.
@@ -61,9 +59,12 @@ export default function Nav({ ready }) {
         <span data-nav-item className="block"><Logo className="text-[17px]" /></span>
       </a>
 
-      <p className="mask hidden font-mono text-[11px] uppercase tracking-[0.12em] text-muted lg:block">
-        <span data-nav-item>
-          Haldwani, IN <span className="mx-1.5">·</span> <span className="tabular-nums">{time}</span>
+      <p className="mask hidden items-center font-mono text-[11px] uppercase tracking-[0.16em] text-muted lg:flex">
+        <span data-nav-item className="flex items-center gap-3">
+          <svg viewBox="0 0 24 24" className="h-3 w-3 text-accent" aria-hidden="true"><path fill="currentColor" d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7Zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5Z" /></svg>
+          Haldwani, India
+          <span className="h-px w-10 bg-ink/25" aria-hidden="true" />
+          {profile.role}
         </span>
       </p>
 
@@ -95,10 +96,9 @@ export default function Nav({ ready }) {
           href="#contact"
           onClick={(e) => go(e, '#contact')}
           data-nav-item
-          data-cursor-tone="dark"
-          className="rounded-full bg-accent px-5 py-2.5 font-mono text-[12px] font-medium uppercase tracking-[0.1em] text-coal transition-colors duration-300 hover:bg-cream focus-visible:bg-cream md:px-6 md:py-3"
+          className="group flex items-center gap-2 rounded-full border border-accent/80 px-5 py-2.5 font-mono text-[12px] font-medium uppercase tracking-[0.1em] text-ink transition-colors duration-300 hover:bg-accent hover:text-coal focus-visible:bg-accent focus-visible:text-coal md:px-6 md:py-3"
         >
-          Let's talk
+          Let's talk <span aria-hidden="true" className="text-accent transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-coal">↗</span>
         </a>
       </nav>
 
