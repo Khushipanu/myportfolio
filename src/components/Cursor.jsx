@@ -2,7 +2,8 @@ import { useEffect, useRef } from 'react'
 
 // Desktop-only cursor: one dot that sits exactly on the pointer (no easing, so
 // it never lags) and inverts whatever is beneath it. Over links and buttons it
-// grows into a disc; over elements with data-cursor="Label" it shows the label.
+// stays a plain dot (the link itself changes colour); over elements with
+// data-cursor="Label" it grows into a disc showing the label.
 // The native cursor is only hidden once this has received a real pointer move.
 export default function Cursor() {
   const root = useRef(null)
@@ -34,8 +35,7 @@ export default function Cursor() {
     const over = (e) => {
       const named = e.target.closest('[data-cursor]')
       const text = named?.getAttribute('data-cursor') || ''
-      const link = e.target.closest('a, button, [role="button"], label, summary')
-      const next = text ? 'label' : link ? 'link' : ''
+      const next = text ? 'label' : ''
       if (next === state && label.current.textContent === text) return
       state = next
       el.dataset.state = next
