@@ -17,10 +17,10 @@ export default function Cursor() {
     gsap.set([dot.current, ring.current], { autoAlpha: 0 })
     let shown = false
 
-    const xDot = gsap.quickTo(dot.current, 'x', { duration: 0.08, ease: 'power3' })
-    const yDot = gsap.quickTo(dot.current, 'y', { duration: 0.08, ease: 'power3' })
-    const xRing = gsap.quickTo(ring.current, 'x', { duration: 0.45, ease: 'power3' })
-    const yRing = gsap.quickTo(ring.current, 'y', { duration: 0.45, ease: 'power3' })
+    const xDot = gsap.quickTo(dot.current, 'x', { duration: 0.12, ease: 'power3' })
+    const yDot = gsap.quickTo(dot.current, 'y', { duration: 0.12, ease: 'power3' })
+    const xRing = gsap.quickTo(ring.current, 'x', { duration: 0.55, ease: 'expo' })
+    const yRing = gsap.quickTo(ring.current, 'y', { duration: 0.55, ease: 'expo' })
 
     const move = (e) => {
       if (!shown) {
@@ -30,8 +30,11 @@ export default function Cursor() {
       }
       xDot(e.clientX); yDot(e.clientY); xRing(e.clientX); yRing(e.clientY)
     }
+    let tone = null
     const over = (e) => {
-      const dark = e.target.closest('[data-cursor-tone="dark"]')
+      const dark = !!e.target.closest('[data-cursor-tone="dark"]')
+      if (dark === tone) return
+      tone = dark
       gsap.to(dot.current, { backgroundColor: dark ? '#131313' : '#6fdc9b', duration: 0.25 })
       gsap.to(ring.current, {
         borderColor: dark ? 'rgba(19,19,19,0.45)' : 'rgba(233,228,223,0.28)',
@@ -57,8 +60,8 @@ export default function Cursor() {
 
   return (
     <div ref={wrap} aria-hidden="true" className="pointer-events-none fixed left-0 top-0 z-[90]" style={{ display: 'none' }}>
-      <div ref={ring} className="absolute -left-[22px] -top-[22px] h-11 w-11 rounded-full border border-ink/30" />
-      <div ref={dot} className="absolute -left-[4px] -top-[4px] h-2 w-2 rounded-full bg-accent" />
+      <div ref={ring} className="absolute -left-[22px] -top-[22px] h-11 w-11 rounded-full border border-ink/30 will-change-transform" />
+      <div ref={dot} className="absolute -left-[4px] -top-[4px] h-2 w-2 rounded-full bg-accent will-change-transform" />
     </div>
   )
 }

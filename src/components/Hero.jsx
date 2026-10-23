@@ -12,36 +12,58 @@ const dots = [
 ]
 
 // Letters near the pointer (or a finger) lift slightly and fade to green.
-// Each letter eases toward its target every frame, so motion stays smooth
-// whatever the pointer does; the loop sleeps once everything settles.
+// Letter centres are measured once (and again on resize/scroll), so each frame
+// only reads one rect and writes transforms/opacity — no layout thrashing and
+// no repaints. Pointer position and each letter are eased, so motion stays
+// smooth whatever the pointer does; the loop sleeps once everything settles.
 function useLetterLift(root) {
   useEffect(() => {
     if (prefersReducedMotion()) return
-    const els = [...root.current.querySelectorAll('[data-lift]')]
+    const box = root.current
+    const els = [...box.querySelectorAll('[data-lift]')]
+    const tints = els.map((el) => el.querySelector('[data-tint]'))
     const cur = els.map(() => 0)
-    const pointer = { x: -9999, y: -9999 }
-    const RADIUS = 260
+    const centres = els.map(() => ({ x: 0, y: 0 }))
+    const target = { x: -9999, y: -9999 }
+    const p = { x: -9999, y: -9999 }
     let raf = 0
     let visible = true
     let release = 0
+    let radius = 260
+
+    const measure = () => {
+      const b = box.getBoundingClientRect()
+      els.forEach((el, i) => {
+        const r = el.getBoundingClientRect()
+        // Undo the current lift so we store the resting position.
+        const lift = (cur[i] * 0.07) * r.height
+        centres[i].x = r.left - b.left + r.width / 2
+        centres[i].y = r.top - b.top + r.height / 2 + lift
+      })
+      radius = Math.max(180, b.height * 0.55)
+    }
 
     const tick = () => {
       raf = 0
-      let moving = false
-      els.forEach((el, i) => {
-        const r = el.getBoundingClientRect()
-        const d = Math.hypot(pointer.x - (r.left + r.width / 2), pointer.y - (r.top + r.height / 2))
-        const t = Math.max(0, 1 - d / RADIUS)
-        const target = t * t * (3 - 2 * t)
-        cur[i] += (target - cur[i]) * 0.12
-        if (Math.abs(target - cur[i]) > 0.002) moving = true
-        el.style.transform = `translate3d(0, ${(-cur[i] * 7).toFixed(2)}%, 0)`
-        el.style.setProperty('--lift', cur[i].toFixed(3))
-      })
+      if (p.x < -5000 || target.x < -5000) { p.x = target.x; p.y = target.y }
+      else { p.x += (target.x - p.x) * 0.25; p.y += (target.y - p.y) * 0.25 }
+      const b = box.getBoundingClientRect()
+      const px = p.x - b.left
+      const py = p.y - b.top
+      let moving = Math.abs(target.x - p.x) > 0.5 || Math.abs(target.y - p.y) > 0.5
+      for (let i = 0; i < els.length; i++) {
+        const d = Math.hypot(px - centres[i].x, py - centres[i].y)
+        const t = Math.max(0, 1 - d / radius)
+        const goal = t * t * (3 - 2 * t)
+        cur[i] += (goal - cur[i]) * 0.14
+        if (Math.abs(goal - cur[i]) > 0.002) moving = true
+        els[i].style.transform = `translate3d(0, ${(-cur[i] * 7).toFixed(2)}%, 0)`
+        tints[i].style.opacity = cur[i].toFixed(3)
+      }
       if (moving && visible) raf = requestAnimationFrame(tick)
     }
     const kick = () => { if (!raf && visible) raf = requestAnimationFrame(tick) }
-    const set = (x, y) => { pointer.x = x; pointer.y = y; kick() }
+    const set = (x, y) => { target.x = x; target.y = y; kick() }
     const move = (e) => set(e.clientX, e.clientY)
     const down = (e) => {
       if (e.pointerType === 'mouse') return
@@ -53,15 +75,22 @@ function useLetterLift(root) {
       release = setTimeout(() => set(-9999, -9999), 450)
     }
     const leave = () => set(-9999, -9999)
+    const scroll = () => kick()
 
+    measure()
+    document.fonts?.ready.then(measure)
+    const ro = new ResizeObserver(measure)
+    ro.observe(box)
     const io = new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; if (visible) kick() })
-    io.observe(root.current)
+    io.observe(box)
     window.addEventListener('pointermove', move, { passive: true })
     window.addEventListener('pointerdown', down, { passive: true })
     window.addEventListener('pointerup', up, { passive: true })
     window.addEventListener('pointercancel', up, { passive: true })
+    window.addEventListener('scroll', scroll, { passive: true })
     document.documentElement.addEventListener('pointerleave', leave)
     return () => {
+      ro.disconnect()
       io.disconnect()
       cancelAnimationFrame(raf)
       clearTimeout(release)
@@ -69,6 +98,7 @@ function useLetterLift(root) {
       window.removeEventListener('pointerdown', down)
       window.removeEventListener('pointerup', up)
       window.removeEventListener('pointercancel', up)
+      window.removeEventListener('scroll', scroll)
       document.documentElement.removeEventListener('pointerleave', leave)
     }
   }, [root])
@@ -78,8 +108,12 @@ function Line({ word, className = '' }) {
   return (
     <span aria-hidden="true" className={`block whitespace-nowrap ${className}`}>
       {word.toUpperCase().split('').map((c, i) => (
-        <span key={i} data-lift className="lift inline-block overflow-hidden align-bottom will-change-transform">
-          <span data-char className="inline-block">{c}</span>
+        <span key={i} data-lift className="relative inline-block overflow-hidden align-bottom will-change-transform">
+          <span data-char className="relative inline-block">
+            {c}
+            {/* Green copy cross-faded with opacity — cheaper than recolouring the glyph. */}
+            <span data-tint aria-hidden="true" className="absolute inset-0 text-accent opacity-0">{c}</span>
+          </span>
         </span>
       ))}
     </span>

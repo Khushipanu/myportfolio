@@ -10,7 +10,7 @@ function ServiceRow({ s, i }) {
       <div
         tabIndex={0}
         data-cursor-tone="dark"
-        className="relative grid grid-cols-12 items-center gap-x-5 overflow-hidden px-1 py-6 outline-none transition-colors duration-500 group-hover:text-paper focus-visible:text-paper md:px-4 md:py-9"
+        className="relative grid grid-cols-12 items-center gap-x-5 overflow-hidden px-1 py-6 outline-none transition-colors duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:text-paper focus-visible:text-paper md:px-4 md:py-9"
       >
         <span
           aria-hidden="true"
@@ -22,7 +22,7 @@ function ServiceRow({ s, i }) {
         <h3 className="relative col-span-10 font-display text-[7vw] uppercase leading-[0.95] transition-transform duration-[650ms] ease-[cubic-bezier(0.7,0,0.2,1)] group-hover:translate-x-3 md:col-span-6 md:text-[3.1vw] md:group-hover:translate-x-6">
           {s.title}
         </h3>
-        <div className="relative col-span-12 mt-3 md:col-span-4 md:mt-0 md:translate-y-3 md:opacity-0 md:transition-all md:duration-500 md:group-hover:translate-y-0 md:group-hover:opacity-100 md:group-focus-within:translate-y-0 md:group-focus-within:opacity-100">
+        <div className="relative col-span-12 mt-3 md:col-span-4 md:mt-0 md:translate-y-3 md:opacity-0 md:transition-[opacity,transform] md:duration-700 md:ease-[cubic-bezier(0.22,1,0.36,1)] md:group-hover:translate-y-0 md:group-hover:opacity-100 md:group-focus-within:translate-y-0 md:group-focus-within:opacity-100">
           <p className="text-[15px] leading-snug">{s.description}</p>
           <p className="mt-3 text-xs uppercase tracking-[0.14em] text-muted group-hover:text-paper/60">{s.tags.join(' · ')}</p>
         </div>
