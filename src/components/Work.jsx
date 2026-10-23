@@ -34,7 +34,8 @@ function useRing(stageRef, ringRef, onFront) {
     const g = { cw: 260, ch: 187, r: 340, dSlice: 0 }
     const layout = () => {
       const w = stage.clientWidth
-      g.cw = Math.max(170, Math.min(340, w * (w < 768 ? 0.5 : 0.2)))
+      // Sized by width, but capped by height so short screens keep room for the text.
+      g.cw = Math.max(150, Math.min(340, w * (w < 768 ? 0.5 : 0.2), stage.clientHeight * 0.3))
       g.ch = g.cw * 0.72
       g.r = g.cw * 1.5
       g.dSlice = ((g.cw / SLICES) / g.r) * (180 / Math.PI)

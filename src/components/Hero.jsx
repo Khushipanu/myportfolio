@@ -75,7 +75,7 @@ export default function Hero({ ready }) {
         <h1
           ref={name}
           aria-label={profile.name}
-          className="hero-name relative z-10 uppercase leading-[0.9] tracking-[0.05em] text-[21vw] md:text-[16vw]"
+          className="hero-name relative z-10 uppercase leading-[0.9] tracking-[0.05em] text-[min(21vw,30svh)] md:text-[min(16vw,27svh)]"
         >
           <span data-line="1" className="relative block">
             <Line word={profile.firstName} />
