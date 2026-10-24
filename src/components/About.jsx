@@ -29,7 +29,7 @@ function Detail({ e, on = true, light = false }) {
           <li
             key={pt}
             className={`flex gap-3 transition-[opacity,transform] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${on ? 'translate-x-0 opacity-100' : '-translate-x-3 opacity-0'}`}
-            style={{ transitionDelay: on ? `${0.35 + k * 0.08}s` : '0s' }}
+            style={{ transitionDelay: on ? `${0.25 + k * 0.05}s` : '0s' }}
           >
             <span aria-hidden="true" className={`mt-[0.5em] h-1 w-1 shrink-0 rounded-full ${light ? 'bg-current' : 'bg-accent'}`} />
             {pt}
@@ -55,7 +55,7 @@ function ExperiencePanels() {
   const hoverTimer = useRef(0)
   const hoverOpen = (i) => {
     clearTimeout(hoverTimer.current)
-    hoverTimer.current = setTimeout(() => setOpen(i), 140)
+    hoverTimer.current = setTimeout(() => setOpen(i), 80)
   }
   const n = (i) => String(i + 1).padStart(2, '0')
 
@@ -77,7 +77,7 @@ function ExperiencePanels() {
                 ev.currentTarget.style.setProperty('--mx', `${ev.clientX - r.left}px`)
                 ev.currentTarget.style.setProperty('--my', `${ev.clientY - r.top}px`)
               }}
-              className={`group relative min-w-0 overflow-hidden rounded-[22px] transition-[flex-grow,box-shadow,color] duration-[900ms] ease-[cubic-bezier(0.65,0,0.35,1)] ${
+              className={`group relative min-w-0 overflow-hidden rounded-[22px] transition-[flex-grow,box-shadow,color] duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] ${
                 on ? 'grow-[3] shadow-[0_30px_60px_-28px_rgba(23,21,18,0.55)]' : 'grow shadow-[0_10px_30px_-20px_rgba(23,21,18,0.35)]'
               }`}
               style={{
@@ -89,7 +89,7 @@ function ExperiencePanels() {
               {/* The panel colour fades in, rather than swapping instantly. */}
               <span
                 aria-hidden="true"
-                className={`pointer-events-none absolute inset-0 transition-opacity duration-[900ms] ease-[cubic-bezier(0.65,0,0.35,1)] ${on ? 'opacity-100' : 'opacity-0'}`}
+                className={`pointer-events-none absolute inset-0 transition-opacity duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] ${on ? 'opacity-100' : 'opacity-0'}`}
                 style={{ background: `linear-gradient(160deg, color-mix(in srgb, ${c} 88%, #fff) 0%, ${c} 45%, color-mix(in srgb, ${c} 80%, #000) 100%)` }}
               />
               <button
@@ -118,7 +118,7 @@ function ExperiencePanels() {
               {/* Closed: a big outlined number in the panel colour. */}
               <span
                 aria-hidden="true"
-                className={`pointer-events-none absolute left-6 top-20 font-serif text-[9rem] italic leading-none text-transparent transition-[opacity,transform] duration-500 ease-out group-hover:-translate-y-2 ${on ? 'opacity-0' : 'opacity-100 delay-500'}`}
+                className={`pointer-events-none absolute left-6 top-20 font-serif text-[9rem] italic leading-none text-transparent transition-[opacity,transform] duration-500 ease-out group-hover:-translate-y-2 ${on ? 'opacity-0' : 'opacity-100 delay-300'}`}
                 style={{ WebkitTextStroke: `1.2px ${c}` }}
               >
                 {n(i)}
@@ -127,7 +127,7 @@ function ExperiencePanels() {
               {/* Closed: a short summary at the foot of the panel. */}
               <div
                 aria-hidden={on}
-                className={`pointer-events-none absolute bottom-6 left-6 right-6 transition-[opacity,transform] duration-500 ease-out ${on ? 'translate-y-2 opacity-0' : 'translate-y-0 opacity-100 delay-500'}`}
+                className={`pointer-events-none absolute bottom-6 left-6 right-6 transition-[opacity,transform] duration-500 ease-out ${on ? 'translate-y-2 opacity-0' : 'translate-y-0 opacity-100 delay-300'}`}
               >
                 <span className="mb-4 block h-1 w-10 rounded-full transition-all duration-500 group-hover:w-16" style={{ background: c }} />
                 <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-ink/50">{e.period}</p>
@@ -139,7 +139,7 @@ function ExperiencePanels() {
               <div
                 aria-hidden={!on}
                 className={`pointer-events-none absolute bottom-0 left-0 top-0 flex w-[clamp(27rem,42vw,40rem)] flex-col justify-end p-8 transition-[opacity,transform] ease-[cubic-bezier(0.22,1,0.36,1)] ${
-                  on ? 'translate-y-0 opacity-100 duration-700 delay-[450ms]' : 'translate-y-3 opacity-0 duration-200'
+                  on ? 'translate-y-0 opacity-100 duration-500 delay-[250ms]' : 'translate-y-3 opacity-0 duration-200'
                 }`}
               >
                 <p className="font-mono text-[11px] uppercase tracking-[0.14em] opacity-70">{e.period}</p>
