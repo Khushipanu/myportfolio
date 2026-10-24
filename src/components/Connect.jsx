@@ -5,8 +5,7 @@ import { profile, socials, resume } from '../data/content'
 
 // Closing section. First, after guillaumezhu.com, a giant "Let's connect"
 // slides across as you scroll, its letters falling into line as they reach the
-// middle. Then the words wrap into a ring that spins down around a large
-// contact panel, followed by the links and the footer bar.
+// middle. Then a large contact panel, followed by the links and the footer bar.
 const gmail = `https://mail.google.com/mail/?view=cm&fs=1&to=${profile.email}`
 function Magnetic({ children, className = '', ...props }) {
   const el = useRef(null)
@@ -81,15 +80,6 @@ export default function Connect() {
         })
       })
       mm.add(MOTION_OK, () => {
-        // The ring winds in: it starts large and spins down to size as the
-        // stage scrolls into view, then keeps turning slowly on its own.
-        gsap.fromTo('[data-lc-ring]', { scale: 2.6, rotate: -200, autoAlpha: 0 }, {
-          scale: 1,
-          rotate: 0,
-          autoAlpha: 1,
-          ease: 'none',
-          scrollTrigger: { trigger: '[data-lc-stage]', start: 'top bottom', end: 'center center', scrub: 0.8 },
-        })
         gsap.from('[data-lc-panel] > *', {
           y: 40,
           autoAlpha: 0,
@@ -108,7 +98,6 @@ export default function Connect() {
     { label: 'Gmail', href: gmail },
     ...socials.map((s) => ({ label: s.label, href: s.href })),
   ]
-  const ring = "LET'S CONNECT ✦ LET'S CONNECT ✦ LET'S CONNECT ✦ "
 
   return (
     <footer id="contact" ref={root} className="relative bg-jet text-ink">
@@ -135,19 +124,9 @@ export default function Connect() {
         <p className="absolute bottom-8 left-5 hidden font-mono text-[11px] uppercase tracking-[0.12em] text-ink/50 md:left-10 md:block">Keep scrolling ↓</p>
       </div>
 
-      {/* Part 2: the words wrap into a turning ring around the contact panel. */}
+      {/* Part 2: the contact panel. */}
       <div data-lc-stage className="relative flex min-h-[100svh] items-center justify-center overflow-hidden px-5 py-24 md:px-10">
         <div aria-hidden="true" className="glow glow-deep left-1/2 top-1/2 h-[70vh] w-[70vw] -translate-x-1/2 -translate-y-1/2" />
-        <div data-lc-ring aria-hidden="true" className="pointer-events-none absolute left-1/2 top-1/2 aspect-square w-[150vw] -translate-x-1/2 -translate-y-1/2 opacity-40 md:w-[min(86vw,104svh)] md:opacity-100">
-          <svg viewBox="0 0 500 500" className="h-full w-full overflow-visible ring-spin">
-            <defs>
-              <path id="lc-ring" d="M250,250 m-232,0 a232,232 0 1,1 464,0 a232,232 0 1,1 -464,0" />
-            </defs>
-            <text className="fill-chartreuse font-display text-[33px] font-black uppercase tracking-[0.06em]">
-              <textPath href="#lc-ring">{ring}</textPath>
-            </text>
-          </svg>
-        </div>
 
         <div data-lc-panel className="relative z-10 flex max-w-2xl flex-col items-center text-center">
           <p className="flex items-center gap-2.5 rounded-full border border-chartreuse/40 px-4 py-1.5 font-mono text-[11px] uppercase tracking-[0.14em] text-chartreuse">
