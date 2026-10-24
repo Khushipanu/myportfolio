@@ -1,7 +1,7 @@
 // Hero planet: a glossy forest-green sphere with grooved bands, wrapped in a
 // gold ring that passes behind it at the top and in front of it at the
-// bottom, with two small moons and a few sparkles. Pure SVG, so it stays
-// crisp at any size; the moons and sparkles drift with CSS animations.
+// bottom, with two small moons. Pure SVG, so it stays crisp at any size;
+// the moons drift with CSS animations.
 export default function Planet({ className = '' }) {
   const ring = 'rotate(-20 100 100)'
   return (
@@ -69,22 +69,7 @@ export default function Planet({ className = '' }) {
       {/* Moons. */}
       <g className="moon-a"><circle cx="46" cy="150" r="10" fill="url(#pl-moon-o)" /></g>
       <g className="moon-b"><circle cx="168" cy="122" r="6.5" fill="url(#pl-moon-g)" /></g>
-      <g className="moon-c"><circle cx="150" cy="26" r="3.5" fill="url(#pl-moon-g)" /></g>
 
-      {/* Sparkles. */}
-      {[
-        [26, 70, 5],
-        [178, 64, 4],
-        [132, 18, 7],
-      ].map(([x, y, r], i) => (
-        <path
-          key={i}
-          className="twinkle"
-          style={{ animationDelay: `${i * 0.7}s`, transformOrigin: `${x}px ${y}px` }}
-          d={`M${x} ${y - r} Q${x} ${y} ${x + r} ${y} Q${x} ${y} ${x} ${y + r} Q${x} ${y} ${x - r} ${y} Q${x} ${y} ${x} ${y - r}Z`}
-          fill={i === 2 ? '#e8a23c' : '#171512'}
-        />
-      ))}
     </svg>
   )
 }
