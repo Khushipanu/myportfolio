@@ -153,7 +153,7 @@ export default function Work() {
   )
 
   return (
-    <section id="work" ref={root} aria-labelledby="work-title" className="relative isolate bg-[#0b0d0c] text-ink">
+    <section id="work" ref={root} aria-labelledby="work-title" className="relative isolate bg-paper-2 text-ink">
       <div
         ref={stage}
         className="relative h-[100svh] select-none overflow-hidden"
@@ -170,13 +170,13 @@ export default function Work() {
             'M200 -40 C 420 260, 160 560, 520 760 S 880 980, 980 1000',
             'M1500 -20 C 1180 260, 1380 540, 1040 760 S 760 980, 640 1000',
           ].map((d, i) => (
-            <g key={i} opacity={i > 2 ? 0.6 : 1}>
-              <path d={d} fill="none" stroke="rgba(47,158,102,0.55)" strokeWidth="10" filter="url(#ribbon-glow)" />
-              <path d={d} fill="none" stroke="rgba(198,242,216,0.55)" strokeWidth="1.2" />
+            <g key={i} opacity={i > 2 ? 0.7 : 1}>
+              <path d={d} fill="none" stroke={['#c8dcf1', '#f3e08a', '#f4c9bf', '#cfe6d6', '#d8cdea'][i]} strokeWidth="14" filter="url(#ribbon-glow)" />
+              <path d={d} fill="none" stroke="rgba(26,25,23,0.18)" strokeWidth="1" />
             </g>
           ))}
         </svg>
-        <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_30%,rgba(11,13,12,0.85)_80%)]" />
+        <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_35%,rgba(235,229,217,0.9)_85%)]" />
 
         <p className="pointer-events-none absolute left-5 top-24 z-20 font-mono text-[11px] uppercase tracking-[0.12em] text-muted md:left-10 md:top-28">(02) Selected work</p>
 

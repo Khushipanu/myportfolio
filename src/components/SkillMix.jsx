@@ -7,12 +7,12 @@ import { skillGroups } from '../data/content'
 // the list below) lifts it out to show everything in it. On smaller screens
 // the cards become a swipeable row.
 const palette = [
-  { bg: '#6fdc9b', ink: '#0f2a1d' },
-  { bg: '#e9e4df', ink: '#131313' },
-  { bg: '#2f9e66', ink: '#effaf3' },
-  { bg: '#c6f2d8', ink: '#0f2a1d' },
-  { bg: '#4f7a63', ink: '#effaf3' },
-  { bg: '#b9d4c4', ink: '#131313' },
+  { bg: '#f3e08a', ink: '#1a1917' },
+  { bg: '#c8dcf1', ink: '#1a1917' },
+  { bg: '#f4c9bf', ink: '#1a1917' },
+  { bg: '#cfe6d6', ink: '#1a1917' },
+  { bg: '#d8cdea', ink: '#1a1917' },
+  { bg: '#f1d3a6', ink: '#1a1917' },
 ]
 const n = (i) => String(i + 1).padStart(2, '0')
 
@@ -29,12 +29,12 @@ function BoxCard({ g, i, active, setActive }) {
     >
       <div
         data-box-card
-        className="h-full w-full origin-bottom rounded-[18px] p-5 shadow-[0_-10px_40px_-10px_rgba(0,0,0,0.6)] transition-[transform,filter] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]"
+        className="h-full w-full origin-bottom rounded-[18px] p-5 shadow-[0_-10px_30px_-12px_rgba(90,60,20,0.35)] transition-[transform,filter] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]"
         style={{
-          background: `linear-gradient(160deg, ${c.bg}, color-mix(in srgb, ${c.bg} 78%, #000))`,
+          background: `linear-gradient(160deg, ${c.bg}, color-mix(in srgb, ${c.bg} 86%, #8a6a3a))`,
           color: c.ink,
           transform: `translateY(${up ? -96 : 0}px) rotate(${up ? 0 : -7}deg)`,
-          filter: dim ? 'brightness(0.6)' : 'none',
+          filter: dim ? 'saturate(0.55) brightness(0.92)' : 'none',
         }}
       >
         <div className="flex items-center justify-between">
@@ -89,12 +89,12 @@ export default function SkillMix() {
 
   return (
     <section ref={root} aria-labelledby="skills-title" className="relative isolate overflow-hidden px-5 py-24 md:px-10 md:py-36">
-      <div aria-hidden="true" className="glow glow-deep -z-10 left-[20%] top-[30%] h-[60vh] w-[60vw]" />
+      <div aria-hidden="true" className="glow glow-soft -z-10 left-[20%] top-[30%] h-[60vh] w-[60vw]" />
       <p className="font-mono text-[11px] uppercase tracking-[0.12em] text-muted">(05) Toolkit</p>
 
       <div data-tk-head className="mx-auto mt-10 max-w-3xl text-center">
         <h2 id="skills-title" className="text-[10vw] font-semibold leading-[1.02] tracking-[-0.04em] md:text-[4.6vw]">
-          My <span className="mark" style={{ transitionDelay: '0.2s' }}>toolkit</span>, packed and ready.
+          My <span className="mark mark-butter" style={{ transitionDelay: '0.2s' }}>toolkit</span>, packed and ready.
         </h2>
         <p className="mt-4 text-[16px] text-ink/60 md:text-[18px]">
           Everything I build with, sorted into a box. <span className="hidden lg:inline">Pick a card.</span>
@@ -104,8 +104,8 @@ export default function SkillMix() {
       {/* Wide screens: the box. */}
       <div data-box className="relative mx-auto mt-14 hidden h-[34rem] w-[60rem] lg:block xl:scale-110">
         {/* Back of the box, with a stitched inner edge. */}
-        <div aria-hidden="true" className="absolute inset-x-[30px] bottom-[60px] top-[40px] rounded-[22px] border border-ink/10 bg-[linear-gradient(180deg,#1d241f,#151916)]">
-          <div className="absolute inset-4 rounded-[14px] border border-dashed border-ink/10" />
+        <div aria-hidden="true" className="absolute inset-x-[30px] bottom-[60px] top-[40px] rounded-[22px] border border-[#b99a66]/40 bg-[linear-gradient(180deg,#eadbbd,#dcc69c)]">
+          <div className="absolute inset-4 rounded-[14px] border border-dashed border-[#a07f4a]/35" />
         </div>
         <ul className="absolute inset-0" aria-label="Skill groups">
           {skillGroups.map((g, i) => (
@@ -115,11 +115,11 @@ export default function SkillMix() {
         {/* Front of the box covers the foot of the cards. */}
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-x-0 bottom-0 z-30 flex h-[12rem] items-center justify-center overflow-hidden rounded-[22px] border border-accent/20 bg-[linear-gradient(180deg,#1f2a23_0%,#161c18_60%,#121512_100%)] shadow-[0_-20px_60px_-20px_rgba(0,0,0,0.9),inset_0_1px_0_rgba(198,242,216,0.18)]"
+          className="pointer-events-none absolute inset-x-0 bottom-0 z-30 flex h-[12rem] items-center justify-center overflow-hidden rounded-[22px] border border-[#b99a66]/50 bg-[linear-gradient(180deg,#f1e3c6_0%,#e3cfa6_60%,#d6bf92_100%)] shadow-[0_-20px_50px_-24px_rgba(90,60,20,0.45),inset_0_1px_0_rgba(255,255,255,0.7)]"
         >
-          <span className="font-tall text-[5.5rem] uppercase leading-none tracking-[0.04em] text-transparent [-webkit-text-stroke:1px_rgba(111,220,155,0.28)]">Things I build with</span>
+          <span className="font-tall text-[5.5rem] uppercase leading-none tracking-[0.04em] text-transparent [-webkit-text-stroke:1px_rgba(120,88,40,0.35)]">Things I build with</span>
         </div>
-        <span aria-hidden="true" className="pointer-events-none absolute -bottom-10 left-1/2 h-16 w-[70%] -translate-x-1/2 rounded-full bg-black/60 blur-2xl" />
+        <span aria-hidden="true" className="pointer-events-none absolute -bottom-10 left-1/2 h-16 w-[70%] -translate-x-1/2 rounded-full bg-[#5a3c14]/25 blur-2xl" />
       </div>
 
       {/* The list under the box: hovering an entry lifts its card. */}
@@ -152,7 +152,7 @@ export default function SkillMix() {
               key={g.label}
               data-group
               className="w-[62vw] shrink-0 snap-start rounded-[18px] p-5 sm:w-[38vw]"
-              style={{ background: `linear-gradient(160deg, ${c.bg}, color-mix(in srgb, ${c.bg} 78%, #000))`, color: c.ink }}
+              style={{ background: `linear-gradient(160deg, ${c.bg}, color-mix(in srgb, ${c.bg} 86%, #8a6a3a))`, color: c.ink }}
             >
               <p className="flex items-center justify-between font-mono text-[10px] uppercase tracking-[0.14em] opacity-70">
                 <span>{n(i)}</span>

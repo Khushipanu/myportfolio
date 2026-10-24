@@ -42,7 +42,8 @@ Add live/source links for a project by setting `live` and `code` in `content.js`
 
 The resume PDF lives in `public/Khushi_Panu_Resume.pdf`; replace that file to update the download.
 
-Design follows a dark theme (#131313 / #E9E4DF) with one green accent (#6FDC9B) with Archivo for
+Design follows a light theme (#F4F0E8 paper, #1A1917 ink) with a deep green accent (#23845A) and soft
+pastel supporting colours (butter, sky, blush, sage, lavender), with Archivo for
 headlines, Inter for body text and JetBrains Mono for labels and the menu.
 
 Decorative effects (grid backdrop, pointer glow, click ripple, word reveal) live in

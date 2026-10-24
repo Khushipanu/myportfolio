@@ -34,7 +34,7 @@ export default function SerenityBackdrop({ start = true, id = 'grid', className 
       <svg className="absolute inset-0 h-full w-full">
         <defs>
           <pattern id={`${id}-p`} width="60" height="60" patternUnits="userSpaceOnUse">
-            <path d="M 60 0 L 0 0 0 60" fill="none" stroke="rgba(233,228,223,0.06)" strokeWidth="0.5" />
+            <path d="M 60 0 L 0 0 0 60" fill="none" stroke="rgba(26,25,23,0.06)" strokeWidth="0.5" />
           </pattern>
           <radialGradient id={`${id}-fade`} cx="50%" cy="45%" r="75%">
             <stop offset="0" stopColor="#fff" stopOpacity="1" />

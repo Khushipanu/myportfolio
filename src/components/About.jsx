@@ -66,7 +66,7 @@ function ExperiencePanels() {
                 ev.currentTarget.style.setProperty('--my', `${ev.clientY - r.top}px`)
               }}
               className={`group relative min-w-0 overflow-hidden rounded-[18px] border transition-[flex-grow,border-color,background-color,transform] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-1 ${
-                on ? 'grow-[3] border-accent/40 bg-[#151a17]' : 'grow border-ink/10 bg-[#161616] hover:border-accent/30'
+                on ? 'grow-[3] border-accent/30 bg-[#e6efe6]' : 'grow border-ink/10 bg-white/55 hover:border-accent/30'
               }`}
               style={{ flexBasis: 0 }}
             >
@@ -81,11 +81,11 @@ function ExperiencePanels() {
               </button>
 
               {/* Spotlight that follows the pointer. */}
-              <span aria-hidden="true" className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100 [background:radial-gradient(420px_circle_at_var(--mx,50%)_var(--my,50%),rgba(111,220,155,0.11),transparent_60%)]" />
+              <span aria-hidden="true" className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100 [background:radial-gradient(420px_circle_at_var(--mx,50%)_var(--my,50%),rgba(243,224,138,0.45),transparent_60%)]" />
               {/* Green line that runs along the foot of the panel on hover. */}
               <span aria-hidden="true" className="pointer-events-none absolute inset-x-6 bottom-0 h-px origin-left scale-x-0 bg-accent transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-x-100" />
               {/* Soft green light in the open panel. */}
-              <span aria-hidden="true" className={`pointer-events-none absolute -right-24 -top-24 h-80 w-80 rounded-full bg-[radial-gradient(closest-side,rgba(111,220,155,0.18),transparent)] transition-opacity duration-700 ${on ? 'opacity-100' : 'opacity-0'}`} />
+              <span aria-hidden="true" className={`pointer-events-none absolute -right-24 -top-24 h-80 w-80 rounded-full bg-[radial-gradient(closest-side,rgba(200,220,241,0.9),transparent)] transition-opacity duration-700 ${on ? 'opacity-100' : 'opacity-0'}`} />
 
               <div className="pointer-events-none absolute left-6 right-6 top-6 flex items-center justify-between">
                 <span className={`font-mono text-[11px] tracking-[0.12em] transition-colors duration-500 ${on ? 'text-accent' : 'text-muted'}`}>{n(i)}</span>
@@ -95,7 +95,7 @@ function ExperiencePanels() {
               {/* Closed: a big outlined number fills the panel and turns green on hover. */}
               <span
                 aria-hidden="true"
-                className={`pointer-events-none absolute left-6 top-16 font-serif text-[9rem] italic leading-none text-transparent transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] [-webkit-text-stroke:1px_rgba(233,228,223,0.18)] group-hover:-translate-y-2 group-hover:[-webkit-text-stroke:1px_rgba(111,220,155,0.8)] ${on ? 'opacity-0' : 'opacity-100'}`}
+                className={`pointer-events-none absolute left-6 top-16 font-serif text-[9rem] italic leading-none text-transparent transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] [-webkit-text-stroke:1px_rgba(26,25,23,0.16)] group-hover:-translate-y-2 group-hover:[-webkit-text-stroke:1px_rgba(35,132,90,0.85)] ${on ? 'opacity-0' : 'opacity-100'}`}
               >
                 {n(i)}
               </span>
@@ -148,7 +148,7 @@ function ExperiencePanels() {
                   <span className="mt-1 block font-serif text-[16px] italic text-ink/55">{e.company}</span>
                   <span className="mt-1 block font-mono text-[10px] uppercase tracking-[0.14em] text-muted">{e.period}</span>
                 </span>
-                <span aria-hidden="true" className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full border transition-all duration-500 ${on ? 'rotate-45 border-accent bg-accent text-coal' : 'border-ink/30 text-ink'}`}>+</span>
+                <span aria-hidden="true" className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full border transition-all duration-500 ${on ? 'rotate-45 border-accent bg-accent text-white' : 'border-ink/30 text-ink'}`}>+</span>
               </button>
               <div className={`grid transition-[grid-template-rows] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${on ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}>
                 <div className="overflow-hidden">
@@ -169,9 +169,9 @@ function ExperiencePanels() {
 // Sticky notes beside the About statement (after the reference the user
 // shared). They can be dragged around with a mouse or finger.
 const notes = [
-  { text: 'Full Stack Developer at Ruhanix — building an ERP right now.', tag: 'Now · 2026', bg: '#efe9e1', rot: -3 },
-  { text: 'Interned at Sheryians: full-stack sites, web animations & dev content.', tag: 'Dec 2025 — Feb 2026', bg: '#c6f2d8', rot: 2.5 },
-  { text: 'MERN all the way.', chips: ['React', 'Node', 'Express', 'MongoDB'], tag: 'Stack', bg: '#6fdc9b', rot: -1.5 },
+  { text: 'Full Stack Developer at Ruhanix — building an ERP right now.', tag: 'Now · 2026', bg: 'var(--color-butter)', rot: -3 },
+  { text: 'Interned at Sheryians: full-stack sites, web animations & dev content.', tag: 'Dec 2025 — Feb 2026', bg: 'var(--color-blush)', rot: 2.5 },
+  { text: 'MERN all the way.', chips: ['React', 'Node', 'Express', 'MongoDB'], tag: 'Stack', bg: 'var(--color-sky)', rot: -1.5 },
 ]
 
 function Note({ n, className = '' }) {
@@ -203,14 +203,14 @@ function Note({ n, className = '' }) {
       data-note
       onPointerDown={onDown}
       style={{ background: n.bg, rotate: `${n.rot}deg` }}
-      className={`relative w-[15.5rem] cursor-grab touch-none select-none rounded-[6px] px-5 pb-4 pt-6 text-coal shadow-[0_18px_40px_-12px_rgba(0,0,0,0.55)] active:cursor-grabbing ${className}`}
+      className={`relative w-[15.5rem] cursor-grab touch-none select-none rounded-[6px] px-5 pb-4 pt-6 text-coal shadow-[0_18px_40px_-14px_rgba(26,25,23,0.35)] active:cursor-grabbing ${className}`}
     >
       <span aria-hidden="true" className="absolute -top-2.5 left-1/2 h-5 w-20 -translate-x-1/2 rotate-[-2deg] bg-white/35 backdrop-blur-[1px]" />
       <p className="font-serif text-[21px] italic leading-[1.2]">{n.text}</p>
       {n.chips && (
         <p className="mt-3 flex flex-wrap gap-1.5">
           {n.chips.map((c) => (
-            <span key={c} className="rounded-full bg-coal/85 px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-[0.08em] text-accent">{c}</span>
+            <span key={c} className="rounded-full bg-ink px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-[0.08em] text-paper">{c}</span>
           ))}
         </p>
       )}
@@ -221,8 +221,8 @@ function Note({ n, className = '' }) {
 
 // Statement with hand-drawn marks: a circled word, green marker highlights
 // and a squiggle underline, drawn in once the paragraph scrolls into view.
-const Mark = ({ children, delay = 0 }) => (
-  <span className="mark" style={{ transitionDelay: `${delay}s` }}>{children}</span>
+const Mark = ({ children, delay = 0, tone = 'sky' }) => (
+  <span className={`mark mark-${tone}`} style={{ transitionDelay: `${delay}s` }}>{children}</span>
 )
 
 function Statement() {
@@ -232,14 +232,14 @@ function Statement() {
       <span className="relative inline-block">
         ideas
         <svg aria-hidden="true" viewBox="0 0 200 90" preserveAspectRatio="none" className="draw pointer-events-none absolute -left-[16%] -top-[22%] h-[150%] w-[132%] overflow-visible">
-          <path pathLength="1" d="M18 52 C 14 18, 182 6, 190 40 C 198 74, 40 86, 14 58 C 4 46, 26 26, 70 20" fill="none" stroke="var(--color-accent)" strokeWidth="2.5" strokeLinecap="round" vectorEffect="non-scaling-stroke" style={{ transitionDelay: '0.2s' }} />
+          <path pathLength="1" d="M18 52 C 14 18, 182 6, 190 40 C 198 74, 40 86, 14 58 C 4 46, 26 26, 70 20" fill="none" stroke="var(--color-coral)" strokeWidth="2.5" strokeLinecap="round" vectorEffect="non-scaling-stroke" style={{ transitionDelay: '0.2s' }} />
         </svg>
       </span>{' '}
-      into <Mark delay={0.5}>fast, maintainable web apps</Mark> — from <Mark delay={0.9}>interfaces people enjoy</Mark> to the{' '}
+      into <Mark delay={0.5} tone="sky">fast, maintainable web apps</Mark> — from <Mark delay={0.9} tone="butter">interfaces people enjoy</Mark> to the{' '}
       <span className="relative inline-block">
         APIs and data
         <svg aria-hidden="true" viewBox="0 0 300 20" preserveAspectRatio="none" className="draw pointer-events-none absolute -bottom-[0.18em] left-0 h-[0.32em] w-full overflow-visible">
-          <path pathLength="1" d="M2 10 C 20 2, 30 18, 48 10 S 76 2, 94 10 S 122 18, 140 10 S 168 2, 186 10 S 214 18, 232 10 S 260 2, 278 10 S 292 14, 298 9" fill="none" stroke="var(--color-accent)" strokeWidth="2" strokeLinecap="round" vectorEffect="non-scaling-stroke" style={{ transitionDelay: '1.3s' }} />
+          <path pathLength="1" d="M2 10 C 20 2, 30 18, 48 10 S 76 2, 94 10 S 122 18, 140 10 S 168 2, 186 10 S 214 18, 232 10 S 260 2, 278 10 S 292 14, 298 9" fill="none" stroke="var(--color-coral)" strokeWidth="2" strokeLinecap="round" vectorEffect="non-scaling-stroke" style={{ transitionDelay: '1.3s' }} />
         </svg>
       </span>{' '}
       that power them.

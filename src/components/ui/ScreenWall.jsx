@@ -27,7 +27,7 @@ export default function ScreenWall({ className = '' }) {
         ))}
       </div>
       {/* Darken the left side so the name and intro sit on a calm background. */}
-      <div className="absolute inset-0 bg-[linear-gradient(90deg,var(--color-paper)_8%,rgba(19,19,19,0.6)_45%,transparent_80%)]" />
+      <div className="absolute inset-0 bg-[linear-gradient(90deg,var(--color-paper)_8%,rgba(244,240,232,0.7)_45%,transparent_80%)]" />
     </div>
   )
 }

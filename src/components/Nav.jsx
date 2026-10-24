@@ -15,6 +15,22 @@ const links = [
 export default function Nav({ ready }) {
   const root = useRef(null)
   const [open, setOpen] = useState(false)
+  // Hidden while scrolling down, shown again as soon as the visitor scrolls up.
+  const [hidden, setHidden] = useState(false)
+  const [atTop, setAtTop] = useState(true)
+
+  useEffect(() => {
+    let last = window.scrollY
+    const onScroll = () => {
+      const y = window.scrollY
+      setAtTop(y < 40)
+      if (Math.abs(y - last) < 6) return
+      setHidden(y > last && y > 120)
+      last = y
+    }
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
 
   // Phone menu: lock scrolling while open and close on Escape.
   useEffect(() => {
@@ -48,7 +64,9 @@ export default function Nav({ ready }) {
   return (
     <header
       ref={root}
-      className="absolute inset-x-0 top-0 z-50 flex items-center justify-between px-5 py-4 md:px-10 md:py-6"
+      className={`fixed inset-x-0 top-0 z-50 flex items-center justify-between px-5 transition-[translate,background-color,padding,box-shadow] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] md:px-10 ${
+        hidden && !open ? '-translate-y-full' : ''
+      } ${atTop || open ? 'py-4 md:py-6' : 'bg-paper/80 py-3 shadow-[0_1px_0_rgba(26,25,23,0.08)] backdrop-blur-md md:py-4'}`}
     >
       <a
         href="#top"
@@ -106,9 +124,9 @@ export default function Nav({ ready }) {
           href="#contact"
           onClick={(e) => go(e, '#contact')}
           data-nav-item
-          className="group flex items-center gap-2 whitespace-nowrap rounded-full border border-accent/80 px-5 py-2.5 font-mono text-[12px] font-medium uppercase tracking-[0.1em] text-ink transition-colors duration-300 hover:bg-accent hover:text-coal focus-visible:bg-accent focus-visible:text-coal md:px-6 md:py-3"
+          className="group flex items-center gap-2 whitespace-nowrap rounded-full border border-accent/80 px-5 py-2.5 font-mono text-[12px] font-medium uppercase tracking-[0.1em] text-ink transition-colors duration-300 hover:bg-accent hover:text-white focus-visible:bg-accent focus-visible:text-white md:px-6 md:py-3"
         >
-          Let's talk <span aria-hidden="true" className="text-accent transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-coal">↗</span>
+          Let's talk <span aria-hidden="true" className="text-accent transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-white">↗</span>
         </a>
       </nav>
 
