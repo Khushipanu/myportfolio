@@ -50,6 +50,13 @@ const tones = ['#1f4a47', '#c9673f', '#1d2433']
 
 function ExperiencePanels() {
   const [open, setOpen] = useState(0)
+  // Hover intent: a panel opens only once the pointer rests on it briefly, so
+  // sweeping across the row doesn't flick through every panel.
+  const hoverTimer = useRef(0)
+  const hoverOpen = (i) => {
+    clearTimeout(hoverTimer.current)
+    hoverTimer.current = setTimeout(() => setOpen(i), 140)
+  }
   const n = (i) => String(i + 1).padStart(2, '0')
 
   return (
@@ -63,23 +70,28 @@ function ExperiencePanels() {
             <li
               key={e.role}
               data-panel
-              onPointerEnter={(ev) => ev.pointerType === 'mouse' && setOpen(i)}
+              onPointerEnter={(ev) => ev.pointerType === 'mouse' && hoverOpen(i)}
+              onPointerLeave={() => clearTimeout(hoverTimer.current)}
               onPointerMove={(ev) => {
                 const r = ev.currentTarget.getBoundingClientRect()
                 ev.currentTarget.style.setProperty('--mx', `${ev.clientX - r.left}px`)
                 ev.currentTarget.style.setProperty('--my', `${ev.clientY - r.top}px`)
               }}
-              className={`group relative min-w-0 overflow-hidden rounded-[22px] transition-[flex-grow,transform,box-shadow] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-1 ${
+              className={`group relative min-w-0 overflow-hidden rounded-[22px] transition-[flex-grow,box-shadow,color] duration-[900ms] ease-[cubic-bezier(0.65,0,0.35,1)] ${
                 on ? 'grow-[3] shadow-[0_30px_60px_-28px_rgba(23,21,18,0.55)]' : 'grow shadow-[0_10px_30px_-20px_rgba(23,21,18,0.35)]'
               }`}
               style={{
                 flexBasis: 0,
                 color: on ? '#f6f0e6' : '#171512',
-                background: on
-                  ? `linear-gradient(160deg, color-mix(in srgb, ${c} 88%, #fff) 0%, ${c} 45%, color-mix(in srgb, ${c} 80%, #000) 100%)`
-                  : `linear-gradient(170deg, #fffdf8, color-mix(in srgb, ${c} 12%, #f6f0e6))`,
+                background: `linear-gradient(170deg, #fffdf8, color-mix(in srgb, ${c} 12%, #f6f0e6))`,
               }}
             >
+              {/* The panel colour fades in, rather than swapping instantly. */}
+              <span
+                aria-hidden="true"
+                className={`pointer-events-none absolute inset-0 transition-opacity duration-[900ms] ease-[cubic-bezier(0.65,0,0.35,1)] ${on ? 'opacity-100' : 'opacity-0'}`}
+                style={{ background: `linear-gradient(160deg, color-mix(in srgb, ${c} 88%, #fff) 0%, ${c} 45%, color-mix(in srgb, ${c} 80%, #000) 100%)` }}
+              />
               <button
                 type="button"
                 onClick={() => setOpen(i)}
@@ -106,7 +118,7 @@ function ExperiencePanels() {
               {/* Closed: a big outlined number in the panel colour. */}
               <span
                 aria-hidden="true"
-                className={`pointer-events-none absolute left-6 top-20 font-serif text-[9rem] italic leading-none text-transparent transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:-translate-y-2 ${on ? 'opacity-0' : 'opacity-100'}`}
+                className={`pointer-events-none absolute left-6 top-20 font-serif text-[9rem] italic leading-none text-transparent transition-[opacity,transform] duration-500 ease-out group-hover:-translate-y-2 ${on ? 'opacity-0' : 'opacity-100 delay-500'}`}
                 style={{ WebkitTextStroke: `1.2px ${c}` }}
               >
                 {n(i)}
@@ -115,7 +127,7 @@ function ExperiencePanels() {
               {/* Closed: a short summary at the foot of the panel. */}
               <div
                 aria-hidden={on}
-                className={`pointer-events-none absolute bottom-6 left-6 right-6 transition-opacity duration-300 ${on ? 'opacity-0' : 'opacity-100 delay-300'}`}
+                className={`pointer-events-none absolute bottom-6 left-6 right-6 transition-[opacity,transform] duration-500 ease-out ${on ? 'translate-y-2 opacity-0' : 'translate-y-0 opacity-100 delay-500'}`}
               >
                 <span className="mb-4 block h-1 w-10 rounded-full transition-all duration-500 group-hover:w-16" style={{ background: c }} />
                 <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-ink/50">{e.period}</p>
@@ -126,8 +138,8 @@ function ExperiencePanels() {
               {/* Open: full detail, at a fixed width so it never reflows while the panel resizes. */}
               <div
                 aria-hidden={!on}
-                className={`pointer-events-none absolute bottom-0 left-0 top-0 flex w-[clamp(27rem,42vw,40rem)] flex-col justify-end p-8 transition-[opacity,transform] duration-500 ${
-                  on ? 'translate-y-0 opacity-100 delay-300' : 'translate-y-4 opacity-0'
+                className={`pointer-events-none absolute bottom-0 left-0 top-0 flex w-[clamp(27rem,42vw,40rem)] flex-col justify-end p-8 transition-[opacity,transform] ease-[cubic-bezier(0.22,1,0.36,1)] ${
+                  on ? 'translate-y-0 opacity-100 duration-700 delay-[450ms]' : 'translate-y-3 opacity-0 duration-200'
                 }`}
               >
                 <p className="font-mono text-[11px] uppercase tracking-[0.14em] opacity-70">{e.period}</p>

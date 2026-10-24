@@ -58,7 +58,7 @@ function useRing(stageRef, ringRef, progressRef, onFront) {
         for (let j = 0; j < SLICES; j++) {
           const sa = a + (j - (SLICES - 1) / 2) * g.dSlice
           const ks = (Math.cos((sa * Math.PI) / 180) + 1) / 2
-          shades[i][j].style.opacity = ((1 - ks) * 0.7).toFixed(3)
+          shades[i][j].style.opacity = ((1 - ks) * 0.62).toFixed(3)
           sl[j].style.transform = `translate3d(-50%, -50%, 0) rotateY(${sa.toFixed(3)}deg) translateZ(${g.r.toFixed(1)}px)`
         }
       }
@@ -109,10 +109,10 @@ function Card({ c, i }) {
           <div className="absolute top-0 h-full" style={{ width: 'var(--cw)', left: `calc(var(--cw) / ${SLICES} * ${-j})` }}>
             <Art
               variant={c.variant}
-              className={`h-full w-full text-[calc(var(--cw)/19)] ${j === 0 ? 'rounded-l-[10px]' : ''} ${j === SLICES - 1 ? 'rounded-r-[10px]' : ''}`}
+              className={`h-full w-full border-y border-[#1a1917]/15 text-[calc(var(--cw)/19)] ${j === 0 ? 'rounded-l-[10px] border-l' : ''} ${j === SLICES - 1 ? 'rounded-r-[10px] border-r' : ''}`}
             />
           </div>
-          <div data-shade className="pointer-events-none absolute inset-0 bg-[#c9bba1]" />
+          <div data-shade className="pointer-events-none absolute inset-0 bg-[#24382f]" />
         </div>
       ))}
     </div>
@@ -153,7 +153,7 @@ export default function Work() {
   )
 
   return (
-    <section id="work" ref={root} aria-labelledby="work-title" className="relative isolate bg-paper-2 text-ink">
+    <section id="work" ref={root} aria-labelledby="work-title" className="relative isolate bg-[radial-gradient(ellipse_at_50%_45%,#f8f3ea_0%,#efe6d6_55%,#e2d4bd_100%)] text-ink">
       <div
         ref={stage}
         className="relative h-[100svh] select-none overflow-hidden"
@@ -171,12 +171,12 @@ export default function Work() {
             'M1500 -20 C 1180 260, 1380 540, 1040 760 S 760 980, 640 1000',
           ].map((d, i) => (
             <g key={i} opacity={i > 2 ? 0.7 : 1}>
-              <path d={d} fill="none" stroke={['#d6e0cf', '#e6d3ad', '#f0c6ae', '#c9d8bf', '#e2d4c0'][i]} strokeWidth="14" filter="url(#ribbon-glow)" />
-              <path d={d} fill="none" stroke="rgba(26,25,23,0.18)" strokeWidth="1" />
+              <path d={d} fill="none" stroke={['#1f4d3a', '#e3a644', '#cf6236', '#6f8f5b', '#b5845a'][i]} strokeOpacity="0.28" strokeWidth="12" filter="url(#ribbon-glow)" />
+              <path d={d} fill="none" stroke={['#1f4d3a', '#c98a2e', '#cf6236', '#4f7a3e', '#9a6a40'][i]} strokeOpacity="0.55" strokeWidth="1.2" />
             </g>
           ))}
         </svg>
-        <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_35%,rgba(235,229,217,0.9)_85%)]" />
+        <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_45%,rgba(226,212,189,0.45)_100%)]" />
 
         <p className="pointer-events-none absolute left-5 top-24 z-20 font-mono text-[11px] uppercase tracking-[0.12em] text-muted md:left-10 md:top-28">(02) Selected work</p>
 
