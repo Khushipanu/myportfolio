@@ -6,14 +6,14 @@ import DotField from './ui/DotField'
 
 // Interactive hero in the jet black / hot pink / chartreuse palette:
 // - a dot grid that lights up around the pointer,
-// - a name whose letters swell wider, bolder and pink as the pointer nears,
+// - a name whose letters swell wider and bolder as the pointer nears,
 // - a line that cycles through what Khushi builds, and an info strip.
 const builds = ['web apps', 'REST APIs', 'ERP systems', 'MERN projects']
 
 function Line({ word, className = '' }) {
   return (
     <span aria-hidden="true" className={`block whitespace-nowrap ${className}`}>
-      {word.toUpperCase().split('').map((c, i) => (
+      {word.split('').map((c, i) => (
         <span key={i} className="inline-block overflow-hidden align-bottom">
           <span data-char data-px className="inline-block will-change-[font-stretch]">{c}</span>
         </span>
@@ -22,14 +22,14 @@ function Line({ word, className = '' }) {
   )
 }
 
-// Letters respond to the pointer: the closer it gets, the wider, heavier and
-// pinker each one becomes. Values ease every frame so the motion stays fluid.
+// Letters respond to the pointer: the closer it gets, the wider and heavier
+// each one becomes (colours stay as they are). Values ease every frame so the
+// motion stays fluid.
 function useProximity(rootRef, ready) {
   useEffect(() => {
     if (!ready || prefersReducedMotion()) return
     const root = rootRef.current
     const chars = [...root.querySelectorAll('[data-px]')]
-    const base = chars.map((c) => getComputedStyle(c).color)
     const state = chars.map(() => 0)
     const pointer = { x: -9999, y: -9999 }
     const onMove = (e) => { pointer.x = e.clientX; pointer.y = e.clientY }
@@ -45,16 +45,15 @@ function useProximity(rootRef, ready) {
         const goal = Math.max(0, 1 - d / R)
         state[i] += (goal - state[i]) * 0.14
         const k = state[i]
-        c.style.fontStretch = `${100 + k * 25}%`
-        c.style.fontWeight = String(Math.round(700 + k * 200))
-        c.style.color = k > 0.04 ? `color-mix(in srgb, #ff2da8 ${Math.round(k * 100)}%, ${base[i]})` : ''
+        c.style.fontStretch = `${88 + k * 12}%`
+        c.style.fontWeight = String(Math.round(640 + k * 160))
       })
     }
     raf = requestAnimationFrame(tick)
     return () => {
       cancelAnimationFrame(raf)
       window.removeEventListener('pointermove', onMove)
-      chars.forEach((c) => { c.style.fontStretch = ''; c.style.fontWeight = ''; c.style.color = '' })
+      chars.forEach((c) => { c.style.fontStretch = ''; c.style.fontWeight = '' })
     }
   }, [rootRef, ready])
 }
@@ -68,7 +67,7 @@ function Cycler() {
   }, [])
   return (
     <span className="relative inline-flex h-[1.35em] overflow-hidden rounded-[0.3em] bg-chartreuse px-[0.35em] align-middle text-jet">
-      <span key={i} className="cycle-in inline-block font-semibold">{builds[i]}</span>
+      <span key={i} className="cycle-in inline-block font-medium">{builds[i]}</span>
     </span>
   )
 }
@@ -112,20 +111,20 @@ export default function Hero({ ready }) {
           </span>
           Available for work
         </span>
-        <span data-hero-fade className="hidden font-mono text-[11px] uppercase tracking-[0.14em] text-pink md:block">Move your cursor ✦</span>
+        <span data-hero-fade className="hidden font-mono text-[11px] uppercase tracking-[0.14em] text-ink/50 md:block">Move your cursor ✦</span>
       </div>
 
       <div className="relative my-auto py-8">
         <h1
           ref={name}
           aria-label={profile.name}
-          className="font-display uppercase leading-[0.86] tracking-[-0.02em] [font-stretch:100%] [font-weight:700] text-[17vw] md:text-[min(15vw,27svh)]"
+          className="font-[family-name:var(--font-hero)] leading-[0.88] tracking-[-0.045em] [font-stretch:88%] [font-weight:640] text-[19vw] md:text-[min(16vw,28svh)]"
         >
           <Line word={profile.firstName} />
           <Line word={profile.lastName} className="text-chartreuse md:pl-[22vw]" />
         </h1>
 
-        <p data-hero-fade className="mt-8 max-w-2xl text-[20px] leading-snug text-ink/80 md:mt-10 md:text-[28px]">
+        <p data-hero-fade className="mt-8 max-w-2xl font-[family-name:var(--font-hero)] text-[21px] font-light leading-snug tracking-[-0.01em] text-ink/80 md:mt-10 md:text-[30px]">
           Full Stack Developer — I build <Cycler /> that people enjoy using.
         </p>
       </div>
