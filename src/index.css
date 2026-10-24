@@ -289,6 +289,7 @@ html.lenis body {
 .mark-butter { --mk: 234, 210, 160; }
 .mark-blush { --mk: 240, 198, 174; }
 .mark-lavender { --mk: 226, 212, 192; }
+.mark-gold { --mk: 244, 205, 72; }
 .is-on .mark { background-size: 100% 72%; }
 .draw path { stroke-dasharray: 1; stroke-dashoffset: 1; transition: stroke-dashoffset 1.2s cubic-bezier(0.65, 0, 0.35, 1); }
 .is-on .draw path { stroke-dashoffset: 0; }

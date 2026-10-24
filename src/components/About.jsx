@@ -21,29 +21,32 @@ function Icon({ i, className = '' }) {
   )
 }
 
-function Detail({ e, on = true }) {
+function Detail({ e, on = true, light = false }) {
   return (
     <>
-      <ul className="space-y-2.5 text-[14px] leading-snug text-ink/80 md:text-[15px]">
+      <ul className={`space-y-2.5 text-[14px] leading-snug md:text-[15px] ${light ? 'opacity-90' : 'text-ink/80'}`}>
         {e.points.map((pt, k) => (
           <li
             key={pt}
             className={`flex gap-3 transition-[opacity,transform] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${on ? 'translate-x-0 opacity-100' : '-translate-x-3 opacity-0'}`}
             style={{ transitionDelay: on ? `${0.35 + k * 0.08}s` : '0s' }}
           >
-            <span aria-hidden="true" className="mt-[0.5em] h-1 w-1 shrink-0 rounded-full bg-accent" />
+            <span aria-hidden="true" className={`mt-[0.5em] h-1 w-1 shrink-0 rounded-full ${light ? 'bg-current' : 'bg-accent'}`} />
             {pt}
           </li>
         ))}
       </ul>
       <ul className="mt-6 flex flex-wrap gap-2" aria-label="Tools">
         {e.stack.map((t) => (
-          <li key={t} className="rounded-full border border-ink/15 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.12em] text-ink/60">{t}</li>
+          <li key={t} className={`rounded-full border px-3 py-1 font-mono text-[10px] uppercase tracking-[0.12em] ${light ? 'border-current/30 opacity-80' : 'border-ink/15 text-ink/60'}`}>{t}</li>
         ))}
       </ul>
     </>
   )
 }
+
+// Panel colours, in the same order as `experience`.
+const tones = ['#1f4a47', '#c9673f', '#1d2433']
 
 function ExperiencePanels() {
   const [open, setOpen] = useState(0)
@@ -51,10 +54,11 @@ function ExperiencePanels() {
 
   return (
     <>
-      {/* Wide screens: side-by-side panels. */}
-      <ul data-panels className="hidden h-[36rem] gap-3 lg:flex" aria-label="Experience">
+      {/* Wide screens: side-by-side panels, each in its own colour. */}
+      <ul data-panels className="hidden h-[36rem] gap-4 lg:flex" aria-label="Experience">
         {experience.map((e, i) => {
           const on = open === i
+          const c = tones[i % tones.length]
           return (
             <li
               key={e.role}
@@ -65,10 +69,16 @@ function ExperiencePanels() {
                 ev.currentTarget.style.setProperty('--mx', `${ev.clientX - r.left}px`)
                 ev.currentTarget.style.setProperty('--my', `${ev.clientY - r.top}px`)
               }}
-              className={`group relative min-w-0 overflow-hidden rounded-[18px] border transition-[flex-grow,border-color,background-color,transform] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-1 ${
-                on ? 'grow-[3] border-accent/30 bg-[#ece4d3]' : 'grow border-ink/10 bg-white/55 hover:border-accent/30'
+              className={`group relative min-w-0 overflow-hidden rounded-[22px] transition-[flex-grow,transform,box-shadow] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-1 ${
+                on ? 'grow-[3] shadow-[0_30px_60px_-28px_rgba(23,21,18,0.55)]' : 'grow shadow-[0_10px_30px_-20px_rgba(23,21,18,0.35)]'
               }`}
-              style={{ flexBasis: 0 }}
+              style={{
+                flexBasis: 0,
+                color: on ? '#f6f0e6' : '#171512',
+                background: on
+                  ? `linear-gradient(160deg, color-mix(in srgb, ${c} 88%, #fff) 0%, ${c} 45%, color-mix(in srgb, ${c} 80%, #000) 100%)`
+                  : `linear-gradient(170deg, #fffdf8, color-mix(in srgb, ${c} 12%, #f6f0e6))`,
+              }}
             >
               <button
                 type="button"
@@ -80,34 +90,37 @@ function ExperiencePanels() {
                 <span className="sr-only">{`${e.role} at ${e.company}`}</span>
               </button>
 
-              {/* Spotlight that follows the pointer. */}
-              <span aria-hidden="true" className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100 [background:radial-gradient(420px_circle_at_var(--mx,50%)_var(--my,50%),rgba(207,98,54,0.12),transparent_60%)]" />
-              {/* Green line that runs along the foot of the panel on hover. */}
-              <span aria-hidden="true" className="pointer-events-none absolute inset-x-6 bottom-0 h-px origin-left scale-x-0 bg-accent transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-x-100" />
-              {/* Soft green light in the open panel. */}
-              <span aria-hidden="true" className={`pointer-events-none absolute -right-24 -top-24 h-80 w-80 rounded-full bg-[radial-gradient(closest-side,rgba(230,211,173,0.9),transparent)] transition-opacity duration-700 ${on ? 'opacity-100' : 'opacity-0'}`} />
+              {/* Fine grain and a spotlight that follows the pointer. */}
+              <span aria-hidden="true" className="pointer-events-none absolute inset-0 opacity-[0.18] mix-blend-overlay [background-image:url(&quot;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E&quot;)]" />
+              <span aria-hidden="true" className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100 [background:radial-gradient(380px_circle_at_var(--mx,50%)_var(--my,50%),rgba(255,255,255,0.18),transparent_60%)]" />
+              {/* Concentric rings in the corner of the open panel. */}
+              <svg aria-hidden="true" viewBox="0 0 200 200" className={`pointer-events-none absolute -right-16 -top-16 h-72 w-72 transition-opacity duration-700 ${on ? 'opacity-30' : 'opacity-0'}`}>
+                {[30, 55, 80, 100].map((r) => <circle key={r} cx="100" cy="100" r={r} fill="none" stroke="currentColor" strokeWidth="0.8" />)}
+              </svg>
 
               <div className="pointer-events-none absolute left-6 right-6 top-6 flex items-center justify-between">
-                <span className={`font-mono text-[11px] tracking-[0.12em] transition-colors duration-500 ${on ? 'text-accent' : 'text-muted'}`}>{n(i)}</span>
-                <Icon i={i} className={`h-5 w-5 transition-colors duration-500 ${on ? 'text-accent' : 'text-ink/50'}`} />
+                <span className="flex h-8 w-8 items-center justify-center rounded-full border font-mono text-[10px] transition-colors duration-500" style={{ borderColor: on ? 'rgba(246,240,230,0.4)' : c, color: on ? '#f6f0e6' : c }}>{n(i)}</span>
+                <Icon i={i} className="h-5 w-5" />
               </div>
 
-              {/* Closed: a big outlined number fills the panel and turns green on hover. */}
+              {/* Closed: a big outlined number in the panel colour. */}
               <span
                 aria-hidden="true"
-                className={`pointer-events-none absolute left-6 top-16 font-serif text-[9rem] italic leading-none text-transparent transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] [-webkit-text-stroke:1px_rgba(26,25,23,0.16)] group-hover:-translate-y-2 group-hover:[-webkit-text-stroke:1px_rgba(207,98,54,0.85)] ${on ? 'opacity-0' : 'opacity-100'}`}
+                className={`pointer-events-none absolute left-6 top-20 font-serif text-[9rem] italic leading-none text-transparent transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:-translate-y-2 ${on ? 'opacity-0' : 'opacity-100'}`}
+                style={{ WebkitTextStroke: `1.2px ${c}` }}
               >
                 {n(i)}
               </span>
 
-              {/* Closed: a short horizontal summary at the foot of the panel. */}
+              {/* Closed: a short summary at the foot of the panel. */}
               <div
                 aria-hidden={on}
                 className={`pointer-events-none absolute bottom-6 left-6 right-6 transition-opacity duration-300 ${on ? 'opacity-0' : 'opacity-100 delay-300'}`}
               >
-                <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-muted">{e.period}</p>
-                <h3 className="mt-3 text-[22px] font-medium leading-[1.15] tracking-[-0.01em] text-ink/90 transition-colors duration-500 group-hover:text-accent">{e.role}</h3>
-                <p className="mt-1.5 font-serif text-[18px] italic leading-snug text-ink/50">{e.company}</p>
+                <span className="mb-4 block h-1 w-10 rounded-full transition-all duration-500 group-hover:w-16" style={{ background: c }} />
+                <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-ink/50">{e.period}</p>
+                <h3 className="mt-3 text-[22px] font-semibold leading-[1.15] tracking-[-0.01em]">{e.role}</h3>
+                <p className="mt-1.5 font-serif text-[18px] italic leading-snug" style={{ color: c }}>{e.company}</p>
               </div>
 
               {/* Open: full detail, at a fixed width so it never reflows while the panel resizes. */}
@@ -117,12 +130,12 @@ function ExperiencePanels() {
                   on ? 'translate-y-0 opacity-100 delay-300' : 'translate-y-4 opacity-0'
                 }`}
               >
-                <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-accent">{e.period}</p>
-                <h3 className="mt-3 text-[34px] font-medium leading-tight tracking-[-0.02em]">{e.role}</h3>
-                <p className="mt-1 font-serif text-[22px] italic leading-snug text-accent">at {e.company}</p>
-                <p className="mt-4 text-[15px] leading-relaxed text-ink/65">{e.summary}</p>
+                <p className="font-mono text-[11px] uppercase tracking-[0.14em] opacity-70">{e.period}</p>
+                <h3 className="mt-3 text-[34px] font-semibold leading-tight tracking-[-0.02em]">{e.role}</h3>
+                <p className="mt-1 font-serif text-[22px] italic leading-snug opacity-85">at {e.company}</p>
+                <p className="mt-4 text-[15px] leading-relaxed opacity-75">{e.summary}</p>
                 <div className="mt-5">
-                  <Detail e={e} on={on} />
+                  <Detail e={e} on={on} light />
                 </div>
               </div>
             </li>
@@ -313,7 +326,13 @@ export default function About() {
         </div>
       </div>
 
-      <div id="experience" className="relative mt-24 scroll-mt-24 md:mt-36">
+      <div id="experience" className="relative mt-24 scroll-mt-24 py-4 md:mt-36">
+        {/* Dotted grid and soft glows behind the panels. */}
+        <div aria-hidden="true" className="pointer-events-none absolute -inset-x-5 -bottom-24 -top-16 -z-10 md:-inset-x-10">
+          <div className="absolute inset-0 opacity-60 [background-image:radial-gradient(rgba(23,21,18,0.14)_1px,transparent_1px)] [background-size:22px_22px] [mask-image:radial-gradient(ellipse_at_center,#000_35%,transparent_75%)]" />
+          <div className="glow glow-mint left-[5%] top-[20%] h-[50vh] w-[40vw]" />
+          <div className="glow glow-deep right-[0%] bottom-[0%] h-[50vh] w-[40vw]" />
+        </div>
         <div data-focus-fade className="mb-10 flex items-end justify-between gap-6 md:mb-14">
           <h2 className="text-[9vw] font-extralight leading-[1.05] tracking-[-0.03em] md:text-[4.4vw]">
             Experience<span className="text-accent">.</span>
