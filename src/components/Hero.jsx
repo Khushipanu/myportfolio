@@ -2,7 +2,7 @@ import { useRef } from 'react'
 import { gsap, useGSAP, MOTION_OK } from '../lib/gsap'
 import { scrollToTarget } from '../hooks/useLenis'
 import { profile, resume } from '../data/content'
-import Planet from './ui/Planet'
+import Shapes3D from './ui/Shapes3D'
 
 function Line({ word, className = '' }) {
   return (
@@ -32,22 +32,12 @@ export default function Hero({ ready }) {
           .from('[data-hero-rule]', { scaleX: 0, duration: 1.6, ease: 'expo.inOut' }, 0.3)
           .from('[data-hero-cta]', { y: 20, autoAlpha: 0, duration: 0.9, ease: 'expo.out', stagger: 0.08 }, 1.1)
 
-        gsap.from('[data-sun]', { scale: 0.6, autoAlpha: 0, duration: 1.8, ease: 'expo.out', delay: 0.5 })
-
-        // The planet drifts gently against the pointer.
-        const onMove = (e) => {
-          const x = e.clientX / window.innerWidth - 0.5
-          const y = e.clientY / window.innerHeight - 0.5
-          gsap.to('[data-sun]', { x: x * -14, y: y * -14, duration: 1.6, ease: 'power3.out' })
-        }
-        window.addEventListener('pointermove', onMove, { passive: true })
 
         // On scroll away the two lines drift apart.
         const st = { trigger: root.current, start: 'top top', end: 'bottom top', scrub: true }
         gsap.to('[data-line="1"]', { xPercent: -8, ease: 'none', scrollTrigger: st })
         gsap.to('[data-line="2"]', { xPercent: 8, ease: 'none', scrollTrigger: st })
         gsap.to(name.current, { yPercent: -10, ease: 'none', scrollTrigger: st })
-        return () => window.removeEventListener('pointermove', onMove)
       })
       return () => mm.revert()
     },
@@ -82,14 +72,11 @@ export default function Hero({ ready }) {
       </div>
 
       <div className="relative my-auto py-6">
-        {/* Ringed planet. */}
-        <div
-          data-sun
-          aria-hidden="true"
-          className="pointer-events-none absolute right-[-12%] top-[-14%] aspect-square w-[46vw] md:right-[4%] md:top-[2%] md:w-[min(30vw,56svh)]"
-        >
-          <Planet className="absolute inset-0 h-full w-full" />
-        </div>
+        {/* Floating 3D shapes that tilt with the pointer. */}
+        <Shapes3D
+          start={ready}
+          className="pointer-events-none absolute right-[-16%] top-[-10%] aspect-square w-[54vw] md:right-[-5%] md:top-[-12%] md:w-[min(46vw,80svh)]"
+        />
 
 
         {/* KHUSHI sits on the left in bold; PANU, in a light condensed face,

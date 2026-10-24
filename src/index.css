@@ -259,12 +259,3 @@ html.lenis body {
   .mark { background-size: 100% 72%; }
   .draw path { stroke-dashoffset: 0; }
 }
-
-
-/* Hero: turning text ring and skills band */
-
-/* Hero planet: drifting moons and twinkling sparkles */
-@keyframes moon-a { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(6px, -5px); } }
-@keyframes moon-b { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(-5px, 4px); } }
-.moon-a { animation: moon-a 6s ease-in-out infinite; }
-.moon-b { animation: moon-b 5s ease-in-out infinite; }
