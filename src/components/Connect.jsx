@@ -1,46 +1,37 @@
 import { useEffect, useRef, useState } from 'react'
-import { gsap, useGSAP, ScrollTrigger, MOTION_OK } from '../lib/gsap'
+import { gsap, useGSAP, ScrollTrigger, MOTION_OK, prefersReducedMotion } from '../lib/gsap'
 import { scrollToTarget } from '../hooks/useLenis'
 import { profile, socials, resume } from '../data/content'
 
 // Closing section, one scroll-driven scene on wide screens: a giant
 // "Let's connect" slides across (letters falling into line as they reach the
-// middle, after guillaumezhu.com), gathers into a spinning circle, bursts, and
-// the contact panel rises out of the burst. Then the links and the footer.
+// middle, after guillaumezhu.com), then bursts apart in a burst of light and
+// the contact panel rises out of it. Then the links and the footer bar.
+const SUBJECT = "Let's work together"
+const MESSAGE = "Hi Khushi, I came across your portfolio and would love to talk about an opportunity with you."
 const gmail = `https://mail.google.com/mail/?view=cm&fs=1&to=${profile.email}`
-function Magnetic({ children, className = '', ...props }) {
-  const el = useRef(null)
-  const onMove = (e) => {
-    const r = el.current.getBoundingClientRect()
-    gsap.to(el.current, {
-      x: (e.clientX - (r.left + r.width / 2)) * 0.25,
-      y: (e.clientY - (r.top + r.height / 2)) * 0.35,
-      duration: 0.6,
-      ease: 'power3.out',
-    })
-  }
-  const onLeave = () => gsap.to(el.current, { x: 0, y: 0, duration: 0.9, ease: 'elastic.out(1, 0.4)' })
-  return (
-    <a ref={el} onPointerMove={onMove} onPointerLeave={onLeave} className={`inline-block ${className}`} {...props}>
-      {children}
-    </a>
-  )
-}
+const gmailDraft = `${gmail}&su=${encodeURIComponent(SUBJECT)}&body=${encodeURIComponent(MESSAGE)}`
 
 const LINE = "Let's connect →"
-// Fixed pseudo-random scatter per letter, so it is the same on every render.
+// Fixed pseudo-random values per index, so they are the same on every render.
 const jitter = (i) => {
   const r = (n) => {
     const x = Math.sin(i * 12.9898 + n * 78.233) * 43758.5453
     return x - Math.floor(x)
   }
-  return { y: (r(1) - 0.5) * 2, rot: (r(2) - 0.5) * 2 }
+  return { y: (r(1) - 0.5) * 2, rot: (r(2) - 0.5) * 2, k: r(3) }
 }
 
-// Burst particles: fixed angles and distances so every render matches.
-const SPARKS = Array.from({ length: 28 }, (_, i) => {
+// Light streaks thrown out by the burst.
+const SPARK_COLORS = ['#d4ff3f', '#ff2da8', '#f4f1ea']
+const SPARKS = Array.from({ length: 40 }, (_, i) => {
   const j = jitter(i + 40)
-  return { a: (i / 28) * Math.PI * 2 + j.rot * 0.2, d: 0.55 + (j.y + 1) * 0.35, s: 5 + Math.round((j.rot + 1) * 3), pink: i % 3 === 0 }
+  return {
+    a: (i / 40) * Math.PI * 2 + j.rot * 0.15,
+    d: 0.35 + j.k * 0.75,
+    len: 14 + Math.round(j.k * 46),
+    color: SPARK_COLORS[i % 3],
+  }
 })
 
 const clamp01 = (v) => Math.min(1, Math.max(0, v))
@@ -56,8 +47,17 @@ function LocalTime() {
   return <>{now} IST</>
 }
 
-function CopyEmail() {
+// A Gmail-style draft that types itself once it comes into view; sending
+// opens a real Gmail draft with the same subject and message.
+function Composer({ typing }) {
+  const [n, setN] = useState(0)
   const [copied, setCopied] = useState(false)
+  useEffect(() => {
+    if (!typing) return
+    if (prefersReducedMotion()) { setN(MESSAGE.length); return }
+    const id = setInterval(() => setN((v) => (v >= MESSAGE.length ? v : v + 1)), 26)
+    return () => clearInterval(id)
+  }, [typing])
   const copy = async () => {
     try {
       await navigator.clipboard.writeText(profile.email)
@@ -66,13 +66,68 @@ function CopyEmail() {
     } catch { /* clipboard unavailable: the address is still visible */ }
   }
   return (
-    <button
-      type="button"
-      onClick={copy}
-      className="rounded-full border border-ink/20 px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.14em] text-ink/70 transition-colors duration-300 hover:border-ink/50 hover:text-ink"
-    >
-      {copied ? 'Copied ✓' : 'Copy'}
-    </button>
+    <div className="w-full overflow-hidden rounded-[22px] border border-ink/12 bg-paper-2/90 text-left shadow-[0_50px_100px_-40px_rgba(212,255,63,0.25)] backdrop-blur-md">
+      <div className="flex items-center justify-between border-b border-ink/10 px-5 py-3.5">
+        <div className="flex items-center gap-1.5">
+          <span className="h-2.5 w-2.5 rounded-full bg-pink" />
+          <span className="h-2.5 w-2.5 rounded-full bg-chartreuse" />
+          <span className="h-2.5 w-2.5 rounded-full bg-ink/30" />
+        </div>
+        <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-ink/50">New message</span>
+      </div>
+      <dl className="divide-y divide-ink/10 px-5 text-[14px]">
+        <div className="flex items-center gap-3 py-3">
+          <dt className="w-14 font-mono text-[10px] uppercase tracking-[0.14em] text-ink/40">To</dt>
+          <dd className="flex min-w-0 flex-1 items-center justify-between gap-3">
+            <span className="truncate rounded-full bg-ink/[0.07] px-3 py-1 text-ink">{profile.email}</span>
+            <button
+              type="button"
+              onClick={copy}
+              className="shrink-0 font-mono text-[10px] uppercase tracking-[0.14em] text-ink/50 transition-colors duration-300 hover:text-ink"
+            >
+              {copied ? 'Copied ✓' : 'Copy'}
+            </button>
+          </dd>
+        </div>
+        <div className="flex items-center gap-3 py-3">
+          <dt className="w-14 font-mono text-[10px] uppercase tracking-[0.14em] text-ink/40">Subject</dt>
+          <dd className="font-semibold text-ink">{SUBJECT}</dd>
+        </div>
+      </dl>
+      <p className="min-h-[7.5rem] border-t border-ink/10 px-5 py-4 text-[15px] leading-relaxed text-ink/80">
+        {MESSAGE.slice(0, n)}
+        <span aria-hidden="true" className="ml-0.5 inline-block h-[1.1em] w-[2px] translate-y-[0.2em] animate-pulse bg-chartreuse" />
+      </p>
+      <div className="flex items-center justify-between gap-3 border-t border-ink/10 px-5 py-4">
+        <span className="whitespace-nowrap font-mono text-[10px] uppercase tracking-[0.14em] text-ink/40"><span className="hidden sm:inline">Haldwani · </span><LocalTime /></span>
+        <a
+          href={gmailDraft}
+          target="_blank"
+          rel="noreferrer"
+          className="group flex shrink-0 items-center gap-2.5 whitespace-nowrap rounded-full bg-chartreuse py-1.5 pl-1.5 pr-5 font-mono text-[12px] font-semibold uppercase tracking-[0.12em] text-jet shadow-[0_0_30px_-6px_rgba(212,255,63,0.6)] transition-[translate] duration-300 hover:-translate-y-0.5"
+        >
+          <span className="flex h-8 w-8 items-center justify-center rounded-full bg-jet text-chartreuse transition-transform duration-300 group-hover:rotate-45">↗</span>
+          Send on Gmail
+        </a>
+      </div>
+    </div>
+  )
+}
+
+// Heading letters hop up as the pointer passes over them.
+function Hop({ text }) {
+  return (
+    <span aria-label={text} className="inline-block">
+      {text.split('').map((c, i) => (
+        <span
+          key={i}
+          aria-hidden="true"
+          className="inline-block whitespace-pre transition-transform duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] hover:-translate-y-[0.14em] hover:-rotate-6"
+        >
+          {c}
+        </span>
+      ))}
+    </span>
   )
 }
 
@@ -81,7 +136,9 @@ export default function Connect() {
   const pin = useRef(null)
   const track = useRef(null)
   const panel = useRef(null)
-  const spot = useRef(null)
+  const [typing, setTyping] = useState(false)
+  const startTyping = useRef(() => {})
+  startTyping.current = () => setTyping(true)
 
   useGSAP(
     () => {
@@ -90,11 +147,10 @@ export default function Connect() {
       mm.add(`${MOTION_OK} and (min-width: 768px)`, () => {
         const chars = gsap.utils.toArray('[data-lc-char]', track.current)
         const sparks = gsap.utils.toArray('[data-lc-spark]', pin.current)
-        const shock = pin.current.querySelector('[data-lc-shock]')
-        const flash = pin.current.querySelector('[data-lc-flash]')
+        const bloom = pin.current.querySelector('[data-lc-bloom]')
+        const after = pin.current.querySelector('[data-lc-after]')
         const hint = pin.current.querySelector('[data-lc-hint]')
         const jit = chars.map((_, i) => jitter(i))
-        const n = chars.length
         let offsets = []
         let lineY = 0
         const measure = () => {
@@ -107,15 +163,14 @@ export default function Connect() {
         // The panel sits over the scene and rises in once the burst clears.
         gsap.set(panel.current, { position: 'absolute', inset: 0, zIndex: 20 })
         const reveal = gsap.timeline({ paused: true })
-          .from('[data-lc-panel] > *', { y: 50, autoAlpha: 0, duration: 0.5, ease: 'power3.out', stagger: 0.08 })
+          .from('[data-lc-panel] > *', { y: 60, autoAlpha: 0, scale: 0.96, duration: 0.5, ease: 'power3.out', stagger: 0.1 })
 
         const start = () => window.innerWidth * 0.75
         const end = () => window.innerWidth * 0.42 - track.current.scrollWidth
         const slide = () => start() - end()
-        const ring = () => window.innerHeight * 0.9
-        const burst = () => window.innerHeight * 0.7
-        const rise = () => window.innerHeight * 0.6
-        const total = () => slide() + ring() + burst() + rise()
+        const burst = () => window.innerHeight * 0.65
+        const rise = () => window.innerHeight * 0.45
+        const total = () => slide() + burst() * 0.7 + rise()
 
         const render = (s) => {
           const vw = window.innerWidth
@@ -125,46 +180,46 @@ export default function Connect() {
           track.current.style.transform = `translate3d(${x}px,0,0)`
           hint.style.opacity = String(1 - clamp01(s / (D * 0.3)))
 
-          // 0 → 1 as the line gathers into a circle, then the burst.
-          const t = smooth(clamp01((s - D) / ring()))
-          const u = clamp01((s - D - ring()) / burst())
-          const pre = smooth(clamp01(u / 0.3))
-          const post = clamp01((u - 0.3) / 0.7)
-          const blast = 1 - (1 - post) ** 3
-          const R = Math.min(vw, vh) * 0.3 * (1 - 0.22 * pre) + vw * 0.9 * blast
-          const spin = Math.max(0, s - D) / (ring() + burst()) * Math.PI * 1.2
+          // A brief pull inwards, then the letters fly apart.
+          const u = clamp01((s - D) / burst())
+          const pull = u < 0.12 ? smooth(u / 0.12) : Math.max(0, 1 - (u - 0.12) / 0.08)
+          const b = clamp01((u - 0.12) / 0.88)
+          const blast = 1 - (1 - b) ** 3
 
           chars.forEach((c, i) => {
             const lx = x + offsets[i]
-            if (t === 0) {
+            if (u === 0) {
               const k = clamp01((lx - vw * 0.5) / (vw * 0.45))
               const e = smooth(k)
               c.style.opacity = ''
               c.style.transform = `translate3d(0, ${(jit[i].y * e * 0.55).toFixed(3)}em, 0) rotate(${(jit[i].rot * e * 28).toFixed(2)}deg)`
               return
             }
-            const a = -Math.PI / 2 + (i / n) * Math.PI * 2 + spin
-            const dx = (vw / 2 + R * Math.cos(a) - lx) * t
-            const dy = (vh / 2 + R * Math.sin(a) - lineY) * t
-            const deg = ((a * 180) / Math.PI + 90) * t
-            const sc = 1 - 0.72 * t + blast * 0.5
-            c.style.opacity = String(1 - post)
-            c.style.transform = `translate3d(${dx.toFixed(1)}px, ${dy.toFixed(1)}px, 0) rotate(${deg.toFixed(1)}deg) scale(${sc.toFixed(3)})`
+            const vx = lx - vw / 2
+            const vy = lineY - vh / 2 + jit[i].y * 60
+            const a = Math.atan2(vy, vx) + jit[i].rot * 0.5
+            const d = vw * (0.35 + jit[i].k * 0.45) * blast - 40 * pull
+            const dx = Math.cos(a) * d
+            const dy = Math.sin(a) * d
+            c.style.opacity = String(1 - smooth(clamp01(b * 1.25)))
+            c.style.transform = `translate3d(${dx.toFixed(1)}px, ${dy.toFixed(1)}px, 0) rotate(${(jit[i].rot * 260 * blast).toFixed(1)}deg) scale(${(1 - 0.25 * pull - 0.5 * blast).toFixed(3)})`
           })
 
-          // Shockwave, flash and sparks.
-          shock.style.opacity = String(post > 0 ? (1 - post) * 0.9 : 0)
-          shock.style.transform = `translate(-50%,-50%) scale(${0.3 + blast * 5})`
-          flash.style.opacity = String(post > 0 ? Math.sin(Math.min(1, post * 1.6) * Math.PI) * 0.8 : 0)
+          // Light: a bright bloom that fades into a soft afterglow.
+          bloom.style.opacity = String(b > 0 ? (b < 0.15 ? b / 0.15 : 1 - smooth(clamp01((b - 0.15) / 0.6))) : 0)
+          bloom.style.transform = `translate(-50%,-50%) scale(${0.15 + blast * 2.2})`
+          after.style.opacity = String(smooth(clamp01((b - 0.3) / 0.7)))
           sparks.forEach((el, j) => {
             const p = SPARKS[j]
-            const d = p.d * Math.min(vw, vh) * blast
-            el.style.opacity = String(post > 0 ? Math.min(1, post * 8) * (1 - post) : 0)
-            el.style.transform = `translate(-50%,-50%) translate(${(Math.cos(p.a) * d).toFixed(1)}px, ${(Math.sin(p.a) * d).toFixed(1)}px)`
+            const d = p.d * Math.max(vw, vh) * 0.62 * blast
+            el.style.opacity = String(b > 0 ? Math.min(1, b * 10) * (1 - smooth(b)) : 0)
+            el.style.transform = `translate(${(Math.cos(p.a) * d).toFixed(1)}px, ${(Math.sin(p.a) * d).toFixed(1)}px) rotate(${p.a}rad) scaleX(${(1.6 - blast).toFixed(3)})`
           })
 
-          reveal.progress(clamp01((s - D - ring() - burst() * 0.75) / rise()))
-          panel.current.style.pointerEvents = reveal.progress() > 0.6 ? 'auto' : 'none'
+          const r = clamp01((s - D - burst() * 0.7) / rise())
+          reveal.progress(r)
+          panel.current.style.pointerEvents = r > 0.6 ? 'auto' : 'none'
+          if (r > 0.7) startTyping.current()
         }
         render(0)
         ScrollTrigger.create({
@@ -172,7 +227,7 @@ export default function Connect() {
           start: 'top top',
           end: () => `+=${total()}`,
           pin: true,
-          scrub: 0.6,
+          scrub: 0.5,
           invalidateOnRefresh: true,
           onRefresh: measure,
           onUpdate: (self) => render(self.progress * total()),
@@ -184,24 +239,27 @@ export default function Connect() {
         }
       })
       // Small screens: plain reveals.
+      mm.add('(max-width: 767px)', () => {
+        ScrollTrigger.create({ trigger: panel.current, start: 'top 60%', once: true, onEnter: () => startTyping.current() })
+      })
       mm.add(`${MOTION_OK} and (max-width: 767px)`, () => {
         gsap.from('[data-lc-panel] > *', {
           y: 40,
           autoAlpha: 0,
           duration: 1,
           ease: 'expo.out',
-          stagger: 0.08,
+          stagger: 0.1,
           scrollTrigger: { trigger: panel.current, start: 'top 75%' },
         })
       })
       mm.add(MOTION_OK, () => {
-        gsap.from('[data-lc-row]', {
-          y: 60,
+        gsap.from('[data-lc-links] > *', {
+          y: 30,
           autoAlpha: 0,
           duration: 1,
           ease: 'expo.out',
-          stagger: 0.07,
-          scrollTrigger: { trigger: '[data-lc-links]', start: 'top 85%' },
+          stagger: 0.05,
+          scrollTrigger: { trigger: '[data-lc-links]', start: 'top 98%' },
         })
       })
       return () => mm.revert()
@@ -209,17 +267,7 @@ export default function Connect() {
     { scope: root },
   )
 
-  // A soft light follows the pointer over the contact panel.
-  const onPanelMove = (e) => {
-    const r = panel.current.getBoundingClientRect()
-    spot.current.style.setProperty('--sx', `${e.clientX - r.left}px`)
-    spot.current.style.setProperty('--sy', `${e.clientY - r.top}px`)
-  }
-
-  const links = [
-    { label: 'Gmail', handle: profile.email, href: gmail },
-    ...socials,
-  ]
+  const links = [{ label: 'Gmail', handle: profile.email, href: gmail }, ...socials]
 
   return (
     <footer id="contact" ref={root} className="relative bg-jet text-ink">
@@ -246,119 +294,87 @@ export default function Connect() {
         </a>
         <p data-lc-hint className="absolute bottom-8 left-5 hidden font-mono text-[11px] uppercase tracking-[0.12em] text-ink/50 md:left-10 md:block">Keep scrolling ↓</p>
 
-        {/* The burst. */}
+        {/* The burst: a bloom of light, streaks, then a soft afterglow. */}
         <div aria-hidden="true" className="pointer-events-none absolute inset-0 hidden md:block">
-          <div data-lc-flash className="absolute left-1/2 top-1/2 h-[90vmin] w-[90vmin] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(212,255,63,0.35),rgba(255,45,168,0.12)_55%,transparent)] opacity-0" />
-          <div data-lc-shock className="absolute left-1/2 top-1/2 h-[30vmin] w-[30vmin] rounded-full border-2 border-chartreuse opacity-0" />
+          <div data-lc-after className="absolute inset-0 opacity-0 [background:radial-gradient(60%_55%_at_30%_40%,rgba(212,255,63,0.06),transparent_70%),radial-gradient(50%_50%_at_80%_70%,rgba(255,45,168,0.08),transparent_70%)]" />
+          <div data-lc-bloom className="absolute left-1/2 top-1/2 h-[60vmin] w-[60vmin] rounded-full opacity-0 blur-md [background:radial-gradient(closest-side,rgba(255,255,255,0.9),rgba(255,255,255,0)_22%,transparent_52%,rgba(212,255,63,0.75)_66%,rgba(255,45,168,0.55)_80%,transparent)]" />
           {SPARKS.map((p, j) => (
-            <span
-              key={j}
-              data-lc-spark
-              className={`absolute left-1/2 top-1/2 rounded-full opacity-0 ${p.pink ? 'bg-pink' : 'bg-chartreuse'}`}
-              style={{ width: p.s, height: p.s }}
-            />
+            <span key={j} className="absolute left-1/2 top-1/2 h-0 w-0">
+              <span
+                data-lc-spark
+                className="absolute left-0 top-0 block h-[3px] origin-left rounded-full opacity-0"
+                style={{ width: p.len, background: `linear-gradient(90deg, transparent, ${p.color})` }}
+              />
+            </span>
           ))}
         </div>
 
         {/* Part 2: the contact panel, which rises out of the burst. */}
-        <div
-          ref={panel}
-          onPointerMove={onPanelMove}
-          className="relative flex items-center justify-center px-5 pb-24 md:px-10 md:py-24"
-        >
-          <div
-            ref={spot}
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-0 hidden [background:radial-gradient(420px_circle_at_var(--sx,50%)_var(--sy,50%),rgba(244,241,234,0.06),transparent_70%)] md:block"
-          />
-          <div data-lc-panel className="relative flex max-w-3xl flex-col items-center text-center">
-            <div className="flex flex-wrap items-center justify-center gap-2.5 font-mono text-[11px] uppercase tracking-[0.14em]">
-              <span className="flex items-center gap-2.5 rounded-full border border-chartreuse/40 px-4 py-1.5 text-chartreuse">
+        <div ref={panel} className="relative flex items-center px-5 pb-20 md:px-10 md:py-24">
+          <div data-lc-panel className="mx-auto grid w-full max-w-6xl items-center gap-12 md:grid-cols-[1.1fr_1fr] md:gap-16">
+            <div>
+              <span className="inline-flex items-center gap-2.5 rounded-full border border-chartreuse/40 px-4 py-1.5 font-mono text-[11px] uppercase tracking-[0.14em] text-chartreuse">
                 <span className="relative flex h-2 w-2">
                   <span className="absolute inset-0 animate-ping rounded-full bg-chartreuse/60" />
                   <span className="relative h-2 w-2 rounded-full bg-chartreuse" />
                 </span>
                 Available for work
               </span>
-              <span className="rounded-full border border-ink/15 px-4 py-1.5 text-ink/60">Haldwani · <LocalTime /></span>
+              <h2 className="mt-7 text-[clamp(56px,7.4vw,124px)] font-black leading-[0.88] tracking-[-0.05em]">
+                <Hop text="Let's" />
+                <br />
+                <Hop text="connect" />
+                <span className="text-chartreuse">.</span>
+              </h2>
+              <p className="mt-6 max-w-md text-[17px] leading-relaxed text-ink/70 md:text-[19px]">
+                Open to new opportunities. Hiring, or have a project in mind? I&apos;d love to hear from you.
+              </p>
+              <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-4">
+                <a
+                  href={resume.href}
+                  download={resume.file}
+                  className="flex items-center gap-2.5 rounded-full border border-ink/30 px-6 py-3.5 font-mono text-[12px] uppercase tracking-[0.12em] text-ink transition-colors duration-300 hover:border-ink/60 hover:bg-ink/5"
+                >
+                  Download resume <span aria-hidden="true">↓</span>
+                </a>
+                <a className="link-underline text-[15px] text-ink/70" href={profile.phoneHref}>
+                  or call <span className="text-ink">{profile.phone}</span>
+                </a>
+              </div>
             </div>
-            <h2 className="mt-7 text-[clamp(52px,8vw,128px)] font-black leading-[0.9] tracking-[-0.05em]">
-              Let&apos;s connect<span className="text-chartreuse">.</span>
-            </h2>
-            <p className="mt-6 max-w-lg text-[17px] leading-relaxed text-ink/70 md:text-[19px]">
-              Open to new opportunities. Hiring, or have a project in mind? I&apos;d love to hear from you.
-            </p>
-            <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
-              <Magnetic
-                href={gmail}
-                target="_blank"
-                rel="noreferrer"
-                data-cursor="Email"
-                className="link-underline text-[clamp(22px,2.8vw,38px)] font-semibold tracking-[-0.02em] text-ink"
-              >
-                {profile.email}
-              </Magnetic>
-              <CopyEmail />
-            </div>
-            <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
-              <a
-                href={gmail}
-                target="_blank"
-                rel="noreferrer"
-                className="group flex items-center gap-3 rounded-full bg-chartreuse py-2 pl-2 pr-7 font-mono text-[13px] font-semibold uppercase tracking-[0.12em] text-jet shadow-[0_0_40px_-6px_rgba(212,255,63,0.55)] transition-[translate] duration-300 hover:-translate-y-0.5"
-              >
-                <span className="flex h-11 w-11 items-center justify-center rounded-full bg-jet text-chartreuse transition-transform duration-300 group-hover:rotate-45">↗</span>
-                Say hello on Gmail
-              </a>
-              <a
-                href={resume.href}
-                download={resume.file}
-                className="flex items-center gap-2.5 rounded-full border border-ink/30 px-7 py-[1.05rem] font-mono text-[13px] uppercase tracking-[0.12em] text-ink transition-colors duration-300 hover:border-ink/60 hover:bg-ink/5"
-              >
-                Download resume <span aria-hidden="true">↓</span>
-              </a>
-            </div>
-            <p className="mt-6 text-[15px] text-ink/60">
-              or call <a className="link-underline text-ink" href={profile.phoneHref}>{profile.phone}</a>
-            </p>
+            <Composer typing={typing} />
           </div>
         </div>
       </div>
 
-      {/* Links: large rows that fill with light on hover. */}
-      <div className="relative px-5 pb-8 pt-16 md:px-10 md:pt-24">
-        <p className="mb-6 font-mono text-[11px] uppercase tracking-[0.12em] text-ink/50">Find me elsewhere</p>
-        <ul data-lc-links className="border-t border-ink/15">
-          {links.map((l, i) => (
-            <li key={l.label} data-lc-row className="border-b border-ink/15">
-              <a
-                href={l.href}
-                target="_blank"
-                rel="noreferrer"
-                className="group relative grid grid-cols-[2.5rem_1fr_auto] items-center gap-4 overflow-hidden py-5 transition-colors duration-500 hover:text-jet md:grid-cols-[4rem_1fr_auto_auto] md:gap-8 md:py-7"
-              >
-                <span aria-hidden="true" className="absolute inset-0 origin-left scale-x-0 bg-ink transition-transform duration-500 ease-[cubic-bezier(0.7,0,0.2,1)] group-hover:scale-x-100" />
-                <span className="relative pl-1 font-mono text-[12px] text-ink/40 transition-colors duration-500 group-hover:text-jet/60 md:pl-4">0{i + 1}</span>
-                <span className="relative text-[clamp(34px,6vw,88px)] font-black leading-none tracking-[-0.04em] transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:translate-x-4">
-                  {l.label}
-                </span>
-                <span className="relative hidden font-mono text-[12px] uppercase tracking-[0.12em] text-ink/50 transition-colors duration-500 group-hover:text-jet/70 md:block">
-                  {l.handle}
-                </span>
-                <span aria-hidden="true" className="relative mr-1 flex h-12 w-12 items-center justify-center rounded-full border border-ink/25 text-[18px] transition-[transform,background-color,border-color,color] duration-500 group-hover:rotate-45 group-hover:border-jet group-hover:bg-jet group-hover:text-chartreuse md:mr-4 md:h-16 md:w-16">
-                  ↗
-                </span>
-              </a>
-            </li>
-          ))}
-        </ul>
+      {/* Links and footer bar. */}
+      <div className="relative px-5 pb-8 pt-10 md:px-10 md:pt-16">
+        <div className="flex flex-col gap-6 border-t border-ink/15 pt-8 md:flex-row md:items-center md:justify-between">
+          <p className="font-mono text-[11px] uppercase tracking-[0.12em] text-ink/50">Find me elsewhere</p>
+          <ul data-lc-links className="flex flex-wrap gap-2.5">
+            {links.map((l) => (
+              <li key={l.label}>
+                <a
+                  href={l.href}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="group relative flex items-center gap-2 overflow-hidden rounded-[10px] border border-ink/15 py-2.5 pl-4 pr-3 transition-colors duration-300 hover:border-ink/40"
+                >
+                  <span className="relative block h-[1.25em] overflow-hidden text-[15px] font-semibold leading-[1.25]">
+                    <span className="block transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:-translate-y-full">{l.label}</span>
+                    <span aria-hidden="true" className="absolute left-0 top-full block whitespace-nowrap text-chartreuse transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:-translate-y-full">
+                      {l.label}
+                    </span>
+                  </span>
+                  <span aria-hidden="true" className="font-mono text-[11px] text-ink/40 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-chartreuse">↗</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
 
-        <p aria-hidden="true" className="mt-16 select-none whitespace-nowrap text-center font-display text-[15.2vw] font-bold uppercase leading-[0.8] tracking-[-0.02em] text-ink/[0.07]">
-          Khushi Panu
-        </p>
-
-        <div className="mt-8 flex flex-col gap-4 border-t border-ink/15 pt-6 font-mono text-[11px] uppercase tracking-[0.12em] text-ink/50 md:flex-row md:items-center md:justify-between">
-          <span>© 2026 {profile.name}</span>
+        <div className="mt-8 flex flex-col gap-3 font-mono text-[11px] uppercase tracking-[0.12em] text-ink/40 md:flex-row md:items-center md:justify-between">
+          <span>© 2026</span>
           <span>{profile.location}</span>
           <button type="button" onClick={() => scrollToTarget('#top')} className="link-underline self-start uppercase tracking-[0.12em] hover:text-ink md:self-auto">
             Back to top ↑

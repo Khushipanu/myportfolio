@@ -38,7 +38,7 @@ Add live/source links for a project by setting `live` and `code` in `content.js`
 4. Selected work — five project screens on a ring around "My Works" that turns as you scroll; the front card drives a project highlight and lights up its skills
 5. About + Experience — a statement with hand-drawn marks and draggable sticky notes; three roles as expanding panels, each in its own colour
 6. Toolkit — "The stack behind my work": skill cards standing in a low charcoal box under warm desk light; hover a card to lift it out
-7. Let's Connect — a giant "Let's connect →" slides across, gathers into a spinning circle and bursts into the contact panel (live local time, copy email); large link rows and footer wordmark
+7. Let's Connect — a giant "Let's connect →" slides across, then bursts in a chartreuse and pink shockwave; the contact panel rises with a self-typing Gmail draft and live local time; compact rolling link chips and footer bar
 
 The resume PDF lives in `public/Khushi_Panu_Resume.pdf`; replace that file to update the download.
 
