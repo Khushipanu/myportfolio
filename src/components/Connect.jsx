@@ -3,7 +3,7 @@ import { gsap, useGSAP, ScrollTrigger, MOTION_OK } from '../lib/gsap'
 import { scrollToTarget } from '../hooks/useLenis'
 import { profile, socials, resume } from '../data/content'
 
-// Closing section, after guillaumezhu.com: on a soft blush background a giant
+// Closing section, after guillaumezhu.com: on a hot-pink background a giant
 // sentence slides across as you scroll, its letters falling into line as they
 // reach the middle; then the email, the links list and the footer bar.
 const gmail = `https://mail.google.com/mail/?view=cm&fs=1&to=${profile.email}`
@@ -26,7 +26,7 @@ function Magnetic({ children, className = '', ...props }) {
   )
 }
 
-const LINE = "Let's work together — say hello."
+const LINE = "Let's connect →"
 // Fixed pseudo-random scatter per letter, so it is the same on every render.
 const jitter = (i) => {
   const r = (n) => {
@@ -101,15 +101,15 @@ export default function Connect() {
   ]
 
   return (
-    <footer id="contact" ref={root} className="relative bg-[#f3e1d8] text-ink">
+    <footer id="contact" ref={root} className="relative bg-pink text-jet">
       {/* Giant sentence that slides across and falls into place. */}
       <div ref={pin} className="relative flex min-h-[70svh] items-center overflow-hidden md:h-[100svh]">
-        <p className="absolute left-5 top-24 font-mono text-[11px] uppercase tracking-[0.12em] text-ink/50 md:left-10 md:top-28">(06) Contact</p>
-        <a href={gmail} target="_blank" rel="noreferrer" aria-label="Let's work together — say hello on Gmail" className="block w-full">
+        <p className="absolute left-5 top-24 font-mono text-[11px] uppercase tracking-[0.12em] text-jet/60 md:left-10 md:top-28">(06) Contact</p>
+        <a href={gmail} target="_blank" rel="noreferrer" aria-label="Let's connect — write to me on Gmail" className="block w-full">
           <span
             ref={track}
             aria-hidden="true"
-            className="block px-5 py-24 text-[17vw] font-semibold leading-[0.95] tracking-[-0.05em] md:inline-block md:whitespace-nowrap md:px-0 md:py-0 md:text-[15vw] md:will-change-transform"
+            className="block px-5 py-24 text-[19vw] font-black leading-[0.95] tracking-[-0.05em] md:inline-block md:whitespace-nowrap md:px-0 md:py-0 md:text-[17vw] md:will-change-transform"
           >
             {/* Words stay whole when the line wraps on small screens. */}
             {LINE.split(' ').map((word, w, words) => {
@@ -124,40 +124,40 @@ export default function Connect() {
             })}
           </span>
         </a>
-        <p className="absolute bottom-8 left-5 hidden font-mono text-[11px] uppercase tracking-[0.12em] text-ink/50 md:left-10 md:block">Keep scrolling ↓</p>
+        <p className="absolute bottom-8 left-5 hidden font-mono text-[11px] uppercase tracking-[0.12em] text-jet/60 md:left-10 md:block">Keep scrolling ↓</p>
       </div>
 
       {/* Contact details. */}
       <div data-lc-details className="relative px-5 pb-8 pt-10 md:px-10 md:pt-6">
-        <div className="grid grid-cols-12 gap-x-5 gap-y-14 border-t border-ink/15 pt-14">
+        <div className="grid grid-cols-12 gap-x-5 gap-y-14 border-t border-jet/20 pt-14">
           <div className="col-span-12 lg:col-span-7" data-lc-fade>
-            <p className="font-mono text-[11px] uppercase tracking-[0.12em] text-ink/50">Write to me</p>
+            <p className="font-mono text-[11px] uppercase tracking-[0.12em] text-jet/60">Write to me</p>
             <Magnetic
               href={gmail}
               target="_blank"
               rel="noreferrer"
               data-cursor="Email"
-              className="link-underline mt-5 text-[clamp(28px,4vw,60px)] font-semibold leading-none tracking-[-0.03em] transition-colors hover:text-terracotta"
+              className="link-underline mt-5 text-[clamp(28px,4vw,60px)] font-semibold leading-none tracking-[-0.03em] transition-colors hover:text-white"
             >
               {profile.email}
             </Magnetic>
-            <p className="mt-6 text-[16px] text-ink/60">
-              Open to new opportunities. Or call <a className="link-underline text-ink" href={profile.phoneHref}>{profile.phone}</a>
+            <p className="mt-6 text-[16px] text-jet/70">
+              Open to new opportunities. Or call <a className="link-underline text-jet" href={profile.phoneHref}>{profile.phone}</a>
             </p>
           </div>
 
           <div className="col-span-12 lg:col-span-4 lg:col-start-9" data-lc-fade>
-            <p className="font-mono text-[11px] uppercase tracking-[0.12em] text-ink/50">Elsewhere</p>
-            <ul className="mt-4 border-t border-ink/15">
+            <p className="font-mono text-[11px] uppercase tracking-[0.12em] text-jet/60">Elsewhere</p>
+            <ul className="mt-4 border-t border-jet/20">
               {rows.map((r) => (
-                <li key={r.label} className="border-b border-ink/15">
+                <li key={r.label} className="border-b border-jet/20">
                   <a
                     href={r.href}
                     {...(r.external ? { target: '_blank', rel: 'noreferrer' } : { download: r.download })}
-                    className="group flex items-center justify-between gap-4 py-4 transition-colors hover:text-terracotta"
+                    className="group flex items-center justify-between gap-4 py-4 transition-colors hover:text-white"
                   >
                     <span className="text-[17px] font-medium">{r.label}</span>
-                    <span className="flex min-w-0 items-center gap-2 text-[13px] text-ink/50 transition-colors group-hover:text-terracotta">
+                    <span className="flex min-w-0 items-center gap-2 text-[13px] text-jet/60 transition-colors group-hover:text-white">
                       <span className="truncate">{r.note}</span>
                       <span aria-hidden="true" className="transition-transform duration-500 group-hover:-translate-y-0.5 group-hover:translate-x-0.5">{r.external ? '↗' : '↓'}</span>
                     </span>
@@ -168,10 +168,10 @@ export default function Connect() {
           </div>
         </div>
 
-        <div className="mt-20 flex flex-col gap-4 border-t border-ink/15 pt-6 font-mono text-[11px] uppercase tracking-[0.12em] text-ink/50 md:flex-row md:items-center md:justify-between">
+        <div className="mt-20 flex flex-col gap-4 border-t border-jet/20 pt-6 font-mono text-[11px] uppercase tracking-[0.12em] text-jet/60 md:flex-row md:items-center md:justify-between">
           <span>© 2026 {profile.name}</span>
           <span>{profile.location}</span>
-          <button type="button" onClick={() => scrollToTarget('#top')} className="link-underline self-start uppercase tracking-[0.12em] hover:text-ink md:self-auto">
+          <button type="button" onClick={() => scrollToTarget('#top')} className="link-underline self-start uppercase tracking-[0.12em] hover:text-white md:self-auto">
             Back to top ↑
           </button>
         </div>

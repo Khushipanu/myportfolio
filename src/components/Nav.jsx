@@ -124,9 +124,9 @@ export default function Nav({ ready }) {
           href="#contact"
           onClick={(e) => go(e, '#contact')}
           data-nav-item
-          className="group flex items-center gap-2 whitespace-nowrap rounded-full border border-accent/80 px-5 py-2.5 font-mono text-[12px] font-medium uppercase tracking-[0.1em] text-ink transition-colors duration-300 hover:bg-accent hover:text-white focus-visible:bg-accent focus-visible:text-white md:px-6 md:py-3"
+          className="group flex items-center gap-2 whitespace-nowrap rounded-full border border-accent/80 px-5 py-2.5 font-mono text-[12px] font-medium uppercase tracking-[0.1em] text-ink transition-colors duration-300 hover:bg-accent hover:text-jet focus-visible:bg-accent focus-visible:text-jet md:px-6 md:py-3"
         >
-          Let's talk <span aria-hidden="true" className="text-accent transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-white">↗</span>
+          Let's talk <span aria-hidden="true" className="text-accent transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-jet">↗</span>
         </a>
       </nav>
 

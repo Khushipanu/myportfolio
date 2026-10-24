@@ -2,19 +2,18 @@ import { useRef, useState } from 'react'
 import { gsap, useGSAP, ScrollTrigger, MOTION_OK } from '../lib/gsap'
 import { skillGroups } from '../data/content'
 
-// Toolkit, after the "cards in a box" reference the user shared: each skill
-// group is a card standing in an open box. Hovering a card (or its entry in
-// the list below) lifts it out to show everything in it. On smaller screens
-// the cards become a swipeable row.
+// Toolkit: each skill group is a card, standing in a fanned row. Hovering a
+// card (or its entry in the list below) lifts it to show everything in it.
+// On smaller screens the cards become a swipeable row.
 const palette = [
-  { bg: '#1f4a47', ink: '#f3eee5' },
-  { bg: '#c9673f', ink: '#fbf3ea' },
-  { bg: '#ece4d6', ink: '#171512' },
-  { bg: '#1d2433', ink: '#f3eee5' },
-  { bg: '#6c9a52', ink: '#f7f3ea' },
-  { bg: '#8a5a6b', ink: '#fbf3ea' },
+  { bg: '#d4ff3f', ink: '#0b0b0b' },
+  { bg: '#ff2da8', ink: '#0b0b0b' },
+  { bg: '#f4f1ea', ink: '#0b0b0b' },
+  { bg: '#1c1c1c', ink: '#f4f1ea', ring: true },
+  { bg: '#d4ff3f', ink: '#0b0b0b' },
+  { bg: '#ff2da8', ink: '#0b0b0b' },
 ]
-// Each card leans and rises a little differently, like cards dropped in a box.
+// Each card leans and rises a little differently, like a fanned hand of cards.
 const poses = [
   { rot: -4, lift: 0 },
   { rot: -2, lift: -10 },
@@ -34,17 +33,17 @@ function BoxCard({ g, i, active, setActive }) {
     <li
       onPointerEnter={() => setActive(i)}
       onPointerLeave={() => setActive(null)}
-      className="absolute bottom-[6rem] h-[22rem] w-[17%] cursor-pointer"
+      className="absolute bottom-[2rem] h-[22rem] w-[17%] cursor-pointer"
       style={{ left: `${5.5 + i * 15}%`, zIndex: 10 + i }}
     >
       <div
         data-box-card
-        className="h-full w-full origin-bottom rounded-[18px] p-5 shadow-[0_18px_40px_-16px_rgba(23,21,18,0.55)] transition-[transform,filter] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] xl:p-6"
+        className={`h-full w-full origin-bottom rounded-[18px] p-5 shadow-[0_24px_50px_-20px_rgba(0,0,0,0.8)] transition-[transform,filter] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] xl:p-6 ${c.ring ? 'ring-1 ring-ink/15' : ''}`}
         style={{
-          background: `linear-gradient(165deg, color-mix(in srgb, ${c.bg} 92%, #fff), ${c.bg} 55%, color-mix(in srgb, ${c.bg} 85%, #000))`,
+          background: `linear-gradient(165deg, color-mix(in srgb, ${c.bg} 90%, #fff), ${c.bg} 55%, color-mix(in srgb, ${c.bg} 88%, #000))`,
           color: c.ink,
           transform: `translateY(${up ? -90 : pose.lift}px) rotate(${up ? 0 : pose.rot}deg)`,
-          filter: dim ? 'saturate(0.6) brightness(0.9)' : 'none',
+          filter: dim ? 'brightness(0.5)' : 'none',
         }}
       >
         <div className="flex items-center justify-between">
@@ -99,10 +98,8 @@ export default function SkillMix() {
 
   return (
     <section ref={root} aria-labelledby="skills-title" className="relative isolate overflow-hidden px-5 py-24 md:px-10 md:py-36">
-      {/* Warm desk light: a soft glow and slanted window shadows. */}
-      <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 bg-[linear-gradient(180deg,#f6f1e8_0%,#f1e7d6_60%,#e9dbc3_100%)]" />
-      <div aria-hidden="true" className="pointer-events-none absolute -right-[10%] -top-[10%] -z-10 h-[90%] w-[60%] rotate-[18deg] opacity-50 blur-2xl [background:repeating-linear-gradient(90deg,rgba(255,250,240,0.9)_0_90px,transparent_90px_170px)]" />
-      <div aria-hidden="true" className="glow glow-soft -z-10 left-[10%] top-[20%] h-[60vh] w-[50vw]" />
+      <div aria-hidden="true" className="glow glow-mint -z-10 left-[5%] top-[30%] h-[60vh] w-[45vw]" />
+      <div aria-hidden="true" className="glow glow-deep -z-10 right-[5%] top-[20%] h-[60vh] w-[45vw]" />
       <p className="relative font-mono text-[11px] uppercase tracking-[0.12em] text-muted">(05) Toolkit</p>
 
       <div data-tk-head className="relative mx-auto mt-10 max-w-3xl text-center">
@@ -112,7 +109,7 @@ export default function SkillMix() {
           my work
           <span className="relative">
             .
-            <svg aria-hidden="true" viewBox="0 0 40 40" className="absolute -right-[0.95em] top-[0.02em] h-[0.6em] w-[0.6em] overflow-visible text-[#e2b33a]">
+            <svg aria-hidden="true" viewBox="0 0 40 40" className="absolute -right-[0.95em] top-[0.02em] h-[0.6em] w-[0.6em] overflow-visible text-pink">
               <path d="M6 30 L16 22 M12 10 L18 20 M30 12 L24 22" fill="none" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" />
             </svg>
           </span>
@@ -122,30 +119,17 @@ export default function SkillMix() {
         </p>
       </div>
 
-      {/* Wide screens: cards standing in a low charcoal box. */}
-      <div data-box className="relative mx-auto mt-16 hidden h-[34rem] w-full max-w-[84rem] lg:block">
+      {/* Wide screens: the cards stand in a fanned row. */}
+      <div data-box className="relative mx-auto mt-16 hidden h-[30rem] w-full max-w-[84rem] lg:block">
         <ul className="absolute inset-0" aria-label="Skill groups">
           {skillGroups.map((g, i) => (
             <BoxCard key={g.label} g={g} i={i} active={active} setActive={setActive} />
           ))}
         </ul>
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-x-[2%] bottom-[1.5rem] z-30 flex h-[10rem] items-center justify-center overflow-hidden rounded-[16px] bg-[linear-gradient(180deg,#3a3f3b_0%,#2c302d_45%,#232624_100%)] shadow-[0_30px_60px_-25px_rgba(23,21,18,0.7),inset_0_1px_0_rgba(255,255,255,0.12)]"
-        >
-          <span className="absolute inset-x-0 top-0 h-3 bg-[linear-gradient(180deg,rgba(0,0,0,0.35),transparent)]" />
-          <span className="absolute inset-0 opacity-25 mix-blend-overlay [background-image:url(&quot;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E&quot;)]" />
-          <span className="relative -rotate-[4deg] text-center">
-            <span className="block font-serif text-[2.4rem] italic tracking-[0.04em] text-paper/90">Things I build with</span>
-            <svg viewBox="0 0 220 16" className="mx-auto mt-1 h-3 w-40 text-paper/80">
-              <path d="M4 10 C 60 2, 120 14, 216 5" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" />
-            </svg>
-          </span>
-        </div>
-        <span aria-hidden="true" className="pointer-events-none absolute inset-x-[6%] bottom-0 h-10 rounded-full bg-[#3b2a17]/25 blur-2xl" />
+        <span aria-hidden="true" className="pointer-events-none absolute inset-x-[8%] bottom-0 h-10 rounded-full bg-black/60 blur-2xl" />
       </div>
 
-      {/* The list under the box: hovering an entry lifts its card. */}
+      {/* The list under the cards: hovering an entry lifts its card. */}
       <ul className="mx-auto mt-24 hidden max-w-[84rem] grid-cols-6 gap-6 lg:grid" aria-hidden="true">
         {skillGroups.map((g, i) => (
           <li

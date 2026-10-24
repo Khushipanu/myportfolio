@@ -112,7 +112,7 @@ function Card({ c, i }) {
               className={`h-full w-full border-y border-[#1a1917]/15 text-[calc(var(--cw)/19)] ${j === 0 ? 'rounded-l-[10px] border-l' : ''} ${j === SLICES - 1 ? 'rounded-r-[10px] border-r' : ''}`}
             />
           </div>
-          <div data-shade className="pointer-events-none absolute inset-0 bg-[#24382f]" />
+          <div data-shade className="pointer-events-none absolute inset-0 bg-black" />
         </div>
       ))}
     </div>
@@ -153,7 +153,7 @@ export default function Work() {
   )
 
   return (
-    <section id="work" ref={root} aria-labelledby="work-title" className="relative isolate bg-[radial-gradient(ellipse_at_50%_45%,#f8f3ea_0%,#efe6d6_55%,#e2d4bd_100%)] text-ink">
+    <section id="work" ref={root} aria-labelledby="work-title" className="relative isolate bg-[radial-gradient(ellipse_at_50%_45%,#1b1b1b_0%,#101010_55%,#070707_100%)] text-ink">
       <div
         ref={stage}
         className="relative h-[100svh] select-none overflow-hidden"
@@ -171,12 +171,12 @@ export default function Work() {
             'M1500 -20 C 1180 260, 1380 540, 1040 760 S 760 980, 640 1000',
           ].map((d, i) => (
             <g key={i} opacity={i > 2 ? 0.7 : 1}>
-              <path d={d} fill="none" stroke={['#1f4d3a', '#e3a644', '#cf6236', '#6f8f5b', '#b5845a'][i]} strokeOpacity="0.28" strokeWidth="12" filter="url(#ribbon-glow)" />
-              <path d={d} fill="none" stroke={['#1f4d3a', '#c98a2e', '#cf6236', '#4f7a3e', '#9a6a40'][i]} strokeOpacity="0.55" strokeWidth="1.2" />
+              <path d={d} fill="none" stroke={['#d4ff3f', '#ff2da8', '#d4ff3f', '#ff2da8', '#f4f1ea'][i]} strokeOpacity="0.22" strokeWidth="12" filter="url(#ribbon-glow)" />
+              <path d={d} fill="none" stroke={['#d4ff3f', '#ff2da8', '#d4ff3f', '#ff2da8', '#f4f1ea'][i]} strokeOpacity="0.6" strokeWidth="1.2" />
             </g>
           ))}
         </svg>
-        <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_45%,rgba(226,212,189,0.45)_100%)]" />
+        <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_45%,rgba(0,0,0,0.55)_100%)]" />
 
         <p className="pointer-events-none absolute left-5 top-24 z-20 font-mono text-[11px] uppercase tracking-[0.12em] text-muted md:left-10 md:top-28">(02) Selected work</p>
 

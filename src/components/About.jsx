@@ -46,7 +46,7 @@ function Detail({ e, on = true, light = false }) {
 }
 
 // Panel colours, in the same order as `experience`.
-const tones = ['#1f4a47', '#c9673f', '#1d2433']
+const tones = ['#d4ff3f', '#ff2da8', '#f4f1ea']
 
 function ExperiencePanels() {
   const [open, setOpen] = useState(0)
@@ -82,8 +82,8 @@ function ExperiencePanels() {
               }`}
               style={{
                 flexBasis: 0,
-                color: on ? '#f6f0e6' : '#171512',
-                background: `linear-gradient(170deg, #fffdf8, color-mix(in srgb, ${c} 12%, #f6f0e6))`,
+                color: on ? '#0b0b0b' : '#f4f1ea',
+                background: `linear-gradient(170deg, #171717, color-mix(in srgb, ${c} 8%, #101010))`,
               }}
             >
               {/* The panel colour fades in, rather than swapping instantly. */}
@@ -104,14 +104,14 @@ function ExperiencePanels() {
 
               {/* Fine grain and a spotlight that follows the pointer. */}
               <span aria-hidden="true" className="pointer-events-none absolute inset-0 opacity-[0.18] mix-blend-overlay [background-image:url(&quot;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E&quot;)]" />
-              <span aria-hidden="true" className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100 [background:radial-gradient(380px_circle_at_var(--mx,50%)_var(--my,50%),rgba(255,255,255,0.18),transparent_60%)]" />
+              <span aria-hidden="true" className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100 [background:radial-gradient(380px_circle_at_var(--mx,50%)_var(--my,50%),rgba(255,255,255,0.14),transparent_60%)]" />
               {/* Concentric rings in the corner of the open panel. */}
               <svg aria-hidden="true" viewBox="0 0 200 200" className={`pointer-events-none absolute -right-16 -top-16 h-72 w-72 transition-opacity duration-700 ${on ? 'opacity-30' : 'opacity-0'}`}>
                 {[30, 55, 80, 100].map((r) => <circle key={r} cx="100" cy="100" r={r} fill="none" stroke="currentColor" strokeWidth="0.8" />)}
               </svg>
 
               <div className="pointer-events-none absolute left-6 right-6 top-6 flex items-center justify-between">
-                <span className="flex h-8 w-8 items-center justify-center rounded-full border font-mono text-[10px] transition-colors duration-500" style={{ borderColor: on ? 'rgba(246,240,230,0.4)' : c, color: on ? '#f6f0e6' : c }}>{n(i)}</span>
+                <span className="flex h-8 w-8 items-center justify-center rounded-full border font-mono text-[10px] transition-colors duration-500" style={{ borderColor: on ? 'rgba(11,11,11,0.4)' : c, color: on ? '#0b0b0b' : c }}>{n(i)}</span>
                 <Icon i={i} className="h-5 w-5" />
               </div>
 
@@ -130,7 +130,7 @@ function ExperiencePanels() {
                 className={`pointer-events-none absolute bottom-6 left-6 right-6 transition-[opacity,transform] duration-500 ease-out ${on ? 'translate-y-2 opacity-0' : 'translate-y-0 opacity-100 delay-300'}`}
               >
                 <span className="mb-4 block h-1 w-10 rounded-full transition-all duration-500 group-hover:w-16" style={{ background: c }} />
-                <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-ink/50">{e.period}</p>
+                <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-ink/55">{e.period}</p>
                 <h3 className="mt-3 text-[22px] font-semibold leading-[1.15] tracking-[-0.01em]">{e.role}</h3>
                 <p className="mt-1.5 font-serif text-[18px] italic leading-snug" style={{ color: c }}>{e.company}</p>
               </div>
@@ -173,7 +173,7 @@ function ExperiencePanels() {
                   <span className="mt-1 block font-serif text-[16px] italic text-ink/55">{e.company}</span>
                   <span className="mt-1 block font-mono text-[10px] uppercase tracking-[0.14em] text-muted">{e.period}</span>
                 </span>
-                <span aria-hidden="true" className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full border transition-all duration-500 ${on ? 'rotate-45 border-accent bg-accent text-white' : 'border-ink/30 text-ink'}`}>+</span>
+                <span aria-hidden="true" className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full border transition-all duration-500 ${on ? 'rotate-45 border-accent bg-accent text-jet' : 'border-ink/30 text-ink'}`}>+</span>
               </button>
               <div className={`grid transition-[grid-template-rows] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${on ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}>
                 <div className="overflow-hidden">
@@ -341,7 +341,7 @@ export default function About() {
       <div id="experience" className="relative mt-24 scroll-mt-24 py-4 md:mt-36">
         {/* Dotted grid and soft glows behind the panels. */}
         <div aria-hidden="true" className="pointer-events-none absolute -inset-x-5 -bottom-24 -top-16 -z-10 md:-inset-x-10">
-          <div className="absolute inset-0 opacity-60 [background-image:radial-gradient(rgba(23,21,18,0.14)_1px,transparent_1px)] [background-size:22px_22px] [mask-image:radial-gradient(ellipse_at_center,#000_35%,transparent_75%)]" />
+          <div className="absolute inset-0 opacity-60 [background-image:radial-gradient(rgba(244,241,234,0.12)_1px,transparent_1px)] [background-size:22px_22px] [mask-image:radial-gradient(ellipse_at_center,#000_35%,transparent_75%)]" />
           <div className="glow glow-mint left-[5%] top-[20%] h-[50vh] w-[40vw]" />
           <div className="glow glow-deep right-[0%] bottom-[0%] h-[50vh] w-[40vw]" />
         </div>
