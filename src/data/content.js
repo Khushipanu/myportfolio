@@ -20,6 +20,7 @@ export const socials = [
   { label: 'LinkedIn', handle: 'khushi-panu', href: 'https://www.linkedin.com/in/khushi-panu-419157294' },
   { label: 'GitHub', handle: 'khushipanu', href: 'https://github.com/khushipanu' },
   { label: 'LeetCode', handle: 'khushipanu', href: 'https://leetcode.com/khushipanu' },
+  { label: 'Instagram', handle: '_khushi.panu', href: 'https://www.instagram.com/_khushi.panu' },
 ]
 
 export const about = {

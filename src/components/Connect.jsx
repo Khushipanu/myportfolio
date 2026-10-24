@@ -198,9 +198,9 @@ export default function Connect() {
 
       {/* Links and footer bar. */}
       <div className="relative px-5 pb-8 md:px-10">
-        <ul className="grid grid-cols-2 gap-3 md:grid-cols-4">
-          {links.map((l) => (
-            <li key={l.label}>
+        <ul className="grid grid-cols-2 gap-3 md:grid-cols-5">
+          {links.map((l, i) => (
+            <li key={l.label} className={i === links.length - 1 ? 'col-span-2 md:col-span-1' : ''}>
               <a
                 href={l.href}
                 target="_blank"
