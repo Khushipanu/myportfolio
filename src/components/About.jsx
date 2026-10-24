@@ -66,7 +66,7 @@ function ExperiencePanels() {
                 ev.currentTarget.style.setProperty('--my', `${ev.clientY - r.top}px`)
               }}
               className={`group relative min-w-0 overflow-hidden rounded-[18px] border transition-[flex-grow,border-color,background-color,transform] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-1 ${
-                on ? 'grow-[3] border-accent/30 bg-[#e6efe6]' : 'grow border-ink/10 bg-white/55 hover:border-accent/30'
+                on ? 'grow-[3] border-accent/30 bg-[#ece4d3]' : 'grow border-ink/10 bg-white/55 hover:border-accent/30'
               }`}
               style={{ flexBasis: 0 }}
             >
@@ -81,11 +81,11 @@ function ExperiencePanels() {
               </button>
 
               {/* Spotlight that follows the pointer. */}
-              <span aria-hidden="true" className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100 [background:radial-gradient(420px_circle_at_var(--mx,50%)_var(--my,50%),rgba(243,224,138,0.45),transparent_60%)]" />
+              <span aria-hidden="true" className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100 [background:radial-gradient(420px_circle_at_var(--mx,50%)_var(--my,50%),rgba(207,98,54,0.12),transparent_60%)]" />
               {/* Green line that runs along the foot of the panel on hover. */}
               <span aria-hidden="true" className="pointer-events-none absolute inset-x-6 bottom-0 h-px origin-left scale-x-0 bg-accent transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-x-100" />
               {/* Soft green light in the open panel. */}
-              <span aria-hidden="true" className={`pointer-events-none absolute -right-24 -top-24 h-80 w-80 rounded-full bg-[radial-gradient(closest-side,rgba(200,220,241,0.9),transparent)] transition-opacity duration-700 ${on ? 'opacity-100' : 'opacity-0'}`} />
+              <span aria-hidden="true" className={`pointer-events-none absolute -right-24 -top-24 h-80 w-80 rounded-full bg-[radial-gradient(closest-side,rgba(230,211,173,0.9),transparent)] transition-opacity duration-700 ${on ? 'opacity-100' : 'opacity-0'}`} />
 
               <div className="pointer-events-none absolute left-6 right-6 top-6 flex items-center justify-between">
                 <span className={`font-mono text-[11px] tracking-[0.12em] transition-colors duration-500 ${on ? 'text-accent' : 'text-muted'}`}>{n(i)}</span>
@@ -95,7 +95,7 @@ function ExperiencePanels() {
               {/* Closed: a big outlined number fills the panel and turns green on hover. */}
               <span
                 aria-hidden="true"
-                className={`pointer-events-none absolute left-6 top-16 font-serif text-[9rem] italic leading-none text-transparent transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] [-webkit-text-stroke:1px_rgba(26,25,23,0.16)] group-hover:-translate-y-2 group-hover:[-webkit-text-stroke:1px_rgba(35,132,90,0.85)] ${on ? 'opacity-0' : 'opacity-100'}`}
+                className={`pointer-events-none absolute left-6 top-16 font-serif text-[9rem] italic leading-none text-transparent transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] [-webkit-text-stroke:1px_rgba(26,25,23,0.16)] group-hover:-translate-y-2 group-hover:[-webkit-text-stroke:1px_rgba(207,98,54,0.85)] ${on ? 'opacity-0' : 'opacity-100'}`}
               >
                 {n(i)}
               </span>

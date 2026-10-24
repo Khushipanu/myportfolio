@@ -68,10 +68,10 @@ export default function Connect() {
         <a href={gmail} target="_blank" rel="noreferrer" aria-label="Let's connect — write to me on Gmail" className="group block">
           <span aria-hidden="true" data-lc-a className="block text-[24vw] md:text-[17vw]">Let's</span>
           <span aria-hidden="true" className="flex items-center justify-end gap-[2vw]">
-            <span data-lc-dot className="inline-flex h-[12vw] w-[12vw] shrink-0 items-center justify-center rounded-full bg-butter text-[6vw] text-ink transition-transform duration-500 group-hover:rotate-45 md:h-[9vw] md:w-[9vw] md:text-[4.5vw]">
+            <span data-lc-dot className="inline-flex h-[12vw] w-[12vw] shrink-0 items-center justify-center rounded-full bg-terracotta text-[6vw] text-paper transition-transform duration-500 group-hover:rotate-45 md:h-[9vw] md:w-[9vw] md:text-[4.5vw]">
               ↗
             </span>
-            <span data-lc-b className="block text-[24vw] transition-colors duration-500 group-hover:text-butter md:text-[17vw]">Connect</span>
+            <span data-lc-b className="block text-[24vw] transition-colors duration-500 group-hover:text-sand md:text-[17vw]">Connect</span>
           </span>
         </a>
       </h2>
@@ -84,7 +84,7 @@ export default function Connect() {
             target="_blank"
             rel="noreferrer"
             data-cursor="Email"
-            className="mt-4 font-serif text-[7.6vw] italic leading-none transition-colors hover:text-butter md:text-[4.6vw]"
+            className="mt-4 font-serif text-[7.6vw] italic leading-none transition-colors hover:text-sand md:text-[4.6vw]"
           >
             {profile.email}
           </Magnetic>
@@ -101,10 +101,10 @@ export default function Connect() {
                 <a
                   href={r.href}
                   {...(r.external ? { target: '_blank', rel: 'noreferrer' } : { download: r.download })}
-                  className="group flex items-center justify-between gap-4 py-4 text-lg transition-colors hover:text-butter"
+                  className="group flex items-center justify-between gap-4 py-4 text-lg transition-colors hover:text-sand"
                 >
                   <span>{r.label}</span>
-                  <span className="truncate text-sm text-paper/50 transition-transform duration-500 group-hover:-translate-y-0.5 group-hover:translate-x-1 group-hover:text-butter">
+                  <span className="truncate text-sm text-paper/50 transition-transform duration-500 group-hover:-translate-y-0.5 group-hover:translate-x-1 group-hover:text-sand">
                     {r.note}
                   </span>
                 </a>

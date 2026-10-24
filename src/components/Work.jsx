@@ -171,7 +171,7 @@ export default function Work() {
             'M1500 -20 C 1180 260, 1380 540, 1040 760 S 760 980, 640 1000',
           ].map((d, i) => (
             <g key={i} opacity={i > 2 ? 0.7 : 1}>
-              <path d={d} fill="none" stroke={['#c8dcf1', '#f3e08a', '#f4c9bf', '#cfe6d6', '#d8cdea'][i]} strokeWidth="14" filter="url(#ribbon-glow)" />
+              <path d={d} fill="none" stroke={['#d6e0cf', '#e6d3ad', '#f0c6ae', '#c9d8bf', '#e2d4c0'][i]} strokeWidth="14" filter="url(#ribbon-glow)" />
               <path d={d} fill="none" stroke="rgba(26,25,23,0.18)" strokeWidth="1" />
             </g>
           ))}

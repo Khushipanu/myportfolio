@@ -33,7 +33,7 @@ Add live/source links for a project by setting `live` and `code` in `content.js`
 ## Sections
 
 1. Loader
-2. Hero — bold KHUSHI / light PANU over a slowly drifting wall of project screens
+2. Hero — bold KHUSHI / green PANU beside a terracotta sun with a turning text ring, floating skill stickers and a scrolling skills band
 3. Statement — "Building digital experiences that matter", rising line by line
 4. Selected work — five project screens on a ring around "My Works" that turns as you scroll; the front card drives a project highlight and lights up its skills
 5. About + Experience — a statement with hand-drawn marks and draggable sticky notes; three roles as expanding panels with a pointer spotlight
@@ -42,8 +42,8 @@ Add live/source links for a project by setting `live` and `code` in `content.js`
 
 The resume PDF lives in `public/Khushi_Panu_Resume.pdf`; replace that file to update the download.
 
-Design follows a light theme (#F4F0E8 paper, #1A1917 ink) with a deep green accent (#23845A) and soft
-pastel supporting colours (butter, sky, blush, sage, lavender), with Archivo for
+Design follows a light theme (#F3EEE5 paper, #171512 ink) with an earthy palette — forest green (#1F4D3A),
+terracotta (#CF6236), sand, moss and clay — with Archivo for
 headlines, Inter for body text and JetBrains Mono for labels and the menu.
 
 Decorative effects (grid backdrop, pointer glow, click ripple, word reveal) live in

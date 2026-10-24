@@ -4,10 +4,10 @@
 // The screens are light app UIs in the site's palette: white windows, pastel
 // fills and the deep green for buttons and active states.
 
-const GREEN = '#23845a'
+const GREEN = '#1f4d3a'
 const posters = [
-  ['#f3e08a', '#e7c95a'], ['#c8dcf1', '#9fbfe3'], ['#f4c9bf', '#e9a594'],
-  ['#cfe6d6', '#a5cdb2'], ['#d8cdea', '#b8a6d8'], ['#f1d3a6', '#e2b677'],
+  ['#e6d3ad', '#d4b87f'], ['#d6e0cf', '#a9bf9a'], ['#f0c6ae', '#dd9a76'],
+  ['#c9d8bf', '#8fae7d'], ['#e2d4c0', '#c4a988'], ['#e9c39a', '#cf9a62'],
 ]
 
 const Bar = ({ w = '60%', o = 0.7, h = '0.35em', c = 'bg-[#1a1917]' }) => (
@@ -32,7 +32,7 @@ function MovieHome() {
   return (
     <Chrome title="MovieThrill">
       <div className="flex h-full flex-col p-[0.9em]">
-        <div className="relative h-[42%] overflow-hidden rounded-[0.4em] bg-[linear-gradient(120deg,#c8dcf1,#d8cdea_55%,#f4c9bf)]">
+        <div className="relative h-[42%] overflow-hidden rounded-[0.4em] bg-[linear-gradient(120deg,#d6e0cf,#e2d4c0_55%,#f0c6ae)]">
           <div className="absolute bottom-[0.8em] left-[0.8em] space-y-[0.35em]">
             <div className="font-display text-[1.1em] font-bold leading-none">Now Trending</div>
             <Bar w="7em" o={0.35} />
@@ -53,12 +53,12 @@ function MovieDetail() {
   return (
     <Chrome title="MovieThrill">
       <div className="flex h-full gap-[0.9em] p-[0.9em]">
-        <div className="w-[34%] rounded-[0.4em] bg-[linear-gradient(170deg,#f3e08a,#f1d3a6_50%,#f4c9bf)]" />
+        <div className="w-[34%] rounded-[0.4em] bg-[linear-gradient(170deg,#e6d3ad,#e9c39a_50%,#f0c6ae)]" />
         <div className="flex flex-1 flex-col gap-[0.5em] pt-[0.3em]">
           <div className="font-display text-[1.15em] font-bold leading-none">The Movie</div>
           <div className="flex gap-[0.35em]">
             {['Drama', 'Thriller', '2h 08m'].map((t) => (
-              <span key={t} className="rounded-full bg-[#c8dcf1]/70 px-[0.5em] py-[0.15em] text-[0.5em]">{t}</span>
+              <span key={t} className="rounded-full bg-[#d6e0cf]/70 px-[0.5em] py-[0.15em] text-[0.5em]">{t}</span>
             ))}
           </div>
           <Bar w="95%" o={0.18} /><Bar w="88%" o={0.18} /><Bar w="70%" o={0.18} />
@@ -73,12 +73,12 @@ function MovieDetail() {
 }
 
 function LmsCourses() {
-  const tones = ['#cfe6d6', '#f3e08a', '#c8dcf1', '#f4c9bf']
+  const tones = ['#c9d8bf', '#e6d3ad', '#d6e0cf', '#f0c6ae']
   return (
     <Chrome title="LMS · Courses">
       <div className="flex h-full">
-        <div className="flex w-[24%] flex-col gap-[0.55em] bg-[#eef4ef] p-[0.8em]">
-          <Bar w="80%" o={1} c="bg-[#23845a]" />
+        <div className="flex w-[24%] flex-col gap-[0.55em] bg-[#eef0e8] p-[0.8em]">
+          <Bar w="80%" o={1} c="bg-[#1f4d3a]" />
           {[0, 1, 2, 3].map((i) => <Bar key={i} w={`${85 - i * 10}%`} o={0.18} />)}
         </div>
         <div className="grid flex-1 grid-cols-2 gap-[0.6em] p-[0.8em]">
@@ -103,7 +103,7 @@ function LmsPlayer() {
   return (
     <Chrome title="LMS · Lesson">
       <div className="flex h-full gap-[0.8em] p-[0.9em]">
-        <div className="relative flex-1 overflow-hidden rounded-[0.4em] bg-[linear-gradient(135deg,#cfe6d6,#c8dcf1)]">
+        <div className="relative flex-1 overflow-hidden rounded-[0.4em] bg-[linear-gradient(135deg,#c9d8bf,#d6e0cf)]">
           <span className="absolute left-1/2 top-1/2 flex h-[2.4em] w-[2.4em] -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-white text-[0.7em] shadow-sm">▶</span>
           <div className="absolute inset-x-[0.7em] bottom-[0.7em] h-[0.25em] rounded-full bg-white/70">
             <div className="h-full w-[38%] rounded-full" style={{ background: GREEN }} />
@@ -111,7 +111,7 @@ function LmsPlayer() {
         </div>
         <div className="flex w-[32%] flex-col gap-[0.45em]">
           {[1, 0, 0, 0, 0].map((on, i) => (
-            <div key={i} className={`flex items-center gap-[0.4em] rounded-[0.3em] p-[0.4em] ${on ? 'bg-[#cfe6d6]' : 'bg-[#1a1917]/[0.04]'}`}>
+            <div key={i} className={`flex items-center gap-[0.4em] rounded-[0.3em] p-[0.4em] ${on ? 'bg-[#c9d8bf]' : 'bg-[#1a1917]/[0.04]'}`}>
               <span className="h-[0.6em] w-[0.6em] rounded-full" style={{ background: on ? GREEN : 'rgba(26,25,23,0.2)' }} />
               <Bar w="70%" o={on ? 0.6 : 0.2} h="0.28em" />
             </div>
@@ -126,7 +126,7 @@ function LmsRoles() {
   return (
     <Chrome title="Sign in" tint="#fbf8f2">
       <div className="flex h-full items-center justify-center gap-[0.9em] p-[0.9em]">
-        {[['Student', '#c8dcf1'], ['Instructor', '#f3e08a']].map(([r, c]) => (
+        {[['Student', '#d6e0cf'], ['Instructor', '#e6d3ad']].map(([r, c]) => (
           <div key={r} className="flex h-[78%] w-[40%] flex-col items-center justify-center gap-[0.55em] rounded-[0.5em] border border-[#1a1917]/8" style={{ background: c }}>
             <span className="h-[2em] w-[2em] rounded-full bg-white" />
             <span className="text-[0.62em] font-semibold">{r}</span>
@@ -148,12 +148,12 @@ function ErpTable() {
         </div>
         <div className="flex-1 overflow-hidden rounded-[0.35em] border border-[#1a1917]/8">
           {Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} className={`grid grid-cols-[1fr_1.4fr_0.8fr_0.7fr] items-center gap-[0.6em] px-[0.6em] py-[0.48em] ${i === 0 ? 'bg-[#eef4ef]' : 'border-t border-[#1a1917]/6'}`}>
+            <div key={i} className={`grid grid-cols-[1fr_1.4fr_0.8fr_0.7fr] items-center gap-[0.6em] px-[0.6em] py-[0.48em] ${i === 0 ? 'bg-[#eef0e8]' : 'border-t border-[#1a1917]/6'}`}>
               <Bar w="70%" o={i ? 0.25 : 0.55} h="0.28em" />
               <Bar w="85%" o={i ? 0.15 : 0.55} h="0.28em" />
               <Bar w="60%" o={i ? 0.15 : 0.55} h="0.28em" />
               {i ? (
-                <span className="h-[0.7em] w-[2.2em] rounded-full" style={{ background: ['#cfe6d6', '#f3e08a', '#f4c9bf'][i % 3] }} />
+                <span className="h-[0.7em] w-[2.2em] rounded-full" style={{ background: ['#c9d8bf', '#e6d3ad', '#f0c6ae'][i % 3] }} />
               ) : <Bar w="60%" o={0.55} h="0.28em" />}
             </div>
           ))}
@@ -190,17 +190,17 @@ function Components() {
   return (
     <Chrome title="Components" tint="#fbf8f2">
       <div className="grid h-full grid-cols-3 gap-[0.6em] p-[0.9em]">
-        <div className="col-span-2 flex flex-col justify-between rounded-[0.4em] bg-[#d8cdea] p-[0.7em]">
+        <div className="col-span-2 flex flex-col justify-between rounded-[0.4em] bg-[#e2d4c0] p-[0.7em]">
           <Bar w="50%" o={0.6} h="0.4em" />
           <div className="flex gap-[0.35em]">
             <span className="rounded-full px-[0.7em] py-[0.25em] text-[0.5em] font-semibold text-white" style={{ background: GREEN }}>Primary</span>
             <span className="rounded-full border border-[#1a1917]/25 px-[0.7em] py-[0.25em] text-[0.5em]">Ghost</span>
           </div>
         </div>
-        <div className="rounded-[0.4em] bg-[#f3e08a]" />
-        <div className="rounded-[0.4em] bg-[#f4c9bf]" />
+        <div className="rounded-[0.4em] bg-[#e6d3ad]" />
+        <div className="rounded-[0.4em] bg-[#f0c6ae]" />
         <div className="col-span-2 flex items-center gap-[0.5em] rounded-[0.4em] border border-[#1a1917]/8 bg-white p-[0.6em]">
-          <span className="h-[1.6em] w-[1.6em] rounded-full bg-[#c8dcf1]" />
+          <span className="h-[1.6em] w-[1.6em] rounded-full bg-[#d6e0cf]" />
           <div className="flex-1 space-y-[0.3em]">
             <Bar w="70%" o={0.55} h="0.28em" />
             <Bar w="40%" o={0.2} h="0.28em" />
