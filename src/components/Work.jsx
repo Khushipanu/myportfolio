@@ -58,7 +58,7 @@ function useRing(stageRef, ringRef, progressRef, onFront) {
         for (let j = 0; j < SLICES; j++) {
           const sa = a + (j - (SLICES - 1) / 2) * g.dSlice
           const ks = (Math.cos((sa * Math.PI) / 180) + 1) / 2
-          shades[i][j].style.opacity = ((1 - ks) * 0.78).toFixed(3)
+          shades[i][j].style.opacity = ((1 - ks) * 0.7).toFixed(3)
           sl[j].style.transform = `translate3d(-50%, -50%, 0) rotateY(${sa.toFixed(3)}deg) translateZ(${g.r.toFixed(1)}px)`
         }
       }
@@ -112,7 +112,7 @@ function Card({ c, i }) {
               className={`h-full w-full text-[calc(var(--cw)/19)] ${j === 0 ? 'rounded-l-[10px]' : ''} ${j === SLICES - 1 ? 'rounded-r-[10px]' : ''}`}
             />
           </div>
-          <div data-shade className="pointer-events-none absolute inset-0 bg-black" />
+          <div data-shade className="pointer-events-none absolute inset-0 bg-[#c9bba1]" />
         </div>
       ))}
     </div>
