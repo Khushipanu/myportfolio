@@ -164,7 +164,7 @@ export default function Connect() {
             <a
               href={resume.href}
               download={resume.file}
-              className="flex items-center gap-2.5 rounded-full border border-ink/30 px-7 py-[1.05rem] font-mono text-[13px] uppercase tracking-[0.12em] text-ink transition-colors duration-300 hover:border-pink hover:text-pink"
+              className="flex items-center gap-2.5 rounded-full border border-ink/30 px-7 py-[1.05rem] font-mono text-[13px] uppercase tracking-[0.12em] text-ink transition-colors duration-300 hover:border-ink/60 hover:bg-ink/5"
             >
               Download resume <span aria-hidden="true">↓</span>
             </a>

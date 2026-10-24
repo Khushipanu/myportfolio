@@ -217,14 +217,14 @@ html.lenis body {
 }
 .kp-cursor[data-pressed='true'] .kp-cursor__disc { transform: scale(0.13); }
 .kp-cursor[data-state='label'] { mix-blend-mode: normal; }
-.kp-cursor[data-state='label'] .kp-cursor__disc { transform: scale(1.25); background: var(--color-pink); }
+.kp-cursor[data-state='label'] .kp-cursor__disc { transform: scale(1.25); background: rgba(244, 241, 234, 0.92); }
 .kp-cursor[data-pressed='true'][data-state='label'] .kp-cursor__disc { transform: scale(1.05); }
 .kp-cursor__label {
   font-family: var(--font-mono);
   font-size: 10px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: #ffffff;
+  color: #0b0b0b;
   opacity: 0;
   transition: opacity 0.2s ease;
 }

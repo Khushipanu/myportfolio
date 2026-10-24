@@ -2,18 +2,16 @@ import { useEffect, useRef, useState } from 'react'
 import { gsap, useGSAP, MOTION_OK, prefersReducedMotion } from '../lib/gsap'
 import { scrollToTarget } from '../hooks/useLenis'
 import { profile, resume } from '../data/content'
-import DotField from './ui/DotField'
 
-// Interactive hero in the jet black / hot pink / chartreuse palette:
-// - a dot grid that lights up around the pointer,
-// - a name whose letters grow bolder as the pointer nears,
+// Hero in the jet black / hot pink / chartreuse palette:
+// - a name whose letters widen and grow bolder as the pointer nears,
 // - a line that cycles through what Khushi builds, and an info strip.
 const builds = ['web apps', 'REST APIs', 'ERP systems', 'MERN projects']
 
 function Line({ word, className = '' }) {
   return (
     <span aria-hidden="true" className={`block whitespace-nowrap ${className}`}>
-      {word.split('').map((c, i) => (
+      {word.toUpperCase().split('').map((c, i) => (
         <span key={i} className="inline-block overflow-hidden align-bottom">
           <span data-char data-px className="inline-block">{c}</span>
         </span>
@@ -22,8 +20,8 @@ function Line({ word, className = '' }) {
   )
 }
 
-// Letters respond to the pointer: the closer it gets, the heavier each one
-// becomes (colours stay as they are). Values ease every frame so the motion
+// Letters respond to the pointer: the closer it gets, the wider and heavier
+// each one becomes (colours stay as they are). Values ease every frame so the motion
 // stays fluid.
 function useProximity(rootRef, ready) {
   useEffect(() => {
@@ -45,6 +43,7 @@ function useProximity(rootRef, ready) {
         const goal = Math.max(0, 1 - d / R)
         state[i] += (goal - state[i]) * 0.14
         const k = state[i]
+        c.style.fontStretch = `${100 + k * 25}%`
         c.style.fontWeight = String(Math.round(700 + k * 200))
       })
     }
@@ -52,7 +51,7 @@ function useProximity(rootRef, ready) {
     return () => {
       cancelAnimationFrame(raf)
       window.removeEventListener('pointermove', onMove)
-      chars.forEach((c) => { c.style.fontWeight = '' })
+      chars.forEach((c) => { c.style.fontStretch = ''; c.style.fontWeight = '' })
     }
   }, [rootRef, ready])
 }
@@ -82,7 +81,6 @@ export default function Hero({ ready }) {
       const mm = gsap.matchMedia()
       mm.add(MOTION_OK, () => {
         gsap.timeline({ delay: 0.3 })
-          .from('[data-dots]', { autoAlpha: 0, duration: 1.4, ease: 'power2.out' })
           .from('[data-char]', { yPercent: 110, duration: 1.2, ease: 'expo.out', stagger: 0.05 }, 0.1)
           .from('[data-hero-fade]', { y: 24, autoAlpha: 0, duration: 1, ease: 'expo.out', stagger: 0.07 }, 0.5)
 
@@ -96,11 +94,7 @@ export default function Hero({ ready }) {
 
   return (
     <section id="top" ref={root} className="relative isolate flex min-h-[100svh] flex-col overflow-hidden bg-jet px-5 pb-6 pt-28 text-ink md:px-10 md:pb-8 md:pt-32">
-      <div data-dots className="absolute inset-0 -z-10">
-        <DotField className="h-full w-full" />
-        <div aria-hidden="true" className="pointer-events-none absolute -right-[10%] top-[10%] h-[60vh] w-[45vw] rounded-full bg-[radial-gradient(closest-side,rgba(255,45,168,0.18),transparent)] blur-2xl" />
-        <div aria-hidden="true" className="pointer-events-none absolute -left-[10%] bottom-[0%] h-[55vh] w-[40vw] rounded-full bg-[radial-gradient(closest-side,rgba(212,255,63,0.12),transparent)] blur-2xl" />
-      </div>
+      <div aria-hidden="true" className="pointer-events-none absolute -right-[10%] top-[10%] -z-10 h-[60vh] w-[45vw] rounded-full bg-[radial-gradient(closest-side,rgba(255,45,168,0.12),transparent)] blur-2xl" />
 
       <div className="flex items-center justify-between gap-6">
         <span data-hero-fade className="inline-flex items-center gap-2.5 rounded-full border border-ink/20 bg-jet/60 px-3.5 py-1.5 font-mono text-[11px] uppercase tracking-[0.14em] text-ink/80 backdrop-blur-sm">
@@ -110,20 +104,19 @@ export default function Hero({ ready }) {
           </span>
           Available for work
         </span>
-        <span data-hero-fade className="hidden font-mono text-[11px] uppercase tracking-[0.14em] text-ink/50 md:block">Move your cursor ✦</span>
       </div>
 
       <div className="relative my-auto py-8">
         <h1
           ref={name}
           aria-label={profile.name}
-          className="font-sans leading-[0.9] tracking-[-0.06em] [font-weight:700] text-[20vw] md:text-[min(15vw,27svh)]"
+          className="font-display uppercase leading-[0.86] tracking-[-0.02em] [font-stretch:100%] [font-weight:700] text-[17vw] md:text-[min(15vw,27svh)]"
         >
           <Line word={profile.firstName} />
           <Line word={profile.lastName} className="text-chartreuse md:pl-[22vw]" />
         </h1>
 
-        <p data-hero-fade className="mt-8 max-w-2xl font-sans text-[20px] font-normal leading-snug tracking-[-0.02em] text-ink/70 md:mt-10 md:text-[28px]">
+        <p data-hero-fade className="mt-8 max-w-2xl text-[20px] leading-snug text-ink/80 md:mt-10 md:text-[28px]">
           Full Stack Developer — I build <Cycler /> that people enjoy using.
         </p>
       </div>
@@ -143,7 +136,7 @@ export default function Hero({ ready }) {
             href={resume.href}
             download={resume.file}
             data-hero-fade
-            className="flex items-center gap-2.5 rounded-full border border-pink/60 px-6 py-4 font-mono text-[12px] uppercase tracking-[0.12em] text-pink transition-colors duration-300 hover:bg-pink hover:text-jet"
+            className="flex items-center gap-2.5 rounded-full border border-pink/60 px-6 py-4 font-mono text-[12px] uppercase tracking-[0.12em] text-pink transition-colors duration-300 hover:bg-pink/10"
           >
             Resume <span aria-hidden="true">↓</span>
           </a>
