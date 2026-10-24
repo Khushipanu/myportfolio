@@ -3,6 +3,7 @@ import { gsap, useGSAP, MOTION_OK } from '../lib/gsap'
 import { scrollToTarget } from '../hooks/useLenis'
 import { profile } from '../data/content'
 import SerenityBackdrop from './ui/SerenityBackdrop'
+import Planet from './ui/Planet'
 
 const dots = [
   { href: '#top', label: 'Intro' },
@@ -98,15 +99,13 @@ export default function Hero({ ready }) {
       </div>
 
       <div className="relative my-auto py-6">
-        {/* Terracotta sun with a slowly turning ring of text. */}
+        {/* Ringed planet with a slowly turning ring of text. */}
         <div
           data-sun
           aria-hidden="true"
           className="pointer-events-none absolute right-[-14%] top-[-34%] aspect-square w-[52vw] md:right-[4%] md:top-[2%] md:w-[min(30vw,56svh)]"
         >
-          <div className="absolute inset-[9%] overflow-hidden rounded-full bg-[radial-gradient(circle_at_32%_28%,#e5865c,#cf6236_52%,#a9492a)] shadow-[0_40px_120px_-30px_rgba(207,98,54,0.6)]">
-            <div className="absolute inset-0 opacity-30 mix-blend-multiply [background-image:url(&quot;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E&quot;)]" />
-          </div>
+          <Planet className="absolute inset-[6%] h-[88%] w-[88%]" />
           <svg viewBox="0 0 200 200" className="spin-slow absolute inset-0 h-full w-full overflow-visible">
             <defs>
               <path id="sun-ring" d="M100,100 m-94,0 a94,94 0 1,1 188,0 a94,94 0 1,1 -188,0" />
@@ -179,7 +178,7 @@ export default function Hero({ ready }) {
       </nav>
 
       {/* Skills band running across the foot of the hero. */}
-      <div data-band aria-hidden="true" className="-mx-5 mb-6 -rotate-[1.2deg] overflow-hidden bg-forest py-3 text-paper md:-mx-10 md:mb-8 md:py-4">
+      <div data-band aria-hidden="true" className="-mx-5 mb-6 overflow-hidden bg-forest py-3 text-paper md:-mx-10 md:mb-8 md:py-4">
         <div className="marquee flex w-max gap-8 whitespace-nowrap font-tall text-[22px] uppercase tracking-[0.04em] md:text-[30px]">
           {[...band, ...band].map((t, i) => (
             <span key={i} className="flex items-center gap-8">

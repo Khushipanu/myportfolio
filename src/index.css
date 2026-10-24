@@ -304,3 +304,12 @@ html.lenis body {
 .spin-slow { animation: spin-slow 28s linear infinite; transform-origin: 50% 50%; }
 @keyframes marquee { to { transform: translateX(-50%); } }
 .marquee { animation: marquee 30s linear infinite; }
+
+/* Hero planet: drifting moons and twinkling sparkles */
+@keyframes moon-a { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(6px, -5px); } }
+@keyframes moon-b { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(-5px, 4px); } }
+@keyframes twinkle { 0%, 100% { opacity: 0.9; transform: scale(1); } 50% { opacity: 0.35; transform: scale(0.6); } }
+.moon-a { animation: moon-a 6s ease-in-out infinite; }
+.moon-b { animation: moon-b 5s ease-in-out infinite; }
+.moon-c { animation: moon-a 7s ease-in-out infinite reverse; }
+.twinkle { animation: twinkle 3s ease-in-out infinite; }
