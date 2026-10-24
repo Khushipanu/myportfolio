@@ -260,3 +260,7 @@ html.lenis body {
   .mark { background-size: 100% 72%; }
   .draw path { stroke-dashoffset: 0; }
 }
+
+/* Contact ring: slow continuous turn (the scroll animation scales it in). */
+@keyframes ring-spin { to { transform: rotate(360deg); } }
+.ring-spin { animation: ring-spin 40s linear infinite; transform-origin: 50% 50%; }
