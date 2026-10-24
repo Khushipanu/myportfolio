@@ -2,11 +2,12 @@ import { useEffect, useRef, useState } from 'react'
 import { gsap, useGSAP, ScrollTrigger, MOTION_OK, prefersReducedMotion } from '../lib/gsap'
 import Art from './Art'
 
-// Visuvate-style "works" ring: five project screens stand on a circle around
-// the "My Works" title, each card curved onto the cylinder (built from thin
-// vertical slices) with its back showing as it turns away. The section is
-// held while scrolling turns the circle through every card, and the card
-// facing front drives the highlight and lights up its skills.
+// Visuvate-style "works" globe: the five project screens, repeated, sit on a
+// sphere around the "My Works" title, each card curved along the globe (built
+// from thin vertical slices) with its back showing as it turns away. The
+// section is held while scrolling spins and tilts the globe, which also
+// drifts slowly on its own. The card facing front drives the highlight and
+// lights up its skills.
 const CARDS = [
   { variant: 'movie', label: 'MovieThrill — home', project: 'MovieThrill', highlight: 'Movie data from The Movie Database (TMDB) API, fetched with Axios.', skills: ['React.js', 'Tailwind CSS', 'JavaScript'] },
   { variant: 'lms', label: 'LMS — courses', project: 'Learning Management System', highlight: 'JWT authentication with student and instructor roles (RBAC).', skills: ['Node.js', 'Express.js', 'MongoDB'] },
@@ -15,53 +16,70 @@ const CARDS = [
   { variant: 'lmsPlayer', label: 'LMS — lesson', project: 'Learning Management System', highlight: 'Course purchasing and streaming on a full MERN stack.', skills: ['MongoDB', 'Express.js', 'React.js', 'Node.js'] },
 ]
 const SKILLS = ['React.js', 'Node.js', 'Express.js', 'MongoDB', 'Redux Toolkit', 'Tailwind CSS', 'JavaScript']
-const COUNT = CARDS.length
-const STEP = 360 / COUNT
-const SLICES = 5
+const SLICES = 4
+// Three bands of cards: above, around and below the equator.
+const ROWS = [
+  { lat: 36, n: 5, off: 0.5 },
+  { lat: 0, n: 6, off: 0 },
+  { lat: -36, n: 5, off: 0 },
+]
+const SPOTS = ROWS.flatMap((r, ri) =>
+  Array.from({ length: r.n }, (_, k) => ({ lat: r.lat, lon: ((k + r.off) / r.n) * 360, v: (ri * 2 + k) % CARDS.length })),
+)
+const RAD = Math.PI / 180
 
-// The ring turns with scroll: while the section is pinned, its progress maps
-// to one full pass through the cards, eased per frame so it glides.
-function useRing(stageRef, ringRef, progressRef, onFront) {
+function useGlobe(stageRef, globeRef, progressRef, onFront) {
   useEffect(() => {
     const stage = stageRef.current
-    const ring = ringRef.current
-    const cards = [...ring.querySelectorAll('[data-card]')]
+    const globe = globeRef.current
+    const cards = [...globe.querySelectorAll('[data-card]')]
     const slices = cards.map((c) => [...c.querySelectorAll('[data-slice]')])
     const shades = cards.map((c) => [...c.querySelectorAll('[data-shade]')])
     const still = prefersReducedMotion()
+    // Each card bends around its own axis through the globe's centre; this
+    // is each slice's angle along that bend.
+    let bend = []
 
-    const g = { cw: 260, ch: 187, r: 340, dSlice: 0 }
     const layout = () => {
       const w = stage.clientWidth
-      // Sized by width, but capped by height so short screens keep room for the text.
-      g.cw = Math.max(150, Math.min(340, w * (w < 768 ? 0.5 : 0.2), stage.clientHeight * 0.3))
-      g.ch = g.cw * 0.72
-      g.r = g.cw * 1.5
-      g.dSlice = ((g.cw / SLICES) / g.r) * (180 / Math.PI)
-      ring.style.setProperty('--cw', `${g.cw}px`)
-      ring.style.setProperty('--ch', `${g.ch}px`)
-      ring.style.setProperty('--sw', `${g.cw / SLICES + 0.6}px`)
+      const h = stage.clientHeight
+      const R = w < 768 ? Math.min(w * 0.46, h * 0.3) : Math.min(w * 0.27, h * 0.42)
+      const cw = R * 0.7
+      const ch = cw * 0.68
+      globe.style.setProperty('--cw', `${cw}px`)
+      globe.style.setProperty('--ch', `${ch}px`)
+      globe.style.setProperty('--sw', `${cw / SLICES + 0.6}px`)
+      const d = (cw / SLICES) / R / RAD
+      bend = Array.from({ length: SLICES }, (_, j) => (j - (SLICES - 1) / 2) * d)
+      SPOTS.forEach((p, i) => {
+        slices[i].forEach((el, j) => {
+          el.style.transform = `rotateY(${p.lon}deg) rotateX(${p.lat}deg) rotateY(${bend[j].toFixed(3)}deg) translateZ(${R.toFixed(1)}px) translate(-50%, -50%)`
+        })
+      })
       draw()
     }
 
-    // Angle in [-180, 180); 0 is facing the viewer.
-    const wrap = (v) => ((((v + 180) % 360) + 360) % 360) - 180
-    const s = { offset: 0, target: 0 }
+    const s = { rot: 0, tilt: 12, drift: 0 }
     let front = -1
     const draw = () => {
-      let best = 0
-      for (let i = 0; i < COUNT; i++) {
-        const a = wrap(i * STEP - s.offset)
-        if (Math.abs(a) < Math.abs(wrap(best * STEP - s.offset))) best = i
-        // Shading goes on the slices: on the card it would flatten its 3D curve.
-        const sl = slices[i]
+      globe.style.transform = `rotateX(${s.tilt.toFixed(3)}deg) rotateY(${(s.rot + s.drift).toFixed(3)}deg)`
+      const st = Math.sin(s.tilt * RAD)
+      const ct = Math.cos(s.tilt * RAD)
+      let best = -1
+      let bestZ = -2
+      SPOTS.forEach((p, i) => {
+        const sl = Math.sin(p.lat * RAD)
+        const cl = Math.cos(p.lat * RAD)
+        const l = (p.lon + s.rot + s.drift) * RAD
         for (let j = 0; j < SLICES; j++) {
-          const sa = a + (j - (SLICES - 1) / 2) * g.dSlice
-          const ks = (Math.cos((sa * Math.PI) / 180) + 1) / 2
-          shades[i][j].style.opacity = ((1 - ks) * 0.62).toFixed(3)
-          sl[j].style.transform = `translate3d(-50%, -50%, 0) rotateY(${sa.toFixed(3)}deg) translateZ(${g.r.toFixed(1)}px)`
+          // How squarely this slice faces the viewer, from -1 (away) to 1.
+          const sd = Math.sin(bend[j] * RAD)
+          const cd = Math.cos(bend[j] * RAD)
+          const z = -cd * sl * st + (-sd * Math.sin(l) + cd * cl * Math.cos(l)) * ct
+          shades[i][j].style.opacity = ((1 - (z + 1) / 2) ** 1.4 * 0.8).toFixed(3)
+          if (j === 1 && p.lat === 0 && z > bestZ) { bestZ = z; best = p.v }
         }
-      }
+      })
       if (best !== front) {
         front = best
         onFront(best)
@@ -78,14 +96,16 @@ function useRing(stageRef, ringRef, progressRef, onFront) {
       const dt = last ? Math.min(64, now - last) : 16.7
       last = now
       if (!visible) return
-      s.target = progressRef.current * STEP * (COUNT - 1)
-      if (Math.abs(s.target - s.offset) < 0.01) return
-      s.offset = still ? s.target : s.offset + (s.target - s.offset) * (1 - Math.pow(1 - 0.1, dt / 16.7))
+      const p = progressRef.current
+      const k = still ? 1 : 1 - Math.pow(1 - 0.08, dt / 16.7)
+      s.rot += (p * 300 - s.rot) * k
+      s.tilt += (12 - p * 26 - s.tilt) * k
+      if (!still) s.drift += dt * 0.005
       draw()
     }
-    raf = requestAnimationFrame(tick)
 
     layout()
+    raf = requestAnimationFrame(tick)
     const ro = new ResizeObserver(layout)
     ro.observe(stage)
     return () => {
@@ -93,23 +113,23 @@ function useRing(stageRef, ringRef, progressRef, onFront) {
       ro.disconnect()
       io.disconnect()
     }
-  }, [stageRef, ringRef, progressRef, onFront])
+  }, [stageRef, globeRef, progressRef, onFront])
 }
 
-function Card({ c, i }) {
+function Card({ variant }) {
   return (
-    <div data-card data-index={i} className="absolute left-0 top-0 [transform-style:preserve-3d]">
+    <div data-card className="absolute left-0 top-0 [transform-style:preserve-3d]">
       {Array.from({ length: SLICES }).map((_, j) => (
         <div
           key={j}
           data-slice
-          className="absolute left-0 top-0 overflow-hidden will-change-transform [backface-visibility:visible]"
+          className="absolute left-0 top-0 overflow-hidden [backface-visibility:visible]"
           style={{ width: 'var(--sw)', height: 'var(--ch)' }}
         >
           <div className="absolute top-0 h-full" style={{ width: 'var(--cw)', left: `calc(var(--cw) / ${SLICES} * ${-j})` }}>
             <Art
-              variant={c.variant}
-              className={`h-full w-full border-y border-[#1a1917]/15 text-[calc(var(--cw)/19)] ${j === 0 ? 'rounded-l-[10px] border-l' : ''} ${j === SLICES - 1 ? 'rounded-r-[10px] border-r' : ''}`}
+              variant={variant}
+              className={`h-full w-full border-y border-white/25 text-[calc(var(--cw)/19)] ${j === 0 ? 'rounded-l-[10px] border-l' : ''} ${j === SLICES - 1 ? 'rounded-r-[10px] border-r' : ''}`}
             />
           </div>
           <div data-shade className="pointer-events-none absolute inset-0 bg-black" />
@@ -122,10 +142,10 @@ function Card({ c, i }) {
 export default function Work() {
   const root = useRef(null)
   const stage = useRef(null)
-  const ring = useRef(null)
+  const globe = useRef(null)
   const [front, setFront] = useState(0)
   const progress = useRef(0)
-  useRing(stage, ring, progress, setFront)
+  useGlobe(stage, globe, progress, setFront)
   const active = CARDS[front]
 
   useGSAP(
@@ -180,22 +200,17 @@ export default function Work() {
 
         <p className="pointer-events-none absolute left-5 top-24 z-20 font-mono text-[11px] uppercase tracking-[0.12em] text-muted md:left-10 md:top-28">(02) Selected work</p>
 
-        <div className="absolute inset-0 [perspective:1500px] [perspective-origin:50%_50%]">
-          <div
-            ref={ring}
-            className="absolute left-1/2 top-1/2 h-0 w-0 [transform-style:preserve-3d]"
-            style={{ transform: 'rotateX(-18deg)' }}
-          >
-            {/* The title sits at the ring's centre: back cards pass behind it, front cards over it. */}
-            <h2
-              id="work-title"
-              className="pointer-events-none absolute left-0 top-0 [transform:translate(-50%,-50%)_rotateX(18deg)]"
-            >
+        <div className="absolute inset-0 [perspective:1600px] [perspective-origin:50%_50%]">
+          <div className="absolute left-1/2 top-1/2 h-0 w-0 [transform-style:preserve-3d]">
+            {/* The title sits at the globe's centre: back cards pass behind it, front cards over it. */}
+            <h2 id="work-title" className="pointer-events-none absolute left-0 top-0 [transform:translate(-50%,-50%)]">
               <span data-work-title className="block whitespace-nowrap font-serif text-[16vw] leading-none text-ink md:text-[11vw]">My Works</span>
             </h2>
-            {CARDS.map((c, i) => (
-              <Card key={i} c={c} i={i} />
-            ))}
+            <div ref={globe} className="absolute left-0 top-0 h-0 w-0 [transform-style:preserve-3d]">
+              {SPOTS.map((p, i) => (
+                <Card key={i} variant={CARDS[p.v].variant} />
+              ))}
+            </div>
           </div>
         </div>
 
@@ -209,7 +224,7 @@ export default function Work() {
         {/* Highlight of the card facing front. */}
         <div aria-live="polite" className="pointer-events-none absolute bottom-14 left-5 right-5 z-20 md:bottom-10 md:left-10 md:right-auto md:max-w-sm">
           <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-muted">
-            <span className="text-accent">{String(front + 1).padStart(2, '0')}</span> / {String(COUNT).padStart(2, '0')} · Highlight
+            <span className="text-accent">{String(front + 1).padStart(2, '0')}</span> / {String(CARDS.length).padStart(2, '0')} · Highlight
           </p>
           <div key={front} className="animate-[work-in_0.7s_cubic-bezier(0.22,1,0.36,1)]">
             <p className="mt-3 font-serif text-[26px] italic leading-none text-ink md:text-[30px]">{active.project}</p>
