@@ -39,15 +39,30 @@ export default function Statement() {
     () => {
       const mm = gsap.matchMedia()
       mm.add(MOTION_OK, () => {
+        // A short hold: the heading is already visible as the section
+        // arrives, and the tiles float up past it over about one screen.
         const tl = gsap.timeline({
           defaults: { ease: 'none' },
-          scrollTrigger: { trigger: root.current, start: 'top top', end: '+=220%', scrub: 1, pin: stage.current },
+          scrollTrigger: { trigger: root.current, start: 'top top', end: '+=90%', scrub: 1, pin: stage.current },
         })
         gsap.utils.toArray('[data-tile]', root.current).forEach((el, i) => {
-          tl.fromTo(el, { y: '110vh' }, { y: () => `${-60 * tiles[i].speed - 40}vh`, duration: 1 }, tiles[i].start)
+          tl.fromTo(el, { y: '70vh' }, { y: () => `${-60 * tiles[i].speed - 40}vh`, duration: 1 }, tiles[i].start * 0.5)
         })
-        tl.fromTo('[data-st-line]', { yPercent: 105 }, { yPercent: 0, duration: 0.22, stagger: 0.1, ease: 'power2.out' }, 0.12)
-          .fromTo('[data-st-sub]', { autoAlpha: 0, y: 30 }, { autoAlpha: 1, y: 0, duration: 0.15 }, 0.55)
+        gsap.from('[data-st-line]', {
+          yPercent: 105,
+          duration: 1.1,
+          ease: 'expo.out',
+          stagger: 0.1,
+          scrollTrigger: { trigger: root.current, start: 'top 70%' },
+        })
+        gsap.from('[data-st-sub]', {
+          autoAlpha: 0,
+          y: 30,
+          duration: 1,
+          ease: 'expo.out',
+          delay: 0.3,
+          scrollTrigger: { trigger: root.current, start: 'top 70%' },
+        })
       })
       return () => mm.revert()
     },

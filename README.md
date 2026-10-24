@@ -33,8 +33,8 @@ Add live/source links for a project by setting `live` and `code` in `content.js`
 ## Sections
 
 1. Loader
-2. Hero — minimal: KHUSHI / PANU with one line and two buttons, beside a glossy 3D liquid orb (three.js, loaded on demand)
-3. Statement — "Building digital experiences that matter", rising line by line
+2. Hero — interactive: a dot grid that lights up pink and chartreuse around the cursor, name letters that swell and turn pink as the cursor nears, a cycling "I build …" word and an info strip
+3. Statement — "Building digital experiences that matter", with project tiles floating past during a short hold
 4. Selected work — five project screens on a ring around "My Works" that turns as you scroll; the front card drives a project highlight and lights up its skills
 5. About + Experience — a statement with hand-drawn marks and draggable sticky notes; three roles as expanding panels, each in its own colour
 6. Toolkit — "The stack behind my work": skill cards standing in a low charcoal box under warm desk light; hover a card to lift it out

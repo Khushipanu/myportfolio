@@ -264,3 +264,7 @@ html.lenis body {
 /* Contact ring: slow continuous turn (the scroll animation scales it in). */
 @keyframes ring-spin { to { transform: rotate(360deg); } }
 .ring-spin { animation: ring-spin 40s linear infinite; transform-origin: 50% 50%; }
+
+/* Hero: word cycler */
+@keyframes cycle-in { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+.cycle-in { animation: cycle-in 0.5s cubic-bezier(0.22, 1, 0.36, 1); }
