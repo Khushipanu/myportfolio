@@ -82,7 +82,7 @@ function useSpiral(stageRef, trackRef, progressRef, onFront) {
         shades[i].forEach((el, j) => {
           // How squarely this slice faces the viewer: 1 front, -1 away.
           const z = Math.cos((theta + phi + g.bend[j]) * RAD) * Math.cos(TILT * RAD)
-          el.style.opacity = (z < 0 ? 0.55 + 0.35 * Math.min(1, -z * 2) : (1 - z) * 0.4).toFixed(3)
+          el.style.opacity = (z < 0 ? 0.6 + 0.35 * Math.min(1, -z * 2) : (1 - z) * 0.55).toFixed(3)
           if (j === (SLICES - 1) / 2 && z > bestZ && along < pitch * 2) { bestZ = z; best = SPIRAL[i] }
         })
       })
@@ -135,10 +135,10 @@ function Card({ c, i }) {
           <div className="absolute top-0 h-full" style={{ width: 'var(--cw)', left: `calc(var(--cw) / ${SLICES} * ${-j})` }}>
             <WorkPoster
               variant={c.variant}
-              className={`h-full w-full border-y border-black/10 text-[calc(var(--cw)/19)] ${j === 0 ? 'rounded-l-[14px] border-l' : ''} ${j === SLICES - 1 ? 'rounded-r-[14px] border-r' : ''}`}
+              className={`h-full w-full border-y border-white/15 text-[calc(var(--cw)/19)] ${j === 0 ? 'rounded-l-[14px] border-l' : ''} ${j === SLICES - 1 ? 'rounded-r-[14px] border-r' : ''}`}
             />
           </div>
-          <div data-shade className="pointer-events-none absolute inset-0 bg-[#ebe6da]" />
+          <div data-shade className="pointer-events-none absolute inset-0 bg-[#080b14]" />
         </div>
       ))}
       <span className="sr-only">{`0${i + 1} · ${c.project}`}</span>
@@ -180,39 +180,38 @@ export default function Work() {
   )
 
   return (
-    <section id="work" ref={root} aria-labelledby="work-title" className="relative isolate bg-[radial-gradient(ellipse_at_50%_42%,#fbfaf6_0%,#f3f0e8_55%,#e9e4d8_100%)] text-jet">
+    <section id="work" ref={root} aria-labelledby="work-title" className="relative isolate bg-[radial-gradient(ellipse_at_50%_40%,#111729_0%,#0a0e19_55%,#06080f_100%)] text-ink">
       <div
         ref={stage}
         className="relative h-[100svh] select-none overflow-hidden"
       >
-        {/* Light backdrop: a slowly drifting mesh of pink, peach, lime and lilac
-            light, a perspective grid floor, fine grain and giant outlined type. */}
+        {/* Night backdrop: drifting amber, magenta and mint light over deep
+            navy, a glowing grid floor, giant outlined type and fine grain. */}
         <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden">
-          <div className="mesh-a absolute -left-[12%] -top-[18%] h-[75vh] w-[60vw] rounded-full bg-[radial-gradient(closest-side,rgba(255,45,168,0.30),transparent)] blur-3xl" />
-          <div className="mesh-b absolute -right-[14%] top-[6%] h-[70vh] w-[55vw] rounded-full bg-[radial-gradient(closest-side,rgba(255,170,110,0.32),transparent)] blur-3xl" />
-          <div className="mesh-c absolute -bottom-[22%] left-[18%] h-[75vh] w-[60vw] rounded-full bg-[radial-gradient(closest-side,rgba(212,255,63,0.45),transparent)] blur-3xl" />
-          <div className="mesh-a absolute -bottom-[10%] -right-[10%] h-[55vh] w-[40vw] rounded-full bg-[radial-gradient(closest-side,rgba(180,160,255,0.30),transparent)] blur-3xl" />
+          <div className="mesh-a absolute -left-[12%] -top-[18%] h-[75vh] w-[60vw] rounded-full bg-[radial-gradient(closest-side,rgba(255,79,184,0.22),transparent)] blur-3xl" />
+          <div className="mesh-b absolute -right-[14%] top-[2%] h-[70vh] w-[55vw] rounded-full bg-[radial-gradient(closest-side,rgba(245,181,68,0.22),transparent)] blur-3xl" />
+          <div className="mesh-c absolute -bottom-[25%] left-[20%] h-[75vh] w-[60vw] rounded-full bg-[radial-gradient(closest-side,rgba(94,234,212,0.16),transparent)] blur-3xl" />
 
           {/* Grid floor receding into the distance. */}
-          <div className="absolute inset-x-[-25%] bottom-[-8%] h-[55%] origin-bottom [transform:perspective(700px)_rotateX(62deg)] [background-image:linear-gradient(rgba(22,22,22,0.10)_1px,transparent_1px),linear-gradient(90deg,rgba(22,22,22,0.10)_1px,transparent_1px)] [background-size:64px_64px] [mask-image:linear-gradient(to_top,black_10%,transparent_85%)]" />
+          <div className="absolute inset-x-[-25%] bottom-[-8%] h-[55%] origin-bottom [transform:perspective(700px)_rotateX(62deg)] [background-image:linear-gradient(rgba(245,181,68,0.16)_1px,transparent_1px),linear-gradient(90deg,rgba(245,181,68,0.16)_1px,transparent_1px)] [background-size:64px_64px] [mask-image:linear-gradient(to_top,black_10%,transparent_85%)]" />
 
           {/* Giant outlined word sitting behind everything. */}
-          <p className="absolute left-1/2 top-[6%] -translate-x-1/2 select-none whitespace-nowrap font-display text-[22vw] font-black uppercase leading-none tracking-[-0.04em] text-transparent [-webkit-text-stroke:1.5px_rgba(22,22,22,0.07)]">
+          <p className="absolute left-1/2 top-[6%] -translate-x-1/2 select-none whitespace-nowrap font-display text-[22vw] font-black uppercase leading-none tracking-[-0.04em] text-transparent [-webkit-text-stroke:1.5px_rgba(244,241,234,0.06)]">
             Projects
           </p>
 
-          {/* Fine grain over the whole backdrop. */}
-          <div className="absolute inset-0 opacity-[0.22] mix-blend-multiply [background-image:url(&quot;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.6'/%3E%3C/svg%3E&quot;)]" />
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_55%,rgba(120,100,70,0.12)_100%)]" />
+          {/* Fine grain and a soft vignette. */}
+          <div className="absolute inset-0 opacity-[0.12] mix-blend-overlay [background-image:url(&quot;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E&quot;)]" />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_50%,rgba(0,0,0,0.55)_100%)]" />
         </div>
 
-        <p className="pointer-events-none absolute left-5 top-24 z-20 font-mono text-[11px] uppercase tracking-[0.12em] text-jet/45 md:left-10 md:top-28">(02) Selected work</p>
+        <p className="pointer-events-none absolute left-5 top-24 z-20 font-mono text-[11px] uppercase tracking-[0.12em] text-ink/45 md:left-10 md:top-28">(02) Selected work</p>
 
         <div className="absolute inset-0 z-0 [perspective:1600px] [perspective-origin:50%_50%]">
           <div className="absolute left-1/2 top-1/2 h-0 w-0 [transform-style:preserve-3d]">
             {/* The title stays behind the cards as they pass. */}
             <h2 id="work-title" className="pointer-events-none absolute left-0 top-0 [transform:translate(-50%,-50%)_translateZ(-900px)] opacity-80">
-              <span data-work-title className="block whitespace-nowrap font-serif text-[16vw] leading-none text-jet md:text-[11vw]">My Works</span>
+              <span data-work-title className="block whitespace-nowrap font-serif text-[16vw] leading-none text-ink md:text-[11vw]">My Works</span>
             </h2>
             <div ref={track} className="absolute left-0 top-0 h-0 w-0 [transform-style:preserve-3d]">
               {SPIRAL.map((v, i) => (
@@ -225,24 +224,24 @@ export default function Work() {
         {/* Core skills; the ones used in the front card light up. */}
         <ul aria-label="Core skills" className="pointer-events-none absolute left-5 right-5 top-32 z-20 flex flex-wrap gap-x-4 gap-y-1.5 font-mono text-[10px] uppercase tracking-[0.14em] md:left-auto md:right-10 md:top-28 md:flex-col md:items-end md:gap-2 md:text-[11px]">
           {SKILLS.map((k) => (
-            <li key={k} className={`transition-colors duration-500 ${active.skills.includes(k) ? 'font-semibold text-pink' : 'text-jet/35'}`}>{k}</li>
+            <li key={k} className={`transition-colors duration-500 ${active.skills.includes(k) ? 'font-semibold text-[#f5b544]' : 'text-ink/35'}`}>{k}</li>
           ))}
         </ul>
 
-        <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-56 bg-gradient-to-t from-[#ece7dc] via-[#ece7dc]/70 to-transparent" />
+        <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-56 bg-gradient-to-t from-[#06080f] via-[#06080f]/70 to-transparent" />
 
         {/* Highlight of the card facing front. */}
         <div aria-live="polite" className="pointer-events-none absolute bottom-14 left-5 right-5 z-20 md:bottom-10 md:left-10 md:right-auto md:max-w-sm">
-          <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-jet/45">
-            <span className="text-pink">{String(front + 1).padStart(2, '0')}</span> / {String(CARDS.length).padStart(2, '0')} · Highlight
+          <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-ink/45">
+            <span className="text-[#f5b544]">{String(front + 1).padStart(2, '0')}</span> / {String(CARDS.length).padStart(2, '0')} · Highlight
           </p>
           <div key={front} className="animate-[work-in_0.7s_cubic-bezier(0.22,1,0.36,1)]">
-            <p className="mt-3 font-serif text-[26px] italic leading-none text-jet md:text-[30px]">{active.project}</p>
-            <p className="mt-2 text-[14px] leading-relaxed text-jet/65 md:text-[15px]">{active.highlight}</p>
+            <p className="mt-3 font-serif text-[26px] italic leading-none text-ink md:text-[30px]">{active.project}</p>
+            <p className="mt-2 text-[14px] leading-relaxed text-ink/65 md:text-[15px]">{active.highlight}</p>
           </div>
         </div>
 
-        <p className="pointer-events-none absolute bottom-6 right-5 z-20 font-mono text-[11px] uppercase tracking-[0.12em] text-jet/40 md:bottom-10 md:right-10">Scroll ↓</p>
+        <p className="pointer-events-none absolute bottom-6 right-5 z-20 font-mono text-[11px] uppercase tracking-[0.12em] text-ink/40 md:bottom-10 md:right-10">Scroll ↓</p>
       </div>
     </section>
   )

@@ -2,25 +2,6 @@ import { useRef, useState } from 'react'
 import { gsap, useGSAP, ScrollTrigger, MOTION_OK } from '../lib/gsap'
 import { about, experience } from '../data/content'
 
-// Stroke icons for the experience cards, in the same order as `experience`.
-const icons = [
-  'M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3zM14 14h7v7h-7z', // ERP modules
-  'M3 5h18v14H3zM3 9h18M7 13h5M7 16h3', // websites
-  'M4 5h16v11H8l-4 3zM8 9h8M8 12h5', // content
-]
-
-// Experience as expanding panels: on wide screens the roles stand side by
-// side; the one hovered, focused or clicked widens to show its detail while
-// the others keep a short horizontal summary. On phones they become an
-// accordion of rows that open on tap.
-function Icon({ i, className = '' }) {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true" className={className} fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-      <path d={icons[i % icons.length]} />
-    </svg>
-  )
-}
-
 function Detail({ e, on = true, tone = '#f5b544' }) {
   return (
     <>
@@ -74,166 +55,166 @@ function Ribbon({ c, className = '' }) {
   )
 }
 
-function ExperiencePanels() {
-  const [open, setOpen] = useState(0)
-  // Panels open as soon as the pointer reaches them.
-  const hoverOpen = (i) => setOpen(i)
+// Experience as a scroll timeline. On wide screens the heading and a list of
+// the roles stay pinned on the left while the role cards scroll past on the
+// right; each card swings up out of the page in 3D as it arrives, glows in its
+// own colour, and lights up its entry in the list. Cards also tilt towards
+// the pointer. On phones the cards simply stack.
+function ExperienceTimeline() {
+  const root = useRef(null)
+  const [active, setActive] = useState(0)
   const n = (i) => String(i + 1).padStart(2, '0')
-  // Cards tilt in 3D towards the pointer and settle back when it leaves.
+
+  useGSAP(
+    () => {
+      const cards = gsap.utils.toArray('[data-xp-card]', root.current)
+      cards.forEach((card, i) => {
+        ScrollTrigger.create({
+          trigger: card,
+          start: 'top 55%',
+          end: 'bottom 55%',
+          onEnter: () => setActive(i),
+          onEnterBack: () => setActive(i),
+        })
+      })
+      const mm = gsap.matchMedia()
+      mm.add(MOTION_OK, () => {
+        gsap.from('[data-xp-head] > *', {
+          y: 30,
+          autoAlpha: 0,
+          duration: 1,
+          ease: 'expo.out',
+          stagger: 0.08,
+          scrollTrigger: { trigger: root.current, start: 'top 75%' },
+        })
+        cards.forEach((card) => {
+          gsap.fromTo(
+            card.querySelector('[data-xp-swing]'),
+            { rotateX: 28, y: 90, z: -160, autoAlpha: 0.2 },
+            { rotateX: 0, y: 0, z: 0, autoAlpha: 1, ease: 'none', scrollTrigger: { trigger: card, start: 'top 98%', end: 'top 55%', scrub: 0.6 } },
+          )
+        })
+      })
+      return () => mm.revert()
+    },
+    { scope: root },
+  )
+
   const tilt = (ev) => {
+    if (ev.pointerType !== 'mouse') return
     const el = ev.currentTarget
     const r = el.getBoundingClientRect()
     const x = (ev.clientX - r.left) / r.width - 0.5
     const y = (ev.clientY - r.top) / r.height - 0.5
     el.style.setProperty('--mx', `${ev.clientX - r.left}px`)
     el.style.setProperty('--my', `${ev.clientY - r.top}px`)
-    el.style.setProperty('--rx', `${(-y * 7).toFixed(2)}deg`)
-    el.style.setProperty('--ry', `${(x * 9).toFixed(2)}deg`)
+    el.style.setProperty('--rx', `${(-y * 6).toFixed(2)}deg`)
+    el.style.setProperty('--ry', `${(x * 8).toFixed(2)}deg`)
   }
   const untilt = (ev) => {
     ev.currentTarget.style.setProperty('--rx', '0deg')
     ev.currentTarget.style.setProperty('--ry', '0deg')
   }
+  const go = (i) => root.current.querySelectorAll('[data-xp-card]')[i]?.scrollIntoView({ behavior: 'smooth', block: 'center' })
 
   return (
-    <>
-      {/* Wide screens: glass panels side by side, each glowing in its own colour. */}
-      <ul data-panels className="mx-auto hidden h-[30rem] max-w-6xl gap-4 lg:flex" aria-label="Experience">
+    <div ref={root} className="relative grid gap-12 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.4fr)] lg:gap-16">
+      {/* Left: heading and the roles, pinned while the cards scroll. */}
+      <div className="lg:sticky lg:top-28 lg:self-start">
+        <div data-xp-head>
+          <p className="font-mono text-[11px] uppercase tracking-[0.12em] text-ink/45">(04) Experience</p>
+          <h2 className="mt-5 text-[13vw] font-extralight leading-[0.95] tracking-[-0.04em] md:text-[7vw] lg:text-[5.2vw]">
+            <span className="text-ink/60">My</span>
+            <br />
+            <span className="bg-[linear-gradient(100deg,#ffe2a3,#f5b544_45%,#ff8a3d)] bg-clip-text font-normal text-transparent">Experience.</span>
+          </h2>
+          <p className="mt-6 max-w-sm text-[16px] leading-relaxed text-ink/60">
+            Full-stack roles across an ERP product, web development and technical content.
+          </p>
+        </div>
+
+        <ol className="relative mt-10 hidden space-y-1 lg:block">
+          <span aria-hidden="true" className="absolute bottom-3 left-[7px] top-3 w-px bg-white/10" />
+          <span
+            aria-hidden="true"
+            className="absolute left-[7px] top-3 w-px transition-[height,background-color] duration-500 ease-out"
+            style={{ height: `${(active / Math.max(1, experience.length - 1)) * 100}%`, maxHeight: 'calc(100% - 1.5rem)', background: tones[active] }}
+          />
+          {experience.map((e, i) => {
+            const on = active === i
+            const c = tones[i % tones.length]
+            return (
+              <li key={e.role}>
+                <button type="button" onClick={() => go(i)} className="group relative flex w-full items-start gap-5 rounded-[12px] py-3 pr-3 text-left">
+                  <span
+                    aria-hidden="true"
+                    className="relative mt-1 h-[15px] w-[15px] shrink-0 rounded-full border-2 transition-all duration-500"
+                    style={{ borderColor: on ? c : 'rgba(244,241,234,0.25)', background: on ? c : '#0a0d16', boxShadow: on ? `0 0 16px ${c}` : 'none' }}
+                  />
+                  <span>
+                    <span className={`block text-[17px] font-medium tracking-[-0.01em] transition-colors duration-300 ${on ? 'text-ink' : 'text-ink/45 group-hover:text-ink/75'}`}>{e.role}</span>
+                    <span className="mt-0.5 block font-mono text-[10px] uppercase tracking-[0.14em] transition-colors duration-300" style={{ color: on ? c : 'rgba(244,241,234,0.35)' }}>
+                      {e.company} · {e.period}
+                    </span>
+                  </span>
+                </button>
+              </li>
+            )
+          })}
+        </ol>
+      </div>
+
+      {/* Right: one glass card per role. */}
+      <ol className="relative space-y-8 lg:space-y-12 lg:pb-[12vh]" aria-label="Experience">
         {experience.map((e, i) => {
-          const on = open === i
           const c = tones[i % tones.length]
+          const on = active === i
           return (
-            <li
-              key={e.role}
-              data-panel
-              onPointerEnter={(ev) => ev.pointerType === 'mouse' && hoverOpen(i)}
-              onPointerMove={tilt}
-              onPointerLeave={untilt}
-              className={`group relative min-w-0 rounded-[22px] transition-[flex-grow] duration-[650ms] ease-[cubic-bezier(0.16,1,0.3,1)] [perspective:1400px] ${on ? 'grow-[2.6]' : 'grow'}`}
-              style={{ flexBasis: 0 }}
-            >
-              <div className="absolute inset-0 transition-transform duration-300 ease-out [transform-style:preserve-3d]" style={{ transform: 'rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg))' }}>
-              {/* Glow that spills out behind the card. */}
-              <span
-                aria-hidden="true"
-                className={`pointer-events-none absolute -inset-3 rounded-[30px] blur-2xl transition-opacity duration-[650ms] ${on ? 'opacity-70' : 'opacity-0 group-hover:opacity-30'}`}
-                style={{ background: `radial-gradient(60% 60% at 30% 0%, ${c}, transparent 70%)`, transform: 'translateZ(-40px)' }}
-              />
-              {/* The glass card. */}
-              <div
-                className="absolute inset-0 overflow-hidden rounded-[22px] border backdrop-blur-xl transition-[border-color,box-shadow] duration-[650ms]"
-                style={{
-                  borderColor: on ? `color-mix(in srgb, ${c} 70%, transparent)` : `color-mix(in srgb, ${c} 28%, transparent)`,
-                  background: `linear-gradient(160deg, color-mix(in srgb, ${c} ${on ? 16 : 10}%, #0e1220) 0%, #0b0e18 55%, color-mix(in srgb, ${c} 8%, #07090f) 100%)`,
-                  boxShadow: on
-                    ? `0 40px 80px -30px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255,255,255,0.12), 0 0 40px -10px ${c}`
-                    : '0 30px 60px -30px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.08)',
-                }}
-              >
-                <span aria-hidden="true" className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100 [background:radial-gradient(340px_circle_at_var(--mx,50%)_var(--my,50%),rgba(255,255,255,0.08),transparent_60%)]" />
-                <Ribbon c={c} className={`pointer-events-none absolute -right-28 bottom-[-22%] h-[78%] transition-opacity duration-700 ${on ? 'opacity-60' : 'opacity-0'}`} />
-              </div>
-
-              <button
-                type="button"
-                onClick={() => setOpen(i)}
-                onFocus={() => setOpen(i)}
-                aria-expanded={on}
-                className="absolute inset-0 z-10 cursor-pointer rounded-[22px] text-left"
-              >
-                <span className="sr-only">{`${e.role} at ${e.company}`}</span>
-              </button>
-
-              {/* Content floats a little in front of the glass. */}
-              <div className="pointer-events-none absolute inset-0 [transform:translateZ(30px)] [transform-style:preserve-3d]">
-                <div className="absolute left-6 right-6 top-6 flex items-center justify-between">
-                  <span className="font-mono text-[12px] font-semibold tracking-[0.14em] text-ink/90">{n(i)}</span>
-                  {on ? (
-                    <span className="flex h-10 w-10 items-center justify-center rounded-full border text-[16px]" style={{ borderColor: c, color: c }}>→</span>
-                  ) : (
-                    <span style={{ color: c }}><Icon i={i} className="h-5 w-5" /></span>
-                  )}
-                </div>
-
-                {/* Closed: a large glowing number and a short summary. */}
-                <span
-                  aria-hidden="true"
-                  className={`absolute left-6 top-16 bg-clip-text pr-4 font-serif text-[6.5rem] italic leading-none text-transparent transition-opacity duration-300 ${on ? 'opacity-0' : 'opacity-100 delay-150'}`}
-                  style={{ backgroundImage: `linear-gradient(160deg, #fff, ${c} 60%)`, filter: `drop-shadow(0 0 18px color-mix(in srgb, ${c} 45%, transparent))` }}
+            <li key={e.role} data-xp-card className="[perspective:1400px]">
+              <div data-xp-swing className="[transform-style:preserve-3d]">
+                <article
+                  onPointerMove={tilt}
+                  onPointerLeave={untilt}
+                  className="group relative overflow-hidden rounded-[24px] border p-7 backdrop-blur-xl transition-[transform,box-shadow,border-color] duration-500 ease-out md:p-9"
+                  style={{
+                    transform: 'rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg))',
+                    borderColor: on ? `color-mix(in srgb, ${c} 65%, transparent)` : `color-mix(in srgb, ${c} 25%, transparent)`,
+                    background: `linear-gradient(155deg, color-mix(in srgb, ${c} 14%, #0e1220) 0%, #0b0e18 55%, color-mix(in srgb, ${c} 7%, #07090f) 100%)`,
+                    boxShadow: on
+                      ? `0 50px 90px -40px rgba(0,0,0,0.85), inset 0 1px 0 rgba(255,255,255,0.12), 0 0 60px -20px ${c}`
+                      : '0 40px 70px -40px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255,255,255,0.07)',
+                  }}
                 >
-                  {n(i)}
-                </span>
-                <div
-                  aria-hidden={on}
-                  className={`absolute bottom-6 left-6 right-6 transition-[opacity,transform] duration-300 ease-out ${on ? 'translate-y-2 opacity-0' : 'translate-y-0 opacity-100 delay-150'}`}
-                >
-                  <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-ink/50">{e.period}</p>
-                  <h3 className="mt-2 text-[19px] font-semibold leading-[1.2] tracking-[-0.01em] text-ink">{e.role}</h3>
-                  <p className="mt-1 font-serif text-[16px] italic leading-snug" style={{ color: c }}>{e.company}</p>
-                </div>
+                  <span aria-hidden="true" className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100 [background:radial-gradient(380px_circle_at_var(--mx,50%)_var(--my,50%),rgba(255,255,255,0.07),transparent_60%)]" />
+                  <Ribbon c={c} className={`pointer-events-none absolute -right-24 -top-20 h-[22rem] transition-opacity duration-700 ${on ? 'opacity-50' : 'opacity-20'}`} />
 
-                {/* Open: full detail, at a fixed width so it never reflows while the panel resizes. */}
-                <div
-                  aria-hidden={!on}
-                  className={`absolute bottom-0 left-0 top-0 flex w-[clamp(24rem,36vw,33rem)] flex-col justify-end p-7 transition-[opacity,transform] ease-[cubic-bezier(0.16,1,0.3,1)] ${
-                    on ? 'translate-y-0 opacity-100 duration-500 delay-150' : 'translate-y-2 opacity-0 duration-150'
-                  }`}
-                >
-                  <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-ink/60">{e.period}</p>
-                  <h3 className="mt-2 text-[26px] font-semibold leading-tight tracking-[-0.02em] text-ink">{e.role}</h3>
-                  <p className="mt-0.5 font-serif text-[18px] italic leading-snug" style={{ color: c }}>at {e.company}</p>
-                  <p className="mt-3 text-[14px] leading-relaxed text-ink/65">{e.summary}</p>
-                  <div className="mt-4">
-                    <Detail e={e} on={on} tone={c} />
+                  <div className="relative flex items-start justify-between gap-6">
+                    <span
+                      aria-hidden="true"
+                      className="bg-clip-text pr-2 font-serif text-[4.5rem] italic leading-none text-transparent md:text-[5.5rem]"
+                      style={{ backgroundImage: `linear-gradient(160deg, #fff, ${c} 65%)`, filter: `drop-shadow(0 0 18px color-mix(in srgb, ${c} 40%, transparent))` }}
+                    >
+                      {n(i)}
+                    </span>
+                    <span className="mt-2 flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.05] px-3.5 py-1.5 font-mono text-[10px] uppercase tracking-[0.14em] text-ink/75">
+                      <span className="h-1.5 w-1.5 rounded-full" style={{ background: c, boxShadow: `0 0 8px ${c}` }} />
+                      {e.period}
+                    </span>
                   </div>
-                </div>
-              </div>
-              </div>
-            </li>
-          )
-        })}
-      </ul>
 
-      {/* Phones and tablets: accordion rows. */}
-      <ul data-panels className="border-t border-white/10 lg:hidden" aria-label="Experience">
-        {experience.map((e, i) => {
-          const on = open === i
-          const c = tones[i % tones.length]
-          return (
-            <li key={e.role} data-panel className="border-b border-white/10">
-              <button
-                type="button"
-                onClick={() => setOpen(on ? -1 : i)}
-                aria-expanded={on}
-                className="flex w-full items-center gap-4 py-5 text-left"
-              >
-                <span className="self-start pt-1.5 font-mono text-[11px] tracking-[0.12em]" style={{ color: c }}>{n(i)}</span>
-                <span className="flex-1">
-                  <span className="block text-[20px] font-medium leading-tight tracking-[-0.01em] text-ink">{e.role}</span>
-                  <span className="mt-1 block font-serif text-[16px] italic" style={{ color: c }}>{e.company}</span>
-                  <span className="mt-1 block font-mono text-[10px] uppercase tracking-[0.14em] text-ink/45">{e.period}</span>
-                </span>
-                <span
-                  aria-hidden="true"
-                  className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full border transition-all duration-500 ${on ? 'rotate-45 text-jet' : 'text-ink'}`}
-                  style={{ borderColor: on ? c : 'rgba(244,241,234,0.3)', background: on ? c : 'transparent' }}
-                >
-                  +
-                </span>
-              </button>
-              <div className={`grid transition-[grid-template-rows] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${on ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}>
-                <div className="overflow-hidden">
-                  <div className="pb-6 pl-9">
-                    <p className="mb-4 text-[15px] leading-relaxed text-ink/65">{e.summary}</p>
+                  <h3 className="relative mt-5 text-[26px] font-semibold leading-tight tracking-[-0.02em] text-ink md:text-[32px]">{e.role}</h3>
+                  <p className="relative mt-1 font-serif text-[19px] italic leading-snug" style={{ color: c }}>at {e.company}</p>
+                  <p className="relative mt-4 max-w-2xl text-[15px] leading-relaxed text-ink/65">{e.summary}</p>
+                  <div className="relative mt-6 max-w-2xl">
                     <Detail e={e} tone={c} />
                   </div>
-                </div>
+                </article>
               </div>
             </li>
           )
         })}
-      </ul>
-    </>
+      </ol>
+    </div>
   )
 }
 
@@ -339,23 +320,6 @@ export default function About() {
           stagger: 0.12,
           scrollTrigger: { trigger: '[data-notes]', start: 'top 80%' },
         })
-        gsap.from('#experience [data-focus-fade]', {
-          y: 30,
-          autoAlpha: 0,
-          duration: 1,
-          ease: 'expo.out',
-          scrollTrigger: { trigger: '#experience', start: 'top 80%' },
-        })
-        gsap.utils.toArray('#experience [data-panels]').forEach((list) =>
-          gsap.from(list.children, {
-            y: 60,
-            autoAlpha: 0,
-            duration: 1.1,
-            ease: 'expo.out',
-            stagger: 0.07,
-            scrollTrigger: { trigger: list, start: 'top 85%' },
-          }),
-        )
       })
       return () => mm.revert()
     },
@@ -363,7 +327,7 @@ export default function About() {
   )
 
   return (
-    <section id="about" ref={root} aria-labelledby="about-title" className="relative isolate overflow-hidden px-5 py-24 md:px-10 md:py-40">
+    <section id="about" ref={root} aria-labelledby="about-title" className="relative isolate overflow-clip px-5 py-24 md:px-10 md:py-40">
       <div aria-hidden="true" className="glow glow-deep -z-10 -left-[10%] top-[5%] h-[55vh] w-[45vw]" />
       <div className="grid grid-cols-12 gap-x-5 gap-y-14">
         <div className="col-span-12 lg:col-span-8">
@@ -385,22 +349,13 @@ export default function About() {
       </div>
 
       {/* Experience sits on a deep navy band lit by warm amber, magenta and mint light. */}
-      <div id="experience" className="relative -mx-5 -mb-24 mt-24 scroll-mt-24 overflow-hidden bg-[linear-gradient(180deg,#0b0f1a_0%,#090c16_60%,#07090f_100%)] px-5 py-20 text-ink md:-mx-10 md:-mb-40 md:mt-36 md:px-10 md:py-28">
+      <div id="experience" className="relative -mx-5 -mb-24 mt-24 scroll-mt-24 overflow-clip bg-[linear-gradient(180deg,#0b0f1a_0%,#090c16_60%,#07090f_100%)] px-5 py-20 text-ink md:-mx-10 md:-mb-40 md:mt-36 md:px-10 md:py-28">
         <div aria-hidden="true" className="pointer-events-none absolute inset-0">
           <div className="absolute left-[20%] top-[-20%] h-[70vh] w-[60vw] rounded-full bg-[radial-gradient(closest-side,rgba(245,181,68,0.22),transparent)] blur-3xl" />
           <div className="absolute -right-[10%] top-[30%] h-[60vh] w-[45vw] rounded-full bg-[radial-gradient(closest-side,rgba(94,234,212,0.12),transparent)] blur-3xl" />
           <div className="absolute -left-[10%] bottom-[-10%] h-[60vh] w-[45vw] rounded-full bg-[radial-gradient(closest-side,rgba(255,79,184,0.12),transparent)] blur-3xl" />
         </div>
-        <div data-focus-fade className="relative mb-10 flex items-end justify-between gap-6 md:mb-14">
-          <h2 className="text-[9vw] font-extralight leading-[1.05] tracking-[-0.03em] md:text-[4.4vw]">
-            <span className="text-ink/60">My</span>{' '}
-            <span className="bg-[linear-gradient(100deg,#ffe2a3,#f5b544_45%,#ff8a3d)] bg-clip-text font-normal text-transparent">Experience.</span>
-          </h2>
-          <p className="hidden shrink-0 pb-3 font-mono text-[11px] uppercase tracking-[0.12em] text-ink/45 md:block">(04) Experience</p>
-        </div>
-        <div className="relative">
-          <ExperiencePanels />
-        </div>
+        <ExperienceTimeline />
       </div>
     </section>
   )
