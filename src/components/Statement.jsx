@@ -3,7 +3,8 @@ import { gsap, useGSAP, MOTION_OK } from '../lib/gsap'
 import Art from './Art'
 
 // Kota-inspired: a few screens of the work and the stack it's built with float
-// up through the frame while the statement rises into place letter by letter.
+// up through the frame while the statement arrives: the top line drops in,
+// the bottom line rises up and the middle line grows out from its centre.
 // "digital" gets a hand-drawn underline and the full stop pops in. On hover,
 // letters hop and turn violet, the heading tilts towards the pointer with a
 // soft glow behind it, and the screens lift.
@@ -85,18 +86,39 @@ export default function Statement() {
         gsap.utils.toArray('[data-tile]', root.current).forEach((el, i) => {
           tl.fromTo(el, { y: '70vh' }, { y: () => `${-60 * tiles[i].speed - 40}vh`, duration: 1 }, tiles[i].start * 0.5)
         })
-        // Letters rise out of their lines, unblurring as they come.
+        // The three lines arrive from different directions and meet in the
+        // middle: the top line drops in from above, the bottom line rises from
+        // below, and the middle line grows out from its centre. Each spreads
+        // outwards from the middle letter.
         const intro = gsap.timeline({ scrollTrigger: { trigger: root.current, start: 'top 70%' } })
+        const line = (n) => `[data-st-row="${n}"] [data-st-char]`
         intro
-          .from('[data-st-char]', {
-            yPercent: 110,
-            rotateX: -70,
+          .from(line(0), {
+            yPercent: -120,
+            rotateX: 75,
             filter: 'blur(8px)',
             autoAlpha: 0,
-            duration: 1,
+            duration: 1.1,
             ease: 'expo.out',
-            stagger: 0.025,
+            stagger: { each: 0.035, from: 'center' },
           })
+          .from(line(2), {
+            yPercent: 120,
+            rotateX: -75,
+            filter: 'blur(8px)',
+            autoAlpha: 0,
+            duration: 1.1,
+            ease: 'expo.out',
+            stagger: { each: 0.035, from: 'center' },
+          }, 0)
+          .from(line(1), {
+            scale: 0.2,
+            filter: 'blur(12px)',
+            autoAlpha: 0,
+            duration: 1.2,
+            ease: 'expo.out',
+            stagger: { each: 0.04, from: 'center' },
+          }, 0.15)
           .from('[data-st-digital]', { yPercent: 60, autoAlpha: 0, filter: 'blur(10px)', duration: 1.1, ease: 'expo.out' }, 0.25)
           .to('[data-st-scribble] path', { strokeDashoffset: 0, duration: 1, ease: 'power2.inOut' }, 0.7)
           .from('[data-st-dot]', { scale: 0, duration: 0.7, ease: 'back.out(3)' }, 0.9)
@@ -145,7 +167,7 @@ export default function Statement() {
             style={{ transform: 'rotateX(var(--hx,0deg)) rotateY(var(--hy,0deg))' }}
           >
             {lines.map((line, i) => (
-              <span key={i} aria-hidden="true" className="block [perspective:800px]">
+              <span key={i} data-st-row={i} aria-hidden="true" className="block [perspective:800px]">
                 {line.map((w, j) =>
                   w.serif ? (
                     <em key={j} data-st-digital className="relative inline-block pr-[0.06em] font-serif font-normal normal-case italic tracking-[-0.02em] text-accent-deep">
