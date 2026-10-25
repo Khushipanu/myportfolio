@@ -7,26 +7,26 @@ import WorkPoster from './WorkPoster'
 // platform for the Sheryians internship, and a lesson player for the content.
 const XP_SCREENS = ['erp', 'lms', 'lmsPlayer']
 
-// Experience as a fanned row of 3D cards, after the reference the user shared:
-// heading and a call to action on the left, the roles on the right. The card
-// in front glows chartreuse; hovering (or tapping) another lifts it up and
-// brings it to the front. Arrows, a counter and a progress bar sit below.
+// Experience, after the reference the user shared: heading and a call to
+// action on the left, three role cards fanned in 3D on the right. The cards
+// keep their places — left, front, right — so they're easy to follow. The
+// card in focus (the middle one at first) glows chartreuse; hovering, tapping
+// or using the arrows focuses another, which rises, turns to face the viewer
+// and glows. A counter and progress bar track which role is in focus.
+const FAN = [
+  { x: '-78%', y: '5%', z: -60, ry: 18, rz: -4, s: 0.82 },
+  { x: '0%', y: '-3%', z: 40, ry: 0, rz: 0, s: 1 },
+  { x: '78%', y: '9%', z: -60, ry: -18, rz: 5, s: 0.82 },
+]
+// Which slot each role takes: the current role stands in the middle.
+const SLOT = [1, 0, 2]
+const EDGE = ['rgba(212,255,63,0.45)', 'rgba(212,255,63,0.9)', 'rgba(180,120,255,0.55)']
+
 function ExperienceShowcase() {
   const root = useRef(null)
-  const [active, setActive] = useState(0)
+  const [focus, setFocus] = useState(0)
   const count = experience.length
-  const step = (d) => setActive((a) => (a + d + count) % count)
-  // Hovering brings a card forward. After a switch the pointer must travel a
-  // little before it can switch again, so a card sliding under a resting
-  // pointer doesn't set off another change.
-  const lastSwitch = useRef({ t: 0, x: -999, y: -999 })
-  const hover = (ev, i) => {
-    if (ev.pointerType !== 'mouse' || i === active) return
-    const last = lastSwitch.current
-    if (performance.now() - last.t < 700 || Math.hypot(ev.clientX - last.x, ev.clientY - last.y) < 60) return
-    lastSwitch.current = { t: performance.now(), x: ev.clientX, y: ev.clientY }
-    setActive(i)
-  }
+  const step = (d) => setFocus((a) => (a + d + count) % count)
   const n = (i) => String(i + 1).padStart(2, '0')
 
   useGSAP(
@@ -41,12 +41,12 @@ function ExperienceShowcase() {
           stagger: 0.08,
           scrollTrigger: { trigger: root.current, start: 'top 70%' },
         })
-        gsap.from('[data-xp-fan]', {
-          rotateX: 25,
-          y: 120,
+        gsap.from('[data-xp-card]', {
+          y: 140,
           autoAlpha: 0,
-          duration: 1.4,
+          duration: 1.3,
           ease: 'expo.out',
+          stagger: 0.1,
           scrollTrigger: { trigger: root.current, start: 'top 65%' },
         })
       })
@@ -56,122 +56,127 @@ function ExperienceShowcase() {
   )
 
   return (
-    <div ref={root} className="relative grid items-center gap-14 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.3fr)] lg:gap-6">
-      {/* Left: heading, text and call to action. */}
-      <div className="relative z-10">
-        <p data-xp-in className="flex items-center gap-4 font-mono text-[11px] uppercase tracking-[0.3em] text-ink/70">
-          <span className="h-px w-14 bg-accent" />
-          My experience
-        </p>
-        <h2 data-xp-in className="mt-6 text-[13vw] font-bold leading-[0.95] tracking-[-0.04em] md:text-[7vw] lg:text-[4.6vw]">
-          Roles that
-          <br />
-          <span className="font-medium text-ink/90">shaped my</span>{' '}
-          <span className="font-serif font-normal italic tracking-[-0.02em] text-accent">craft.</span>
-        </h2>
-        <p data-xp-in className="mt-6 max-w-sm text-[16px] leading-relaxed text-ink/65 md:text-[17px]">
-          From a production ERP to full-stack websites and developer content — the places where I&apos;ve been writing code.
-        </p>
-        <div data-xp-in className="relative mt-9 inline-flex items-center">
-          <a
-            href={resume.href}
-            download={resume.file}
-            className="group flex items-center gap-3 rounded-full bg-accent px-7 py-3.5 text-[15px] font-semibold text-jet shadow-[0_0_40px_-8px_rgba(212,255,63,0.6)] transition-[translate] duration-300 hover:-translate-y-0.5"
-          >
-            Download resume
-            <span aria-hidden="true" className="transition-transform duration-300 group-hover:translate-x-1">→</span>
-          </a>
-          <svg aria-hidden="true" viewBox="0 0 120 50" className="absolute -right-32 top-6 hidden h-12 w-28 text-accent md:block">
-            <path d="M4 34 C 30 48, 70 44, 104 18" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
-            <path d="M92 14 L106 16 L101 29" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
+    <div ref={root} className="relative flex min-h-[calc(100svh-7rem)] flex-col justify-center">
+      <div className="grid items-center gap-16 lg:grid-cols-[minmax(0,0.75fr)_minmax(0,1.25fr)] lg:gap-4">
+        {/* Left: heading, text and call to action. */}
+        <div className="relative z-10">
+          <p data-xp-in className="flex items-center gap-5 text-[12px] font-medium uppercase tracking-[0.35em] text-ink/80">
+            <span className="h-px w-16 bg-accent" />
+            My experience
+          </p>
+          <h2 data-xp-in className="mt-7 text-[13vw] leading-[1.02] tracking-[-0.035em] md:text-[7.5vw] lg:text-[clamp(52px,4.9vw,84px)]">
+            <span className="font-bold">Roles that</span>
+            <br />
+            <span className="font-medium">shaped my</span>{' '}
+            <span className="font-serif font-normal italic tracking-[-0.01em] text-accent">craft.</span>
+          </h2>
+          <p data-xp-in className="mt-7 max-w-[22rem] text-[17px] leading-[1.6] text-ink/80 md:text-[18px]">
+            From a production ERP to full-stack websites and developer content — the places I&apos;ve been building.
+          </p>
+          <div data-xp-in className="relative mt-10 inline-flex">
+            <a
+              href={resume.href}
+              download={resume.file}
+              className="group flex items-center gap-3 rounded-full bg-accent px-8 py-4 text-[16px] font-semibold text-jet shadow-[0_0_40px_-8px_rgba(212,255,63,0.65)] transition-[translate] duration-300 hover:-translate-y-0.5"
+            >
+              Download resume
+              <span aria-hidden="true" className="text-[18px] transition-transform duration-300 group-hover:translate-x-1">→</span>
+            </a>
+            <svg aria-hidden="true" viewBox="0 0 140 60" className="absolute -right-44 top-8 hidden h-14 w-36 text-accent md:block">
+              <path d="M4 44 C 40 58, 92 52, 124 22" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+              <path d="M110 18 L126 19 L121 35" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </div>
         </div>
-      </div>
 
-      {/* Right: the fanned cards. */}
-      <div className="relative">
-        <div data-xp-fan className="relative mx-auto h-[33rem] w-full [perspective:1600px] md:h-[35rem]">
+        {/* Right: three cards fanned in 3D, each staying in its place. */}
+        <div className="relative h-[34rem] [perspective:1800px] md:h-[38rem] lg:h-[40rem]">
           {experience.map((e, i) => {
-            // Position relative to the card in front: -1 left, 0 front, 1 right.
-            let d = i - active
-            if (d > count / 2) d -= count
-            if (d < -count / 2) d += count
-            const front = d === 0
+            const pose = FAN[SLOT[i]]
+            const on = focus === i
             return (
               <button
                 key={e.role}
+                data-xp-card
                 type="button"
-                onPointerMove={(ev) => hover(ev, i)}
-                onClick={() => setActive(i)}
-                aria-pressed={front}
+                onPointerEnter={(ev) => ev.pointerType === 'mouse' && setFocus(i)}
+                onClick={() => setFocus(i)}
+                aria-pressed={on}
                 aria-label={`${e.role} at ${e.company}`}
-                className="group absolute left-1/2 top-1/2 w-[min(74vw,20rem)] text-left transition-[transform,filter] duration-[700ms] ease-[cubic-bezier(0.16,1,0.3,1)] [transform-style:preserve-3d] md:w-[21rem]"
-                style={{
-                  transform: `translate(-50%, -50%) translateX(${d * 74}%) translateY(${front ? -18 : 14}px) translateZ(${front ? 60 : -90}px) rotateY(${d * -24}deg) rotateZ(${d * 3}deg) scale(${front ? 1.04 : 0.9})`,
-                  zIndex: front ? 30 : 20 - Math.abs(d),
-                  filter: front ? 'none' : 'brightness(0.72)',
-                }}
+                className="absolute left-1/2 top-1/2 w-[min(58vw,22rem)] text-left md:w-[min(30vw,23rem)]"
+                style={{ zIndex: on ? 30 : SLOT[i] === 1 ? 20 : 10 }}
               >
-                <article
-                  className="relative overflow-hidden rounded-[26px] border p-5 backdrop-blur-xl transition-[border-color,box-shadow,translate] duration-500 group-hover:-translate-y-2"
+                <div
+                  className="transition-[transform,filter] duration-[650ms] ease-[cubic-bezier(0.16,1,0.3,1)] [transform-style:preserve-3d]"
                   style={{
-                    borderColor: front ? 'rgba(212,255,63,0.85)' : 'rgba(244,241,234,0.12)',
-                    background: 'linear-gradient(160deg, rgba(30,30,30,0.92), rgba(12,12,12,0.96))',
-                    boxShadow: front
-                      ? '0 0 0 1px rgba(212,255,63,0.25), 0 0 50px -6px rgba(212,255,63,0.55), 0 50px 80px -30px rgba(0,0,0,0.9), inset 0 1px 0 rgba(255,255,255,0.1)'
-                      : '0 40px 70px -30px rgba(0,0,0,0.9), inset 0 1px 0 rgba(255,255,255,0.06)',
+                    transform: on
+                      ? `translate(-50%, -50%) translateX(${pose.x}) translateY(calc(${pose.y} - 26px)) translateZ(90px) rotateY(${pose.ry * 0.25}deg) rotateZ(${pose.rz * 0.3}deg) scale(${Math.max(pose.s, 0.9) + 0.04})`
+                      : `translate(-50%, -50%) translateX(${pose.x}) translateY(${pose.y}) translateZ(${pose.z}px) rotateY(${pose.ry}deg) rotateZ(${pose.rz}deg) scale(${pose.s})`,
+                    filter: on ? 'none' : 'brightness(0.8)',
                   }}
                 >
-                  <div className="flex items-start justify-between gap-3">
-                    <div>
-                      <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-ink/45">{n(i)} · {e.period}</p>
-                      <h3 className="mt-1.5 text-[21px] font-semibold leading-tight tracking-[-0.02em] text-ink">{e.role}</h3>
+                  <article
+                    className="relative overflow-hidden rounded-[28px] border-[1.5px] p-6 transition-[border-color,box-shadow] duration-500"
+                    style={{
+                      borderColor: on ? 'rgba(212,255,63,0.95)' : EDGE[SLOT[i]].replace(/[\d.]+\)$/, '0.35)'),
+                      background: 'linear-gradient(165deg, #1b1b1b 0%, #121212 45%, #0c0c0c 100%)',
+                      boxShadow: on
+                        ? '0 0 0 1px rgba(212,255,63,0.35), 0 0 70px -10px rgba(212,255,63,0.7), 0 60px 90px -40px rgba(0,0,0,0.95), inset 0 1px 0 rgba(255,255,255,0.1)'
+                        : `0 0 40px -18px ${EDGE[SLOT[i]]}, 0 50px 80px -40px rgba(0,0,0,0.95), inset 0 1px 0 rgba(255,255,255,0.06)`,
+                    }}
+                  >
+                    <div className="flex items-start justify-between gap-4">
+                      <div>
+                        <h3 className="text-[22px] font-semibold leading-tight tracking-[-0.02em] text-ink md:text-[24px]">{e.role}</h3>
+                        <p className="mt-1 font-mono text-[10px] uppercase tracking-[0.16em] text-ink/45">{e.period}</p>
+                      </div>
+                      <span
+                        aria-hidden="true"
+                        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-[1.5px] text-[15px] transition-colors duration-500"
+                        style={{ borderColor: on ? '#d4ff3f' : 'rgba(212,255,63,0.5)', color: '#d4ff3f' }}
+                      >
+                        ↗
+                      </span>
                     </div>
-                    <span
-                      aria-hidden="true"
-                      className="mt-1 flex h-9 w-9 shrink-0 items-center justify-center rounded-full border text-[14px] transition-colors duration-500"
-                      style={{ borderColor: front ? '#d4ff3f' : 'rgba(244,241,234,0.25)', color: front ? '#d4ff3f' : 'rgba(244,241,234,0.6)' }}
-                    >
-                      ↗
-                    </span>
-                  </div>
-                  <div className="mt-4 overflow-hidden rounded-[14px] border border-white/10">
-                    <WorkPoster variant={XP_SCREENS[i % XP_SCREENS.length]} className="aspect-[16/10] w-full text-[calc(min(74vw,20rem)/19)] md:text-[calc(21rem/19)]" />
-                  </div>
-                  <ul className="mt-4 flex flex-wrap gap-1.5">
-                    {e.stack.map((t) => (
-                      <li key={t} className="rounded-full border border-white/12 bg-white/[0.05] px-3 py-1 text-[11px] font-medium text-ink/80">{t}</li>
-                    ))}
-                  </ul>
-                  <p className="mt-3 text-[13.5px] leading-relaxed text-ink/65">{e.summary}</p>
-                  <p className="mt-3 font-serif text-[15px] italic text-accent/90">{e.company}</p>
-                </article>
+                    <div className="mt-5 overflow-hidden rounded-[14px] border border-white/10 shadow-[0_20px_40px_-20px_rgba(0,0,0,0.9)]">
+                      <WorkPoster variant={XP_SCREENS[i % XP_SCREENS.length]} className="aspect-[16/10] w-full text-[calc(min(58vw,22rem)/22)] md:text-[calc(min(30vw,23rem)/22)]" />
+                    </div>
+                    <ul className="mt-5 flex flex-wrap gap-2">
+                      {e.stack.map((t) => (
+                        <li key={t} className="rounded-full border border-white/12 bg-white/[0.06] px-3.5 py-1.5 text-[12px] font-medium text-ink/90">{t}</li>
+                      ))}
+                    </ul>
+                    <p className="mt-4 text-[14.5px] leading-relaxed text-ink/80">{e.summary}</p>
+                    <p className="mt-3 font-serif text-[16px] italic text-accent">{e.company}</p>
+                  </article>
+                </div>
               </button>
             )
           })}
           {/* Coloured light pooling under the cards. */}
-          <span aria-hidden="true" className="pointer-events-none absolute bottom-[0%] left-1/2 h-16 w-[70%] -translate-x-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(212,255,63,0.35),transparent)] blur-2xl" />
-          <span aria-hidden="true" className="pointer-events-none absolute bottom-[2%] left-[14%] h-12 w-[30%] rounded-full bg-[radial-gradient(closest-side,rgba(120,110,255,0.25),transparent)] blur-2xl" />
-          <span aria-hidden="true" className="pointer-events-none absolute bottom-[2%] right-[12%] h-12 w-[30%] rounded-full bg-[radial-gradient(closest-side,rgba(255,45,168,0.25),transparent)] blur-2xl" />
+          <span aria-hidden="true" className="pointer-events-none absolute bottom-[3%] left-1/2 h-20 w-[55%] -translate-x-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(212,255,63,0.4),transparent)] blur-2xl" />
+          <span aria-hidden="true" className="pointer-events-none absolute bottom-[6%] left-[8%] h-14 w-[30%] rounded-full bg-[radial-gradient(closest-side,rgba(110,110,255,0.3),transparent)] blur-2xl" />
+          <span aria-hidden="true" className="pointer-events-none absolute bottom-[6%] right-[4%] h-14 w-[30%] rounded-full bg-[radial-gradient(closest-side,rgba(180,90,255,0.3),transparent)] blur-2xl" />
         </div>
+      </div>
 
-        {/* Arrows, counter and progress. */}
-        <div className="mt-2 flex items-center justify-end gap-4 md:gap-5">
-          <button type="button" onClick={() => step(-1)} aria-label="Previous role" className="flex h-11 w-11 items-center justify-center rounded-full border border-white/20 text-ink transition-colors hover:border-white/50">←</button>
-          <button type="button" onClick={() => step(1)} aria-label="Next role" className="flex h-11 w-11 items-center justify-center rounded-full bg-accent text-jet shadow-[0_0_24px_-4px_rgba(212,255,63,0.7)] transition-[translate] hover:-translate-y-0.5">→</button>
-          <div className="ml-3 w-32">
-            <p className="font-mono text-[13px] text-ink"><span className="font-semibold">{n(active)}</span> <span className="text-ink/40">/ {n(count - 1)}</span></p>
-            <div className="mt-2 h-[3px] w-full rounded-full bg-white/10">
-              <div className="h-full rounded-full bg-accent transition-[width] duration-500 ease-out" style={{ width: `${((active + 1) / count) * 100}%` }} />
+      {/* Bottom row: the current role on the left, arrows and progress on the right. */}
+      <div className="mt-8 flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+        <p data-xp-in className="flex items-center gap-3 text-[11px] font-medium uppercase tracking-[0.28em] text-ink/45">
+          <span className="h-2 w-2 rounded-full bg-accent shadow-[0_0_10px_#d4ff3f]" />
+          Currently · {experience[0].company}
+        </p>
+        <div className="flex items-center gap-4">
+          <button type="button" onClick={() => step(-1)} aria-label="Previous role" className="flex h-12 w-12 items-center justify-center rounded-full border border-white/25 text-[18px] text-ink transition-colors hover:border-white/60">←</button>
+          <button type="button" onClick={() => step(1)} aria-label="Next role" className="flex h-12 w-12 items-center justify-center rounded-full bg-accent text-[18px] text-jet shadow-[0_0_24px_-4px_rgba(212,255,63,0.8)] transition-[translate] hover:-translate-y-0.5">→</button>
+          <div className="ml-4 w-40">
+            <p className="text-[15px] text-ink"><span className="font-semibold">{n(focus)}</span> <span className="text-ink/40">/ {n(count - 1)}</span></p>
+            <div className="mt-2.5 h-[3px] w-full rounded-full bg-white/10">
+              <div className="h-full rounded-full bg-accent transition-[width] duration-500 ease-out" style={{ width: `${((focus + 1) / count) * 100}%` }} />
             </div>
           </div>
         </div>
       </div>
-
-      <p data-xp-in className="flex items-center gap-3 font-mono text-[10px] uppercase tracking-[0.2em] text-ink/40 lg:col-span-2">
-        <span className="h-1.5 w-1.5 rounded-full bg-accent shadow-[0_0_8px_#d4ff3f]" />
-        Currently · {experience[0].role} at {experience[0].company}
-      </p>
     </div>
   )
 }
@@ -307,7 +312,7 @@ export default function About() {
       </div>
 
       {/* Experience sits on jet black lit by soft chartreuse and hot pink light. */}
-      <div id="experience" className="relative -mx-5 -mb-24 mt-24 scroll-mt-24 overflow-clip bg-[linear-gradient(180deg,#0b0b0b_0%,#0d0d0d_60%,#0b0b0b_100%)] px-5 py-20 text-ink md:-mx-10 md:-mb-40 md:mt-36 md:px-10 md:py-28">
+      <div id="experience" className="relative -mx-5 -mb-24 mt-24 scroll-mt-24 overflow-clip bg-[linear-gradient(180deg,#0b0b0b_0%,#0d0d0d_60%,#0b0b0b_100%)] px-5 py-16 text-ink md:-mx-10 md:-mb-40 md:mt-36 md:px-10 md:py-14 lg:px-16">
         {/* Jet black with chartreuse light at the edges and thin glowing curves. */}
         <div aria-hidden="true" className="pointer-events-none absolute inset-0">
           <div className="absolute -left-[15%] top-[10%] h-[80vh] w-[40vw] rounded-full bg-[radial-gradient(closest-side,rgba(212,255,63,0.16),transparent)] blur-3xl" />
