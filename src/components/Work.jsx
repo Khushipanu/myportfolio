@@ -17,12 +17,14 @@ const CARDS = [
   { variant: 'lmsPlayer', label: 'LMS — lesson', project: 'Learning Management System', highlight: 'Course purchasing and streaming on a full MERN stack.', skills: ['MongoDB', 'Express.js', 'React.js', 'Node.js'], href: null },
 ]
 const SKILLS = ['React.js', 'Node.js', 'Express.js', 'MongoDB', 'Redux Toolkit', 'Tailwind CSS', 'JavaScript']
-const SLICES = 6
-// Three bands of cards: above, around and below the equator.
+const SLICES = 5
+// Five bands of cards wrap the globe, as in the reference.
 const ROWS = [
-  { lat: 40, n: 4, off: 0.5 },
-  { lat: 0, n: 5, off: 0 },
-  { lat: -40, n: 4, off: 0 },
+  { lat: 58, n: 4, off: 0.25 },
+  { lat: 29, n: 6, off: 0.5 },
+  { lat: 0, n: 7, off: 0 },
+  { lat: -29, n: 6, off: 0.5 },
+  { lat: -58, n: 4, off: 0.75 },
 ]
 const SPOTS = ROWS.flatMap((r, ri) =>
   Array.from({ length: r.n }, (_, k) => ({ lat: r.lat, lon: ((k + r.off) / r.n) * 360, v: (ri * 2 + k) % CARDS.length })),
@@ -44,9 +46,9 @@ function useGlobe(stageRef, globeRef, progressRef, onFront) {
     const layout = () => {
       const w = stage.clientWidth
       const h = stage.clientHeight
-      const R = w < 768 ? Math.min(w * 0.5, h * 0.32) : Math.min(w * 0.3, h * 0.5)
-      const cw = R * 0.78
-      const ch = cw * 0.68
+      const R = w < 768 ? Math.min(w * 0.62, h * 0.4) : Math.min(w * 0.34, h * 0.62)
+      const cw = R * 0.6
+      const ch = cw * 0.7
       globe.style.setProperty('--cw', `${cw}px`)
       globe.style.setProperty('--ch', `${ch}px`)
       globe.style.setProperty('--sw', `${cw / SLICES + 1.2}px`)
@@ -77,7 +79,7 @@ function useGlobe(stageRef, globeRef, progressRef, onFront) {
           const sd = Math.sin(bend[j] * RAD)
           const cd = Math.cos(bend[j] * RAD)
           const z = -cd * sl * st + (-sd * Math.sin(l) + cd * cl * Math.cos(l)) * ct
-          shades[i][j].style.opacity = ((1 - (z + 1) / 2) ** 1.4 * 0.8).toFixed(3)
+          shades[i][j].style.opacity = (z < 0 ? 0.55 + 0.4 * Math.min(1, -z * 2) : (1 - z) * 0.55).toFixed(3)
           if (j === 1 && p.lat === 0 && z > bestZ) { bestZ = z; best = p.v }
         }
       })
@@ -176,26 +178,29 @@ export default function Work() {
   )
 
   return (
-    <section id="work" ref={root} aria-labelledby="work-title" className="relative isolate bg-[radial-gradient(ellipse_at_50%_45%,#1b1b1b_0%,#101010_55%,#070707_100%)] text-ink">
+    <section id="work" ref={root} aria-labelledby="work-title" className="relative isolate bg-[radial-gradient(ellipse_at_50%_45%,#141414_0%,#080808_60%,#030303_100%)] text-ink">
       <div
         ref={stage}
         className="relative h-[100svh] select-none overflow-hidden"
       >
-        {/* Glowing light ribbons behind the vortex. */}
-        <svg aria-hidden="true" className="pointer-events-none absolute inset-0 h-full w-full" viewBox="0 0 1440 900" preserveAspectRatio="none">
+        {/* A web of glowing, electric lines behind the globe, drifting slowly. */}
+        <svg aria-hidden="true" className="work-lines pointer-events-none absolute inset-[-6%] h-[112%] w-[112%]" viewBox="0 0 1440 900" preserveAspectRatio="none">
           <defs>
-            <filter id="ribbon-glow" x="-10%" y="-10%" width="120%" height="120%"><feGaussianBlur stdDeviation="5" /></filter>
+            <filter id="line-glow" x="-10%" y="-10%" width="120%" height="120%"><feGaussianBlur stdDeviation="7" /></filter>
           </defs>
           {[
-            'M-60 700 C 260 420, 520 900, 860 560 S 1300 260, 1520 380',
-            'M-80 230 C 240 80, 560 520, 900 300 S 1280 60, 1520 200',
-            'M-40 880 C 380 640, 720 1000, 1060 720 S 1380 520, 1520 600',
-            'M200 -40 C 420 260, 160 560, 520 760 S 880 980, 980 1000',
-            'M1500 -20 C 1180 260, 1380 540, 1040 760 S 760 980, 640 1000',
-          ].map((d, i) => (
-            <g key={i} opacity={i > 2 ? 0.7 : 1}>
-              <path d={d} fill="none" stroke={['#d4ff3f', '#ff2da8', '#d4ff3f', '#ff2da8', '#f4f1ea'][i]} strokeOpacity="0.22" strokeWidth="12" filter="url(#ribbon-glow)" />
-              <path d={d} fill="none" stroke={['#d4ff3f', '#ff2da8', '#d4ff3f', '#ff2da8', '#f4f1ea'][i]} strokeOpacity="0.6" strokeWidth="1.2" />
+            ['M-60 700 C 220 380, 520 900, 820 540 S 1260 220, 1520 360', '#d4ff3f'],
+            ['M-80 210 C 260 60, 540 520, 900 280 S 1300 80, 1520 220', '#ff2da8'],
+            ['M-40 880 C 360 620, 700 1000, 1060 700 S 1380 500, 1520 600', '#d4ff3f'],
+            ['M180 -40 C 420 240, 120 560, 520 760 S 860 980, 980 1000', '#ff2da8'],
+            ['M1500 -20 C 1160 240, 1400 560, 1040 760 S 760 980, 620 1000', '#d4ff3f'],
+            ['M-60 460 C 300 560, 600 180, 980 420 S 1320 700, 1520 520', '#ff2da8'],
+            ['M620 -40 C 760 200, 520 420, 820 620 S 1100 900, 1160 1000', '#d4ff3f'],
+            ['M-40 60 C 240 300, 460 120, 700 360 S 1000 820, 1300 960', '#ff2da8'],
+          ].map(([d, c], i) => (
+            <g key={i}>
+              <path d={d} fill="none" stroke={c} strokeOpacity="0.35" strokeWidth="14" filter="url(#line-glow)" />
+              <path d={d} fill="none" stroke={c} strokeOpacity="0.85" strokeWidth="1.4" />
             </g>
           ))}
         </svg>
