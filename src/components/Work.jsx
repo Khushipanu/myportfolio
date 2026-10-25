@@ -2,13 +2,13 @@ import { useEffect, useRef, useState } from 'react'
 import { gsap, useGSAP, ScrollTrigger, MOTION_OK, prefersReducedMotion } from '../lib/gsap'
 import WorkPoster from './WorkPoster'
 
-// Visuvate-style works: the five project cards sit on an S-shaped wave that
-// winds down the page, swinging right, left, right… Each card is curved like
-// a sheet of paper and turned towards the middle. While the section is held,
-// scrolling carries the wave upwards so the cards come to the front one by
-// one (1 → 5), then the page moves on. The card at the front drives the
-// highlight and lights up its skills. Each card is a link: add a project's
-// URL as `href` and it opens.
+// Visuvate-style works: project cards wind round a leaning spiral, each one
+// curved along it. One card faces the viewer in the middle while its
+// neighbours sit just above-right and below-left, and cards at the sides
+// bend away. While the section is held, scrolling turns the spiral so the
+// cards climb from the lower left to the upper right and projects 1 → 5 pass
+// the front in turn. The card at the front drives the highlight and lights up
+// its skills. Each card is a link: add a project's URL as `href` and it opens.
 const CARDS = [
   { variant: 'movie', label: 'MovieThrill — home', project: 'MovieThrill', highlight: 'Movie data from The Movie Database (TMDB) API, fetched with Axios.', skills: ['React.js', 'Tailwind CSS', 'JavaScript'], href: null },
   { variant: 'lms', label: 'LMS — courses', project: 'Learning Management System', highlight: 'JWT authentication with student and instructor roles (RBAC).', skills: ['Node.js', 'Express.js', 'MongoDB'], href: null },
@@ -19,67 +19,72 @@ const CARDS = [
 const SKILLS = ['React.js', 'Node.js', 'Express.js', 'MongoDB', 'Redux Toolkit', 'Tailwind CSS', 'JavaScript']
 const SLICES = 7
 const RAD = Math.PI / 180
-const smooth = (k) => k * k * (3 - 2 * k)
+// Fifteen cards — the five projects three times over — wind round a spiral.
+const PER = 15
+const STEP = 52 // degrees between neighbouring cards round the spiral
+const SPIRAL = Array.from({ length: PER }, (_, i) => i % CARDS.length)
+// Cards 5–9 (projects 1 → 5) pass the front while the section is held.
+const FIRST = 5
 
-function useWave(stageRef, trackRef, progressRef, onFront) {
+function useSpiral(stageRef, trackRef, progressRef, onFront) {
   useEffect(() => {
     const stage = stageRef.current
-    const cards = [...trackRef.current.querySelectorAll('[data-card]')]
+    const track = trackRef.current
+    const cards = [...track.querySelectorAll('[data-card]')]
     const shades = cards.map((c) => [...c.querySelectorAll('[data-shade]')])
     const still = prefersReducedMotion()
-    const g = { w: 0, h: 0, cw: 0, ch: 0, bend: [] }
+    const g = { w: 0, h: 0, R: 0, pitch: 0, bend: [] }
 
     const layout = () => {
       g.w = stage.clientWidth
       g.h = stage.clientHeight
       const mobile = g.w < 768
-      g.cw = mobile ? g.w * 0.6 : Math.min(g.w * 0.25, g.h * 0.46)
-      g.ch = g.cw * 0.7
-      // Each card bends round a vertical cylinder, like a sheet of paper.
-      const r = g.cw * 1.15
-      const d = (g.cw / SLICES) / r / RAD
+      g.R = mobile ? g.w * 0.42 : Math.min(g.w * 0.25, g.h * 0.5)
+      const cw = g.R * (mobile ? 1 : 0.86)
+      const ch = cw * 0.7
+      // Each turn of the spiral climbs a little more than one card's height.
+      g.pitch = ch * 0.42
+      // Cards bend round the spiral's own cylinder.
+      const d = (cw / SLICES) / g.R / RAD
       g.bend = Array.from({ length: SLICES }, (_, j) => (j - (SLICES - 1) / 2) * d)
-      const el = trackRef.current
-      el.style.setProperty('--cw', `${g.cw}px`)
-      el.style.setProperty('--ch', `${g.ch}px`)
-      el.style.setProperty('--sw', `${g.cw / SLICES + 1.2}px`)
+      track.style.setProperty('--cw', `${cw}px`)
+      track.style.setProperty('--ch', `${ch}px`)
+      track.style.setProperty('--sw', `${cw / SLICES + 1.2}px`)
       cards.forEach((c) => {
         ;[...c.querySelectorAll('[data-slice]')].forEach((sl, j) => {
-          sl.style.transform = `rotateY(${g.bend[j].toFixed(3)}deg) translateZ(${r.toFixed(1)}px) translate(-50%, -50%)`
+          sl.style.transform = `rotateY(${g.bend[j].toFixed(3)}deg) translateZ(${g.R.toFixed(1)}px) translate(-50%, -50%)`
         })
-        c.style.setProperty('--r', `${r}px`)
+        c.style.setProperty('--r', `${g.R}px`)
       })
       draw()
     }
 
-    const s = { u: 0 }
+    // The spiral leans so cards travel from the lower left to the upper right.
+    const LEAN = 28
+    const TILT = -10
+    const s = { u: FIRST }
     let front = -1
     const draw = () => {
-      const { w, h, cw } = g
-      const mobile = w < 768
-      // Cards sit close together, so the ones above and below stay in view.
-      const amp = mobile ? w * 0.16 : w * 0.19
-      const gap = mobile ? h * 0.25 : h * 0.27
+      const { h, pitch } = g
+      const phi = s.u * STEP
+      track.style.transform = `rotateZ(${LEAN}deg) rotateX(${TILT}deg) rotateY(${phi.toFixed(3)}deg) translateY(${(-s.u * pitch).toFixed(1)}px)`
       let best = 0
-      let bestD = 9
+      let bestZ = -2
       cards.forEach((c, i) => {
-        const d = i - s.u // 0 = at the front; 1 = next one down
-        const a = Math.min(1, Math.abs(d))
-        const side = i % 2 ? -1 : 1
-        // The wave: away from the front, cards swing out to alternate sides.
-        const x = side * amp * smooth(a) + Math.sin(d * Math.PI) * amp * 0.25
-        const y = d * gap
-        const z = (1 - smooth(a)) * cw * 0.45 - Math.min(2.5, Math.abs(d)) * cw * 0.12
-        const ry = -side * 34 * smooth(a)
-        const rz = side * 5 * smooth(a)
-        const rx = -d * 8
-        c.style.transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, ${(z - cw * 1.15).toFixed(1)}px) rotateX(${rx.toFixed(2)}deg) rotateY(${ry.toFixed(2)}deg) rotateZ(${rz.toFixed(2)}deg)`
-        c.style.opacity = String(Math.max(0, 1 - Math.max(0, Math.abs(d) - 2.2) * 1.5))
+        const theta = -i * STEP
+        const y = i * pitch
+        // Each card turns back about its own centre so it stands upright,
+        // even though the spiral leans.
+        c.style.transform = `translateY(${y.toFixed(1)}px) rotateY(${theta}deg) rotateZ(${-LEAN * 0.85}deg)`
+        // Fade cards far along the spiral, above or below the view.
+        const along = Math.abs(y - s.u * pitch)
+        c.style.opacity = String(Math.max(0, Math.min(1, 1 - (along - h * 0.55) / (h * 0.3))))
         shades[i].forEach((el, j) => {
-          const turn = Math.abs(ry + g.bend[j])
-          el.style.opacity = Math.min(0.7, Math.min(2, Math.abs(d)) * 0.18 + (1 - Math.cos(turn * RAD)) * 1.1).toFixed(3)
+          // How squarely this slice faces the viewer: 1 front, -1 away.
+          const z = Math.cos((theta + phi + g.bend[j]) * RAD) * Math.cos(TILT * RAD)
+          el.style.opacity = (z < 0 ? 0.55 + 0.35 * Math.min(1, -z * 2) : (1 - z) * 0.4).toFixed(3)
+          if (j === (SLICES - 1) / 2 && z > bestZ && along < pitch * 2) { bestZ = z; best = SPIRAL[i] }
         })
-        if (Math.abs(d) < bestD) { bestD = Math.abs(d); best = i }
       })
       if (best !== front) {
         front = best
@@ -97,7 +102,7 @@ function useWave(stageRef, trackRef, progressRef, onFront) {
       const dt = last ? Math.min(64, now - last) : 16.7
       last = now
       if (!visible) return
-      const target = progressRef.current * (cards.length - 1)
+      const target = FIRST + progressRef.current * (CARDS.length - 1)
       if (Math.abs(target - s.u) < 0.0005) return
       s.u = still ? target : s.u + (target - s.u) * (1 - Math.pow(1 - 0.1, dt / 16.7))
       draw()
@@ -136,13 +141,7 @@ function Card({ c, i }) {
           <div data-shade className="pointer-events-none absolute inset-0 bg-black" />
         </div>
       ))}
-      {/* Card number, floating just above its top edge. */}
-      <span
-        className="pointer-events-none absolute left-0 top-0 whitespace-nowrap font-mono text-[11px] uppercase tracking-[0.14em] text-ink/70"
-        style={{ transform: `translate(calc(var(--cw) / -2), calc(var(--ch) / -2 - 26px)) translateZ(var(--r))` }}
-      >
-        <span className="text-accent">0{i + 1}</span> · {c.project}
-      </span>
+      <span className="sr-only">{`0${i + 1} · ${c.project}`}</span>
     </Tag>
   )
 }
@@ -153,7 +152,7 @@ export default function Work() {
   const track = useRef(null)
   const [front, setFront] = useState(0)
   const progress = useRef(0)
-  useWave(stage, track, progress, setFront)
+  useSpiral(stage, track, progress, setFront)
   const active = CARDS[front]
 
   useGSAP(
@@ -163,7 +162,7 @@ export default function Work() {
         ScrollTrigger.create({
           trigger: root.current,
           start: 'top top',
-          end: () => `+=${CARDS.length * 38}%`,
+          end: () => `+=${CARDS.length * 45}%`,
           pin: stage.current,
           onUpdate: (self) => { progress.current = self.progress },
         })
@@ -218,8 +217,8 @@ export default function Work() {
               <span data-work-title className="block whitespace-nowrap font-serif text-[16vw] leading-none text-ink md:text-[11vw]">My Works</span>
             </h2>
             <div ref={track} className="absolute left-0 top-0 h-0 w-0 [transform-style:preserve-3d]">
-              {CARDS.map((c, i) => (
-                <Card key={i} c={c} i={i} />
+              {SPIRAL.map((v, i) => (
+                <Card key={i} c={CARDS[v]} i={v} />
               ))}
             </div>
           </div>
