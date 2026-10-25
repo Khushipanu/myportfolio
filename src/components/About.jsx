@@ -21,24 +21,24 @@ function Icon({ i, className = '' }) {
   )
 }
 
-function Detail({ e, on = true, light = false }) {
+function Detail({ e, on = true, tone }) {
   return (
     <>
-      <ul className={`space-y-2.5 text-[14px] leading-snug md:text-[15px] ${light ? 'opacity-90' : 'text-ink/80'}`}>
+      <ul className="space-y-2 text-[13.5px] leading-snug text-ink/75 md:text-[14px]">
         {e.points.map((pt, k) => (
           <li
             key={pt}
-            className={`flex gap-3 transition-[opacity,transform] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${on ? 'translate-x-0 opacity-100' : '-translate-x-3 opacity-0'}`}
-            style={{ transitionDelay: on ? `${0.25 + k * 0.05}s` : '0s' }}
+            className={`flex gap-3 transition-[opacity,transform] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${on ? 'translate-x-0 opacity-100' : '-translate-x-2 opacity-0'}`}
+            style={{ transitionDelay: on ? `${0.2 + k * 0.05}s` : '0s' }}
           >
-            <span aria-hidden="true" className={`mt-[0.5em] h-1 w-1 shrink-0 rounded-full ${light ? 'bg-current' : 'bg-accent'}`} />
+            <span aria-hidden="true" className="mt-[0.5em] h-1 w-1 shrink-0 rounded-full bg-accent" style={tone ? { background: tone } : undefined} />
             {pt}
           </li>
         ))}
       </ul>
-      <ul className="mt-6 flex flex-wrap gap-2" aria-label="Tools">
+      <ul className="mt-4 flex flex-wrap gap-1.5" aria-label="Tools">
         {e.stack.map((t) => (
-          <li key={t} className={`rounded-full border px-3 py-1 font-mono text-[10px] uppercase tracking-[0.12em] ${light ? 'border-current/30 opacity-80' : 'border-ink/15 text-ink/60'}`}>{t}</li>
+          <li key={t} className="rounded-full border border-ink/15 px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-[0.12em] text-ink/60">{t}</li>
         ))}
       </ul>
     </>
@@ -56,8 +56,8 @@ function ExperiencePanels() {
 
   return (
     <>
-      {/* Wide screens: side-by-side panels, each in its own colour. */}
-      <ul data-panels className="hidden h-[36rem] gap-4 lg:flex" aria-label="Experience">
+      {/* Wide screens: side-by-side dark panels, each with its own accent. */}
+      <ul data-panels className="mx-auto hidden h-[28rem] max-w-6xl gap-3 lg:flex" aria-label="Experience">
         {experience.map((e, i) => {
           const on = open === i
           const c = tones[i % tones.length]
@@ -71,20 +71,25 @@ function ExperiencePanels() {
                 ev.currentTarget.style.setProperty('--mx', `${ev.clientX - r.left}px`)
                 ev.currentTarget.style.setProperty('--my', `${ev.clientY - r.top}px`)
               }}
-              className={`group relative min-w-0 overflow-hidden rounded-[22px] transition-[flex-grow,box-shadow,color] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${
-                on ? 'grow-[3] shadow-[0_30px_60px_-28px_rgba(23,21,18,0.55)]' : 'grow shadow-[0_10px_30px_-20px_rgba(23,21,18,0.35)]'
+              className={`group relative min-w-0 overflow-hidden rounded-[20px] border bg-[#131313] transition-[flex-grow,border-color,box-shadow] duration-[650ms] ease-[cubic-bezier(0.16,1,0.3,1)] ${
+                on ? 'grow-[2.6]' : 'grow border-ink/10 hover:border-ink/20'
               }`}
               style={{
                 flexBasis: 0,
-                color: on ? '#0b0b0b' : '#f4f1ea',
-                background: `linear-gradient(170deg, #171717, color-mix(in srgb, ${c} 8%, #101010))`,
+                borderColor: on ? `color-mix(in srgb, ${c} 45%, transparent)` : undefined,
+                boxShadow: on ? `0 30px 80px -40px color-mix(in srgb, ${c} 45%, transparent)` : undefined,
               }}
             >
-              {/* The panel colour fades in, rather than swapping instantly. */}
+              {/* The accent glow fades in as the panel opens. */}
               <span
                 aria-hidden="true"
-                className={`pointer-events-none absolute inset-0 transition-opacity duration-300 ease-out ${on ? 'opacity-100' : 'opacity-0'}`}
-                style={{ background: `linear-gradient(160deg, color-mix(in srgb, ${c} 88%, #fff) 0%, ${c} 45%, color-mix(in srgb, ${c} 80%, #000) 100%)` }}
+                className={`pointer-events-none absolute inset-0 transition-opacity duration-[650ms] ease-out ${on ? 'opacity-100' : 'opacity-0'}`}
+                style={{ background: `radial-gradient(120% 90% at 100% 0%, color-mix(in srgb, ${c} 16%, transparent), transparent 60%)` }}
+              />
+              <span
+                aria-hidden="true"
+                className={`pointer-events-none absolute left-0 top-0 h-[2px] origin-left transition-transform duration-[650ms] ease-[cubic-bezier(0.16,1,0.3,1)] ${on ? 'scale-x-100' : 'scale-x-0'}`}
+                style={{ width: '100%', background: c }}
               />
               <button
                 type="button"
@@ -96,52 +101,44 @@ function ExperiencePanels() {
                 <span className="sr-only">{`${e.role} at ${e.company}`}</span>
               </button>
 
-              {/* Fine grain and a spotlight that follows the pointer. */}
-              <span aria-hidden="true" className="pointer-events-none absolute inset-0 opacity-[0.18] mix-blend-overlay [background-image:url(&quot;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E&quot;)]" />
-              <span aria-hidden="true" className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100 [background:radial-gradient(380px_circle_at_var(--mx,50%)_var(--my,50%),rgba(255,255,255,0.14),transparent_60%)]" />
-              {/* Concentric rings in the corner of the open panel. */}
-              <svg aria-hidden="true" viewBox="0 0 200 200" className={`pointer-events-none absolute -right-16 -top-16 h-72 w-72 transition-opacity duration-700 ${on ? 'opacity-30' : 'opacity-0'}`}>
-                {[30, 55, 80, 100].map((r) => <circle key={r} cx="100" cy="100" r={r} fill="none" stroke="currentColor" strokeWidth="0.8" />)}
-              </svg>
+              {/* A soft spotlight follows the pointer. */}
+              <span aria-hidden="true" className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100 [background:radial-gradient(320px_circle_at_var(--mx,50%)_var(--my,50%),rgba(255,255,255,0.06),transparent_60%)]" />
 
-              <div className="pointer-events-none absolute left-6 right-6 top-6 flex items-center justify-between">
-                <span className="flex h-8 w-8 items-center justify-center rounded-full border font-mono text-[10px] transition-colors duration-500" style={{ borderColor: on ? 'rgba(11,11,11,0.4)' : c, color: on ? '#0b0b0b' : c }}>{n(i)}</span>
-                <Icon i={i} className="h-5 w-5" />
+              <div className="pointer-events-none absolute left-6 right-6 top-6 flex items-center justify-between" style={{ color: c }}>
+                <span className="font-mono text-[11px] tracking-[0.14em]">{n(i)}</span>
+                <Icon i={i} className="h-5 w-5 opacity-80" />
               </div>
 
-              {/* Closed: a big outlined number in the panel colour. */}
+              {/* Closed: a large outlined number and a short summary. */}
               <span
                 aria-hidden="true"
-                className={`pointer-events-none absolute left-6 top-20 font-serif text-[9rem] italic leading-none text-transparent transition-[opacity,transform] duration-300 ease-out group-hover:-translate-y-2 ${on ? 'opacity-0' : 'opacity-100 delay-150'}`}
-                style={{ WebkitTextStroke: `1.2px ${c}` }}
+                className={`pointer-events-none absolute left-6 top-14 font-serif text-[6.5rem] italic leading-none text-transparent transition-opacity duration-300 ${on ? 'opacity-0' : 'opacity-100 delay-150'}`}
+                style={{ WebkitTextStroke: `1px color-mix(in srgb, ${c} 70%, transparent)` }}
               >
                 {n(i)}
               </span>
-
-              {/* Closed: a short summary at the foot of the panel. */}
               <div
                 aria-hidden={on}
                 className={`pointer-events-none absolute bottom-6 left-6 right-6 transition-[opacity,transform] duration-300 ease-out ${on ? 'translate-y-2 opacity-0' : 'translate-y-0 opacity-100 delay-150'}`}
               >
-                <span className="mb-4 block h-1 w-10 rounded-full transition-all duration-500 group-hover:w-16" style={{ background: c }} />
-                <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-ink/55">{e.period}</p>
-                <h3 className="mt-3 text-[22px] font-semibold leading-[1.15] tracking-[-0.01em]">{e.role}</h3>
-                <p className="mt-1.5 font-serif text-[18px] italic leading-snug" style={{ color: c }}>{e.company}</p>
+                <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-ink/45">{e.period}</p>
+                <h3 className="mt-2 text-[19px] font-semibold leading-[1.2] tracking-[-0.01em] text-ink">{e.role}</h3>
+                <p className="mt-1 font-serif text-[16px] italic leading-snug" style={{ color: c }}>{e.company}</p>
               </div>
 
               {/* Open: full detail, at a fixed width so it never reflows while the panel resizes. */}
               <div
                 aria-hidden={!on}
-                className={`pointer-events-none absolute bottom-0 left-0 top-0 flex w-[clamp(27rem,42vw,40rem)] flex-col justify-end p-8 transition-[opacity,transform] ease-[cubic-bezier(0.22,1,0.36,1)] ${
-                  on ? 'translate-y-0 opacity-100 duration-300 delay-[120ms]' : 'translate-y-3 opacity-0 duration-150'
+                className={`pointer-events-none absolute bottom-0 left-0 top-0 flex w-[clamp(24rem,36vw,33rem)] flex-col justify-end p-7 transition-[opacity,transform] ease-[cubic-bezier(0.16,1,0.3,1)] ${
+                  on ? 'translate-y-0 opacity-100 duration-500 delay-150' : 'translate-y-2 opacity-0 duration-150'
                 }`}
               >
-                <p className="font-mono text-[11px] uppercase tracking-[0.14em] opacity-70">{e.period}</p>
-                <h3 className="mt-3 text-[34px] font-semibold leading-tight tracking-[-0.02em]">{e.role}</h3>
-                <p className="mt-1 font-serif text-[22px] italic leading-snug opacity-85">at {e.company}</p>
-                <p className="mt-4 text-[15px] leading-relaxed opacity-75">{e.summary}</p>
-                <div className="mt-5">
-                  <Detail e={e} on={on} light />
+                <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-ink/50">{e.period}</p>
+                <h3 className="mt-2 text-[26px] font-semibold leading-tight tracking-[-0.02em] text-ink">{e.role}</h3>
+                <p className="mt-0.5 font-serif text-[18px] italic leading-snug" style={{ color: c }}>at {e.company}</p>
+                <p className="mt-3 text-[14px] leading-relaxed text-ink/60">{e.summary}</p>
+                <div className="mt-4">
+                  <Detail e={e} on={on} tone={c} />
                 </div>
               </div>
             </li>
