@@ -2,7 +2,7 @@ import { useRef, useState } from 'react'
 import { gsap, useGSAP, ScrollTrigger, MOTION_OK } from '../lib/gsap'
 import { about, experience } from '../data/content'
 
-function Detail({ e, on = true, tone = '#f5b544' }) {
+function Detail({ e, on = true, tone = '#d4ff3f' }) {
   return (
     <>
       <ul className="space-y-2 text-[13.5px] leading-snug text-ink/80 md:text-[14px]">
@@ -26,8 +26,9 @@ function Detail({ e, on = true, tone = '#f5b544' }) {
   )
 }
 
-// Glowing accents, in the same order as `experience`: amber, magenta, mint.
-const tones = ['#f5b544', '#ff4fb8', '#5eead4']
+// Accents in the site palette, in the same order as `experience`:
+// chartreuse, hot pink, off-white.
+const tones = ['#d4ff3f', '#ff2da8', '#f4f1ea']
 
 // A slowly turning 3D ribbon drawn from tilted rings, in the panel's accent.
 function Ribbon({ c, className = '' }) {
@@ -126,7 +127,7 @@ function ExperienceTimeline() {
           <h2 className="mt-5 text-[13vw] font-extralight leading-[0.95] tracking-[-0.04em] md:text-[7vw] lg:text-[5.2vw]">
             <span className="text-ink/60">My</span>
             <br />
-            <span className="bg-[linear-gradient(100deg,#ffe2a3,#f5b544_45%,#ff8a3d)] bg-clip-text font-normal text-transparent">Experience.</span>
+            <span className="bg-[linear-gradient(100deg,#f4f1ea,#d4ff3f_55%)] bg-clip-text font-normal text-transparent">Experience.</span>
           </h2>
           <p className="mt-6 max-w-sm text-[16px] leading-relaxed text-ink/60">
             Full-stack roles across an ERP product, web development and technical content.
@@ -149,7 +150,7 @@ function ExperienceTimeline() {
                   <span
                     aria-hidden="true"
                     className="relative mt-1 h-[15px] w-[15px] shrink-0 rounded-full border-2 transition-all duration-500"
-                    style={{ borderColor: on ? c : 'rgba(244,241,234,0.25)', background: on ? c : '#0a0d16', boxShadow: on ? `0 0 16px ${c}` : 'none' }}
+                    style={{ borderColor: on ? c : 'rgba(244,241,234,0.25)', background: on ? c : '#0b0b0b', boxShadow: on ? `0 0 16px ${c}` : 'none' }}
                   />
                   <span>
                     <span className={`block text-[17px] font-medium tracking-[-0.01em] transition-colors duration-300 ${on ? 'text-ink' : 'text-ink/45 group-hover:text-ink/75'}`}>{e.role}</span>
@@ -179,7 +180,7 @@ function ExperienceTimeline() {
                   style={{
                     transform: 'rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg))',
                     borderColor: on ? `color-mix(in srgb, ${c} 65%, transparent)` : `color-mix(in srgb, ${c} 25%, transparent)`,
-                    background: `linear-gradient(155deg, color-mix(in srgb, ${c} 14%, #0e1220) 0%, #0b0e18 55%, color-mix(in srgb, ${c} 7%, #07090f) 100%)`,
+                    background: `linear-gradient(155deg, color-mix(in srgb, ${c} 9%, #161616) 0%, #101010 55%, color-mix(in srgb, ${c} 5%, #090909) 100%)`,
                     boxShadow: on
                       ? `0 50px 90px -40px rgba(0,0,0,0.85), inset 0 1px 0 rgba(255,255,255,0.12), 0 0 60px -20px ${c}`
                       : '0 40px 70px -40px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255,255,255,0.07)',
@@ -348,12 +349,12 @@ export default function About() {
         </div>
       </div>
 
-      {/* Experience sits on a deep navy band lit by warm amber, magenta and mint light. */}
-      <div id="experience" className="relative -mx-5 -mb-24 mt-24 scroll-mt-24 overflow-clip bg-[linear-gradient(180deg,#0b0f1a_0%,#090c16_60%,#07090f_100%)] px-5 py-20 text-ink md:-mx-10 md:-mb-40 md:mt-36 md:px-10 md:py-28">
+      {/* Experience sits on jet black lit by soft chartreuse and hot pink light. */}
+      <div id="experience" className="relative -mx-5 -mb-24 mt-24 scroll-mt-24 overflow-clip bg-[linear-gradient(180deg,#0b0b0b_0%,#0d0d0d_60%,#0b0b0b_100%)] px-5 py-20 text-ink md:-mx-10 md:-mb-40 md:mt-36 md:px-10 md:py-28">
         <div aria-hidden="true" className="pointer-events-none absolute inset-0">
-          <div className="absolute left-[20%] top-[-20%] h-[70vh] w-[60vw] rounded-full bg-[radial-gradient(closest-side,rgba(245,181,68,0.22),transparent)] blur-3xl" />
-          <div className="absolute -right-[10%] top-[30%] h-[60vh] w-[45vw] rounded-full bg-[radial-gradient(closest-side,rgba(94,234,212,0.12),transparent)] blur-3xl" />
-          <div className="absolute -left-[10%] bottom-[-10%] h-[60vh] w-[45vw] rounded-full bg-[radial-gradient(closest-side,rgba(255,79,184,0.12),transparent)] blur-3xl" />
+          <div className="absolute left-[20%] top-[-20%] h-[70vh] w-[60vw] rounded-full bg-[radial-gradient(closest-side,rgba(212,255,63,0.10),transparent)] blur-3xl" />
+          <div className="absolute -right-[10%] top-[30%] h-[60vh] w-[45vw] rounded-full bg-[radial-gradient(closest-side,rgba(244,241,234,0.05),transparent)] blur-3xl" />
+          <div className="absolute -left-[10%] bottom-[-10%] h-[60vh] w-[45vw] rounded-full bg-[radial-gradient(closest-side,rgba(255,45,168,0.12),transparent)] blur-3xl" />
         </div>
         <ExperienceTimeline />
       </div>

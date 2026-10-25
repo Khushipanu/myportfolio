@@ -138,7 +138,7 @@ function Card({ c, i }) {
               className={`h-full w-full border-y border-white/15 text-[calc(var(--cw)/19)] ${j === 0 ? 'rounded-l-[14px] border-l' : ''} ${j === SLICES - 1 ? 'rounded-r-[14px] border-r' : ''}`}
             />
           </div>
-          <div data-shade className="pointer-events-none absolute inset-0 bg-[#080b14]" />
+          <div data-shade className="pointer-events-none absolute inset-0 bg-[#0b0b0b]" />
         </div>
       ))}
       <span className="sr-only">{`0${i + 1} · ${c.project}`}</span>
@@ -180,20 +180,20 @@ export default function Work() {
   )
 
   return (
-    <section id="work" ref={root} aria-labelledby="work-title" className="relative isolate bg-[radial-gradient(ellipse_at_50%_40%,#111729_0%,#0a0e19_55%,#06080f_100%)] text-ink">
+    <section id="work" ref={root} aria-labelledby="work-title" className="relative isolate bg-[radial-gradient(ellipse_at_50%_40%,#171717_0%,#0b0b0b_55%,#060606_100%)] text-ink">
       <div
         ref={stage}
         className="relative h-[100svh] select-none overflow-hidden"
       >
-        {/* Night backdrop: drifting amber, magenta and mint light over deep
-            navy, a glowing grid floor, giant outlined type and fine grain. */}
+        {/* Backdrop in the site palette: drifting hot pink and chartreuse light
+            over jet black, a glowing grid floor, giant outlined type and grain. */}
         <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden">
-          <div className="mesh-a absolute -left-[12%] -top-[18%] h-[75vh] w-[60vw] rounded-full bg-[radial-gradient(closest-side,rgba(255,79,184,0.22),transparent)] blur-3xl" />
-          <div className="mesh-b absolute -right-[14%] top-[2%] h-[70vh] w-[55vw] rounded-full bg-[radial-gradient(closest-side,rgba(245,181,68,0.22),transparent)] blur-3xl" />
-          <div className="mesh-c absolute -bottom-[25%] left-[20%] h-[75vh] w-[60vw] rounded-full bg-[radial-gradient(closest-side,rgba(94,234,212,0.16),transparent)] blur-3xl" />
+          <div className="mesh-a absolute -left-[12%] -top-[18%] h-[75vh] w-[60vw] rounded-full bg-[radial-gradient(closest-side,rgba(255,45,168,0.20),transparent)] blur-3xl" />
+          <div className="mesh-b absolute -right-[14%] top-[2%] h-[70vh] w-[55vw] rounded-full bg-[radial-gradient(closest-side,rgba(212,255,63,0.14),transparent)] blur-3xl" />
+          <div className="mesh-c absolute -bottom-[25%] left-[20%] h-[75vh] w-[60vw] rounded-full bg-[radial-gradient(closest-side,rgba(244,241,234,0.07),transparent)] blur-3xl" />
 
           {/* Grid floor receding into the distance. */}
-          <div className="absolute inset-x-[-25%] bottom-[-8%] h-[55%] origin-bottom [transform:perspective(700px)_rotateX(62deg)] [background-image:linear-gradient(rgba(245,181,68,0.16)_1px,transparent_1px),linear-gradient(90deg,rgba(245,181,68,0.16)_1px,transparent_1px)] [background-size:64px_64px] [mask-image:linear-gradient(to_top,black_10%,transparent_85%)]" />
+          <div className="absolute inset-x-[-25%] bottom-[-8%] h-[55%] origin-bottom [transform:perspective(700px)_rotateX(62deg)] [background-image:linear-gradient(rgba(212,255,63,0.14)_1px,transparent_1px),linear-gradient(90deg,rgba(212,255,63,0.14)_1px,transparent_1px)] [background-size:64px_64px] [mask-image:linear-gradient(to_top,black_10%,transparent_85%)]" />
 
           {/* Giant outlined word sitting behind everything. */}
           <p className="absolute left-1/2 top-[6%] -translate-x-1/2 select-none whitespace-nowrap font-display text-[22vw] font-black uppercase leading-none tracking-[-0.04em] text-transparent [-webkit-text-stroke:1.5px_rgba(244,241,234,0.06)]">
@@ -224,16 +224,16 @@ export default function Work() {
         {/* Core skills; the ones used in the front card light up. */}
         <ul aria-label="Core skills" className="pointer-events-none absolute left-5 right-5 top-32 z-20 flex flex-wrap gap-x-4 gap-y-1.5 font-mono text-[10px] uppercase tracking-[0.14em] md:left-auto md:right-10 md:top-28 md:flex-col md:items-end md:gap-2 md:text-[11px]">
           {SKILLS.map((k) => (
-            <li key={k} className={`transition-colors duration-500 ${active.skills.includes(k) ? 'font-semibold text-[#f5b544]' : 'text-ink/35'}`}>{k}</li>
+            <li key={k} className={`transition-colors duration-500 ${active.skills.includes(k) ? 'font-semibold text-accent' : 'text-ink/35'}`}>{k}</li>
           ))}
         </ul>
 
-        <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-56 bg-gradient-to-t from-[#06080f] via-[#06080f]/70 to-transparent" />
+        <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-56 bg-gradient-to-t from-[#0b0b0b] via-[#0b0b0b]/70 to-transparent" />
 
         {/* Highlight of the card facing front. */}
         <div aria-live="polite" className="pointer-events-none absolute bottom-14 left-5 right-5 z-20 md:bottom-10 md:left-10 md:right-auto md:max-w-sm">
           <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-ink/45">
-            <span className="text-[#f5b544]">{String(front + 1).padStart(2, '0')}</span> / {String(CARDS.length).padStart(2, '0')} · Highlight
+            <span className="text-accent">{String(front + 1).padStart(2, '0')}</span> / {String(CARDS.length).padStart(2, '0')} · Highlight
           </p>
           <div key={front} className="animate-[work-in_0.7s_cubic-bezier(0.22,1,0.36,1)]">
             <p className="mt-3 font-serif text-[26px] italic leading-none text-ink md:text-[30px]">{active.project}</p>
