@@ -5,14 +5,13 @@ import { profile, socials, resume } from '../data/content'
 
 // Closing section, one scroll-driven scene on wide screens: a giant
 // "Let's connect" slides across (letters falling into line as they reach the
-// middle, after guillaumezhu.com), then glitches — letters scramble into code
-// with an RGB split and scanlines — and switches off like a CRT. The contact
-// screen appears in its place: a pitch and every way to get in touch beside a
+// middle, after guillaumezhu.com), then the letters drift up, soften and fade
+// away one after another as a soft violet glow blooms. The contact screen
+// appears in its place: a pitch and every way to get in touch beside a
 // short message form that opens a ready-to-send Gmail draft, all on one screen.
 const gmail = `https://mail.google.com/mail/?view=cm&fs=1&to=${profile.email}`
 
 const LINE = "Let's connect →"
-const GLYPHS = '01<>/{}[]=;$#_*+'
 // Fixed pseudo-random values per index, so they are the same on every render.
 const jitter = (i) => {
   const r = (n) => {
@@ -71,12 +70,12 @@ function ContactForm({ time }) {
     const body = [msg || 'Hi Khushi,', ...(sign.length ? ['', ...sign] : [])].join('\n')
     window.open(`${gmail}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`, '_blank', 'noopener')
   }
-  const field = 'w-full border-b border-ink/15 bg-transparent pb-2.5 pt-1 text-[16px] text-ink placeholder:text-ink/30 outline-none focus-visible:outline-none transition-colors duration-200 focus:border-chartreuse'
-  const label = 'font-mono text-[10px] uppercase tracking-[0.16em] text-ink/45'
+  const field = 'w-full border-b border-ink/25 bg-transparent pb-2.5 pt-1 text-[16px] text-ink placeholder:text-ink/40 outline-none focus-visible:outline-none transition-colors duration-200 focus:border-chartreuse'
+  const label = 'font-mono text-[10px] uppercase tracking-[0.16em] text-ink/60'
   return (
     <form
       onSubmit={send}
-      className="relative w-full max-w-[34rem] overflow-hidden rounded-[24px] border border-ink/10 bg-[#FBF8FF]/90 p-6 shadow-[0_50px_120px_-50px_rgba(167,139,250,0.25)] backdrop-blur md:p-8"
+      className="relative w-full max-w-[34rem] overflow-hidden rounded-[24px] border border-accent/60 bg-white p-6 shadow-[0_0_0_6px_rgba(225,210,250,0.6),0_40px_90px_-30px_rgba(113,81,181,0.45)] md:p-8"
     >
       <span aria-hidden="true" className="pointer-events-none absolute -right-20 -top-24 h-64 w-64 rounded-full bg-[radial-gradient(closest-side,rgba(113,81,181,0.22),transparent)] blur-2xl" />
       <div className="relative flex items-center justify-between gap-4">
@@ -97,7 +96,7 @@ function ContactForm({ time }) {
               onClick={() => setTopic(t)}
               aria-pressed={topic === t}
               className={`rounded-full border px-3.5 py-1.5 text-[13px] transition-colors duration-200 ${
-                topic === t ? 'border-chartreuse bg-chartreuse text-jet' : 'border-ink/15 text-ink/70 hover:border-ink/40 hover:text-ink'
+                topic === t ? 'border-chartreuse bg-chartreuse text-jet' : 'border-ink/25 text-ink/80 hover:border-ink/50 hover:text-ink'
               }`}
             >
               {t}
@@ -149,7 +148,7 @@ function Socials() {
             href={l.href}
             target="_blank"
             rel="noreferrer"
-            className="group flex items-center gap-2 overflow-hidden rounded-full border border-ink/15 py-2 pl-4 pr-3 transition-colors duration-200 hover:border-ink/40 hover:bg-ink/[0.04]"
+            className="group flex items-center gap-2 overflow-hidden rounded-full border border-ink/25 bg-white/60 py-2 pl-4 pr-3 transition-colors duration-200 hover:border-ink/40 hover:bg-ink/[0.04]"
           >
             <span className="relative block h-[1.3em] overflow-hidden text-[14px] font-semibold leading-[1.3]">
               <span className="block transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:-translate-y-full">{l.label}</span>
@@ -176,10 +175,8 @@ export default function Connect() {
       // Wide screens: the whole scene plays while the section is held.
       mm.add(`${MOTION_OK} and (min-width: 768px)`, () => {
         const chars = gsap.utils.toArray('[data-lc-char]', track.current)
-        const original = chars.map((c) => c.textContent)
-        const scan = pin.current.querySelector('[data-lc-scan]')
         const grid = pin.current.querySelector('[data-lc-grid]')
-        const dot = pin.current.querySelector('[data-lc-dot]')
+        const bloom = pin.current.querySelector('[data-lc-bloom]')
         const hints = gsap.utils.toArray('[data-lc-hint]', pin.current)
         const jit = chars.map((_, i) => jitter(i))
         let offsets = []
@@ -207,44 +204,29 @@ export default function Connect() {
           const h = String(1 - clamp01((s - D * 0.7) / (D * 0.3)))
           hints.forEach((el) => { el.style.opacity = h })
 
-          // 0 → 1 across the glitch: scramble, then the CRT switch-off.
+          // 0 → 1 across the hand-over: the letters drift up, soften and fade
+          // one after another while a soft violet glow blooms behind them.
           const u = clamp01((s - D) / glitch())
-          const scramble = clamp01(u / 0.45)
-          const noise = Math.sin(u * Math.PI) * (u < 0.55 ? 1 : 0)
-          const off = clamp01((u - 0.5) / 0.3) // squash to a line
-          const shrink = clamp01((u - 0.78) / 0.14) // line to a dot
-          const tick = Math.floor(s / 14)
 
           chars.forEach((c, i) => {
             const lx = x + offsets[i]
             if (u === 0) {
-              if (c.textContent !== original[i]) c.textContent = original[i]
               // Letters right of centre are scattered; all settle as the slide ends.
               const k = clamp01((lx - vw * 0.5) / (vw * 0.45))
               const e = smooth(k) * clamp01((D - s) / (vw * 0.35))
-              c.style.textShadow = ''
+              c.style.opacity = ''
+              c.style.filter = ''
               c.style.transform = `translate3d(0, ${(jit[i].y * e * 0.55).toFixed(3)}em, 0) rotate(${(jit[i].rot * e * 28).toFixed(2)}deg)`
               return
             }
-            // Letters flip to code glyphs, left to right.
-            const flipped = original[i] !== ' ' && scramble > (i / chars.length) * 0.8
-            const glyph = flipped ? GLYPHS[(tick + i * 7) % GLYPHS.length] : original[i]
-            if (c.textContent !== glyph) c.textContent = glyph
-            const o = (noise * 6 * (0.4 + jit[(i + tick) % chars.length].k)).toFixed(1)
-            c.style.textShadow = noise > 0.02 ? `${o}px 0 rgba(113,81,181,0.85), ${-o}px 0 rgba(167,139,250,0.85)` : ''
-            const slice = noise > 0.3 && (tick + i) % 5 === 0 ? jit[i].rot * 18 * noise : 0
-            c.style.transform = `translate3d(${slice.toFixed(1)}px, 0, 0)`
+            const t = smooth(clamp01(u * 1.7 - (i / chars.length) * 0.7))
+            c.style.opacity = String(1 - t)
+            c.style.filter = t > 0.01 ? `blur(${(t * 14).toFixed(1)}px)` : ''
+            c.style.transform = `translate3d(0, ${(-t * 0.45).toFixed(3)}em, 0) scale(${(1 - t * 0.12).toFixed(3)})`
           })
-
-          // CRT switch-off: the line squashes flat and bright, then shrinks away.
-          const sy = 1 - 0.985 * smooth(off)
-          const sx = 1 + 0.15 * smooth(off) - smooth(shrink)
-          track.current.style.transformOrigin = `${(vw / 2 - x).toFixed(1)}px 50%`
-          track.current.style.transform = `translate3d(${x}px,0,0) scale(${Math.max(0, sx).toFixed(3)}, ${sy.toFixed(3)})`
-          track.current.style.filter = off > 0 ? `brightness(${(1 + off * 2.5).toFixed(2)})` : ''
-          track.current.style.opacity = String(1 - smooth(clamp01((u - 0.86) / 0.1)))
-          dot.style.opacity = String(shrink > 0 ? Math.sin(Math.min(1, shrink * 1.2) * Math.PI) : 0)
-          scan.style.opacity = String(Math.min(0.5, noise * 0.6 + off * (1 - shrink) * 0.4))
+          track.current.style.transform = `translate3d(${x}px,0,0)`
+          bloom.style.opacity = String(Math.sin(u * Math.PI) * 0.9)
+          bloom.style.transform = `translate(-50%,-50%) scale(${(0.6 + u * 0.9).toFixed(3)})`
 
           const r = clamp01((s - D - glitch() * 0.85) / boot())
           grid.style.opacity = String(smooth(clamp01((u - 0.8) / 0.2)))
@@ -265,8 +247,8 @@ export default function Connect() {
         return () => {
           reveal.progress(1).kill()
           panel.current.style.pointerEvents = ''
-          Object.assign(track.current.style, { transform: '', transformOrigin: '', filter: '', opacity: '' })
-          chars.forEach((c, i) => { c.textContent = original[i]; c.style.textShadow = ''; c.style.transform = '' })
+          track.current.style.transform = ''
+          chars.forEach((c) => { c.style.opacity = ''; c.style.filter = ''; c.style.transform = '' })
         }
       })
       // Small screens: plain reveals.
@@ -310,11 +292,10 @@ export default function Connect() {
         </a>
         <p data-lc-hint className="absolute bottom-8 left-5 hidden font-mono text-[11px] uppercase tracking-[0.12em] text-ink/50 md:left-10 md:block">Keep scrolling ↓</p>
 
-        {/* Glitch layers: scanlines, the CRT's last dot, and the grid the contact screen boots onto. */}
+        {/* The bloom behind the fading letters, and the grid the contact screen sits on. */}
         <div aria-hidden="true" className="pointer-events-none absolute inset-0 hidden md:block">
           <div data-lc-grid className="absolute inset-0 opacity-0 [background-image:linear-gradient(rgba(167,139,250,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(167,139,250,0.05)_1px,transparent_1px)] [background-size:48px_48px] [mask-image:radial-gradient(ellipse_at_center,black_30%,transparent_80%)]" />
-          <div data-lc-scan className="absolute inset-0 opacity-0 [background:repeating-linear-gradient(0deg,rgba(255,255,255,0.08)_0px,rgba(255,255,255,0.08)_1px,transparent_1px,transparent_4px)]" />
-          <div data-lc-dot className="absolute left-1/2 top-1/2 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white opacity-0 shadow-[0_0_30px_10px_rgba(167,139,250,0.7)]" />
+          <div data-lc-bloom className="absolute left-1/2 top-1/2 h-[80vmin] w-[80vmin] rounded-full opacity-0 blur-2xl [background:radial-gradient(closest-side,rgba(167,139,250,0.45),rgba(225,210,250,0.35)_50%,transparent)]" />
         </div>
 
         {/* Part 2: the contact screen. */}
@@ -366,7 +347,7 @@ export default function Connect() {
             </div>
           </div>
 
-          <div data-lc-reveal className="mt-4 flex flex-col gap-2 font-mono text-[11px] uppercase tracking-[0.12em] text-ink/40 md:flex-row md:items-center md:justify-between">
+          <div data-lc-reveal className="mt-4 flex flex-col gap-2 font-mono text-[11px] uppercase tracking-[0.12em] text-ink/65 md:flex-row md:items-center md:justify-between">
             <span>© 2026</span>
             <span>{profile.location}</span>
             <button type="button" onClick={() => scrollToTarget('#top')} className="link-underline self-start uppercase tracking-[0.12em] hover:text-ink md:self-auto">
