@@ -90,9 +90,9 @@ export default function Statement() {
                 <span data-st-line>
                   {line.map((w, j) =>
                     w.serif ? (
-                      <em key={j} className="pr-[0.06em] font-serif font-normal normal-case italic tracking-[-0.02em] text-accent">{w.t}</em>
+                      <em key={j} className="pr-[0.06em] font-serif font-normal normal-case italic tracking-[-0.02em] text-accent-deep">{w.t}</em>
                     ) : (
-                      <span key={j} className={w.accent ? 'text-accent' : ''}>{w.t}</span>
+                      <span key={j} className={w.accent ? 'text-accent-deep' : ''}>{w.t}</span>
                     ),
                   )}
                 </span>

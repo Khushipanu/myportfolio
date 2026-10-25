@@ -71,7 +71,7 @@ export default function Nav({ ready }) {
       <a
         href="#top"
         onClick={(e) => go(e, '#top')}
-        className="mask whitespace-nowrap text-[15px] font-semibold tracking-[-0.01em] transition-colors hover:text-accent"
+        className="mask whitespace-nowrap text-[15px] font-semibold tracking-[-0.01em] transition-colors hover:text-accent-deep"
         aria-label="Khushi Panu — back to top"
       >
         <span data-nav-item className="block"><Logo className="text-[17px]" /></span>
@@ -79,7 +79,7 @@ export default function Nav({ ready }) {
 
       <p className="mask hidden items-center whitespace-nowrap font-mono text-[11px] uppercase tracking-[0.16em] text-muted xl:flex">
         <span data-nav-item className="flex items-center gap-3">
-          <svg viewBox="0 0 24 24" className="h-3 w-3 text-accent" aria-hidden="true"><path fill="currentColor" d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7Zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5Z" /></svg>
+          <svg viewBox="0 0 24 24" className="h-3 w-3 text-accent-deep" aria-hidden="true"><path fill="currentColor" d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7Zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5Z" /></svg>
           Haldwani, India
           <span className="h-px w-10 bg-ink/25" aria-hidden="true" />
           {profile.role}
@@ -94,7 +94,7 @@ export default function Nav({ ready }) {
                 href={l.href}
                 onClick={(e) => go(e, l.href)}
                 data-nav-item
-                className="whitespace-nowrap font-mono text-[12px] uppercase tracking-[0.1em] text-ink transition-colors duration-200 ease-out hover:text-accent focus-visible:text-accent"
+                className="whitespace-nowrap font-mono text-[12px] uppercase tracking-[0.1em] text-ink transition-colors duration-200 ease-out hover:text-accent-deep focus-visible:text-accent-deep"
               >
                 {l.label}
               </a>
@@ -105,9 +105,9 @@ export default function Nav({ ready }) {
               href={resume.href}
               download={resume.file}
               data-nav-item
-              className="whitespace-nowrap font-mono text-[12px] uppercase tracking-[0.1em] text-ink transition-colors duration-200 ease-out hover:text-accent focus-visible:text-accent"
+              className="whitespace-nowrap font-mono text-[12px] uppercase tracking-[0.1em] text-ink transition-colors duration-200 ease-out hover:text-accent-deep focus-visible:text-accent-deep"
             >
-              Resume <span aria-hidden="true" className="text-accent">↓</span>
+              Resume <span aria-hidden="true" className="text-accent-deep">↓</span>
             </a>
           </li>
         </ul>
@@ -126,7 +126,7 @@ export default function Nav({ ready }) {
           data-nav-item
           className="group flex items-center gap-2 whitespace-nowrap rounded-full border border-accent/80 px-5 py-2.5 font-mono text-[12px] font-medium uppercase tracking-[0.1em] text-ink transition-colors duration-300 hover:bg-accent hover:text-jet focus-visible:bg-accent focus-visible:text-jet md:px-6 md:py-3"
         >
-          Let's talk <span aria-hidden="true" className="text-accent transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-jet">↗</span>
+          Let's talk <span aria-hidden="true" className="text-accent-deep transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-jet">↗</span>
         </a>
       </nav>
 
@@ -141,7 +141,7 @@ export default function Nav({ ready }) {
               <a
                 href={l.href}
                 onClick={(e) => go(e, l.href)}
-                className="flex items-baseline justify-between py-3 font-display text-[13vw] uppercase leading-none transition-colors active:text-accent"
+                className="flex items-baseline justify-between py-3 font-display text-[13vw] uppercase leading-none transition-colors active:text-accent-deep"
               >
                 {l.label}
                 <span className="font-mono text-[11px] tracking-[0.12em] text-muted">0{i + 1}</span>
@@ -150,9 +150,9 @@ export default function Nav({ ready }) {
           ))}
         </ul>
         <div className="flex flex-wrap gap-x-6 gap-y-2 font-mono text-[11px] uppercase tracking-[0.12em] text-muted">
-          <a href={resume.href} download={resume.file} className="text-ink hover:text-accent">Resume ↓</a>
+          <a href={resume.href} download={resume.file} className="text-ink hover:text-accent-deep">Resume ↓</a>
           {socials.map((s) => (
-            <a key={s.label} href={s.href} target="_blank" rel="noreferrer" className="hover:text-accent">{s.label} ↗</a>
+            <a key={s.label} href={s.href} target="_blank" rel="noreferrer" className="hover:text-accent-deep">{s.label} ↗</a>
           ))}
         </div>
       </div>

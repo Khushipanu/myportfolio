@@ -93,11 +93,11 @@ export default function Hero({ ready }) {
   )
 
   return (
-    <section id="top" ref={root} className="relative isolate flex min-h-[100svh] flex-col overflow-hidden bg-jet px-5 pb-6 pt-28 text-ink md:px-10 md:pb-8 md:pt-32">
-      <div aria-hidden="true" className="pointer-events-none absolute -right-[10%] top-[10%] -z-10 h-[60vh] w-[45vw] rounded-full bg-[radial-gradient(closest-side,rgba(255,45,168,0.12),transparent)] blur-2xl" />
+    <section id="top" ref={root} className="relative isolate flex min-h-[100svh] flex-col overflow-hidden bg-paper px-5 pb-6 pt-28 text-ink md:px-10 md:pb-8 md:pt-32">
+      <div aria-hidden="true" className="pointer-events-none absolute -right-[10%] top-[10%] -z-10 h-[60vh] w-[45vw] rounded-full bg-[radial-gradient(closest-side,rgba(226,160,140,0.12),transparent)] blur-2xl" />
 
       <div className="flex items-center justify-between gap-6">
-        <span data-hero-fade className="inline-flex items-center gap-2.5 rounded-full border border-ink/20 bg-jet/60 px-3.5 py-1.5 font-mono text-[11px] uppercase tracking-[0.14em] text-ink/80 backdrop-blur-sm">
+        <span data-hero-fade className="inline-flex items-center gap-2.5 rounded-full border border-ink/20 bg-paper/70 px-3.5 py-1.5 font-mono text-[11px] uppercase tracking-[0.14em] text-ink/80 backdrop-blur-sm">
           <span className="relative flex h-2 w-2">
             <span className="absolute inset-0 animate-ping rounded-full bg-chartreuse/60" />
             <span className="relative h-2 w-2 rounded-full bg-chartreuse" />
@@ -113,7 +113,7 @@ export default function Hero({ ready }) {
           className="font-display uppercase leading-[0.86] tracking-[-0.02em] [font-stretch:100%] [font-weight:700] text-[17vw] md:text-[min(15vw,27svh)]"
         >
           <Line word={profile.firstName} />
-          <Line word={profile.lastName} className="text-chartreuse md:pl-[22vw]" />
+          <Line word={profile.lastName} className="text-accent-deep md:pl-[22vw]" />
         </h1>
 
         <p data-hero-fade className="mt-8 max-w-2xl text-[20px] leading-snug text-ink/80 md:mt-10 md:text-[28px]">
@@ -129,14 +129,14 @@ export default function Hero({ ready }) {
             onClick={() => scrollToTarget('#work')}
             className="group flex items-center gap-3 rounded-full bg-chartreuse py-2 pl-2 pr-6 font-mono text-[12px] font-semibold uppercase tracking-[0.12em] text-jet transition-[translate] duration-300 hover:-translate-y-0.5"
           >
-            <span className="flex h-10 w-10 items-center justify-center rounded-full bg-jet text-chartreuse transition-transform duration-300 group-hover:-rotate-45">→</span>
+            <span className="flex h-10 w-10 items-center justify-center rounded-full bg-jet text-accent-deep transition-transform duration-300 group-hover:-rotate-45">→</span>
             Explore my work
           </button>
           <a
             href={resume.href}
             download={resume.file}
             data-hero-fade
-            className="flex items-center gap-2.5 rounded-full border border-pink/60 px-6 py-4 font-mono text-[12px] uppercase tracking-[0.12em] text-pink transition-colors duration-300 hover:bg-pink/10"
+            className="flex items-center gap-2.5 rounded-full border border-pink/60 px-6 py-4 font-mono text-[12px] uppercase tracking-[0.12em] text-rose transition-colors duration-300 hover:bg-pink/10"
           >
             Resume <span aria-hidden="true">↓</span>
           </a>
@@ -149,7 +149,7 @@ export default function Hero({ ready }) {
             ['Based in', 'Haldwani, IN'],
           ].map(([k, v], i) => (
             <div key={k}>
-              <dt className={i === 1 ? 'text-chartreuse' : 'text-pink'}>{k}</dt>
+              <dt className={i === 1 ? 'text-accent-deep' : 'text-rose'}>{k}</dt>
               <dd className="mt-1.5 text-ink/80">{v}</dd>
             </div>
           ))}

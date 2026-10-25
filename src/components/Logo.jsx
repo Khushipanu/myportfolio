@@ -13,12 +13,12 @@ export default function Logo({ className = '', split = false }) {
             </span>
           ))}
           <span aria-hidden="true" className="inline-block overflow-hidden align-bottom">
-            <span data-logo-char className="inline-block text-accent">.</span>
+            <span data-logo-char className="inline-block text-accent-deep">.</span>
           </span>
         </>
       ) : (
         <span aria-hidden="true">
-          {NAME}<span className="text-accent">.</span>
+          {NAME}<span className="text-accent-deep">.</span>
         </span>
       )}
     </span>

@@ -49,7 +49,7 @@ export default function Loader({ onDone }) {
       <div aria-hidden="true" className="absolute inset-x-0 bottom-0 h-px bg-accent/60 shadow-[0_0_24px_2px_rgba(111,220,155,0.35)]" />
       <div className="absolute inset-0 flex items-center justify-center px-5 text-ink">
         <p data-term aria-hidden="true" className="flex items-center whitespace-nowrap font-mono text-[14px] tracking-[0.02em] md:text-[18px]">
-          <span className="mr-3 text-accent">$</span>
+          <span className="mr-3 text-accent-deep">$</span>
           <span data-cmd className="inline-block">{COMMAND}</span>
           <span data-launch className="ml-4 flex gap-2">
             {[0, 1, 2].map((i) => (

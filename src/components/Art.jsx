@@ -17,7 +17,7 @@ const Bar = ({ w = '60%', o = 0.7, h = '0.35em', c = 'bg-[#1a1917]' }) => (
 function Chrome({ children, title, tint = '#ffffff' }) {
   return (
     <div className="flex h-full w-full flex-col text-[#1a1917]" style={{ background: tint }}>
-      <div className="flex items-center gap-[0.4em] border-b border-[#1a1917]/8 bg-white/70 px-[0.8em] py-[0.55em]">
+      <div className="flex items-center gap-[0.4em] border-b border-[#1a1917]/8 bg-jet/70 px-[0.8em] py-[0.55em]">
         <span className="h-[0.45em] w-[0.45em] rounded-full bg-[#f4a493]" />
         <span className="h-[0.45em] w-[0.45em] rounded-full bg-[#f3d86a]" />
         <span className="h-[0.45em] w-[0.45em] rounded-full bg-[#8fcca6]" />
@@ -37,7 +37,7 @@ function MovieHome() {
             <div className="font-display text-[1.1em] font-bold leading-none">Now Trending</div>
             <Bar w="7em" o={0.35} />
           </div>
-          <span className="absolute right-[0.8em] top-[0.8em] rounded-full px-[0.7em] py-[0.25em] text-[0.5em] font-semibold text-white" style={{ background: GREEN }}>▶ Watch</span>
+          <span className="absolute right-[0.8em] top-[0.8em] rounded-full px-[0.7em] py-[0.25em] text-[0.5em] font-semibold text-jet" style={{ background: GREEN }}>▶ Watch</span>
         </div>
         <div className="mt-[0.7em] grid flex-1 grid-cols-6 gap-[0.45em]">
           {posters.map(([a, b], i) => (
@@ -63,7 +63,7 @@ function MovieDetail() {
           </div>
           <Bar w="95%" o={0.18} /><Bar w="88%" o={0.18} /><Bar w="70%" o={0.18} />
           <div className="mt-auto flex gap-[0.4em]">
-            <span className="rounded-full px-[0.8em] py-[0.3em] text-[0.55em] font-semibold text-white" style={{ background: GREEN }}>▶ Trailer</span>
+            <span className="rounded-full px-[0.8em] py-[0.3em] text-[0.55em] font-semibold text-jet" style={{ background: GREEN }}>▶ Trailer</span>
             <span className="rounded-full border border-[#1a1917]/20 px-[0.8em] py-[0.3em] text-[0.55em]">+ Watchlist</span>
           </div>
         </div>
@@ -85,7 +85,7 @@ function LmsCourses() {
           {tones.map((c, i) => (
             <div key={i} className="flex flex-col overflow-hidden rounded-[0.35em] border border-[#1a1917]/8 bg-white">
               <div className="relative flex-1" style={{ background: c }}>
-                <span className="absolute left-[0.5em] top-[0.5em] flex h-[1.5em] w-[1.5em] items-center justify-center rounded-full bg-white/90 text-[0.5em]">▶</span>
+                <span className="absolute left-[0.5em] top-[0.5em] flex h-[1.5em] w-[1.5em] items-center justify-center rounded-full bg-jet/90 text-[0.5em]">▶</span>
               </div>
               <div className="space-y-[0.3em] p-[0.5em]">
                 <Bar w="80%" o={0.6} h="0.3em" />
@@ -105,7 +105,7 @@ function LmsPlayer() {
       <div className="flex h-full gap-[0.8em] p-[0.9em]">
         <div className="relative flex-1 overflow-hidden rounded-[0.4em] bg-[linear-gradient(135deg,#c9d8bf,#d6e0cf)]">
           <span className="absolute left-1/2 top-1/2 flex h-[2.4em] w-[2.4em] -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-white text-[0.7em] shadow-sm">▶</span>
-          <div className="absolute inset-x-[0.7em] bottom-[0.7em] h-[0.25em] rounded-full bg-white/70">
+          <div className="absolute inset-x-[0.7em] bottom-[0.7em] h-[0.25em] rounded-full bg-jet/70">
             <div className="h-full w-[38%] rounded-full" style={{ background: GREEN }} />
           </div>
         </div>
@@ -144,7 +144,7 @@ function ErpTable() {
       <div className="flex h-full flex-col gap-[0.5em] p-[0.9em]">
         <div className="flex items-center justify-between">
           <Bar w="30%" o={0.7} h="0.45em" />
-          <span className="rounded-full px-[0.7em] py-[0.25em] text-[0.5em] font-semibold text-white" style={{ background: GREEN }}>+ New</span>
+          <span className="rounded-full px-[0.7em] py-[0.25em] text-[0.5em] font-semibold text-jet" style={{ background: GREEN }}>+ New</span>
         </div>
         <div className="flex-1 overflow-hidden rounded-[0.35em] border border-[#1a1917]/8">
           {Array.from({ length: 6 }).map((_, i) => (
@@ -179,7 +179,7 @@ function ErpForm() {
         </div>
         <div className="col-span-2 flex justify-end gap-[0.4em]">
           <span className="rounded-full border border-[#1a1917]/20 px-[0.8em] py-[0.3em] text-[0.55em]">Cancel</span>
-          <span className="rounded-full px-[0.8em] py-[0.3em] text-[0.55em] text-white" style={{ background: GREEN }}>Save</span>
+          <span className="rounded-full px-[0.8em] py-[0.3em] text-[0.55em] text-jet" style={{ background: GREEN }}>Save</span>
         </div>
       </div>
     </Chrome>
@@ -193,7 +193,7 @@ function Components() {
         <div className="col-span-2 flex flex-col justify-between rounded-[0.4em] bg-[#e2d4c0] p-[0.7em]">
           <Bar w="50%" o={0.6} h="0.4em" />
           <div className="flex gap-[0.35em]">
-            <span className="rounded-full px-[0.7em] py-[0.25em] text-[0.5em] font-semibold text-white" style={{ background: GREEN }}>Primary</span>
+            <span className="rounded-full px-[0.7em] py-[0.25em] text-[0.5em] font-semibold text-jet" style={{ background: GREEN }}>Primary</span>
             <span className="rounded-full border border-[#1a1917]/25 px-[0.7em] py-[0.25em] text-[0.5em]">Ghost</span>
           </div>
         </div>

@@ -20,7 +20,7 @@ const FAN = [
 ]
 // Which slot each role takes: the current role stands in the middle.
 const SLOT = [1, 0, 2]
-const EDGE = ['rgba(212,255,63,0.45)', 'rgba(212,255,63,0.9)', 'rgba(180,120,255,0.55)']
+const EDGE = ['rgba(198,181,232,0.45)', 'rgba(198,181,232,0.9)', 'rgba(180,120,255,0.55)']
 
 function ExperienceShowcase() {
   const root = useRef(null)
@@ -68,7 +68,7 @@ function ExperienceShowcase() {
             <span className="font-bold">Roles that</span>
             <br />
             <span className="font-medium">shaped my</span>{' '}
-            <span className="font-serif font-normal italic tracking-[-0.01em] text-accent">craft.</span>
+            <span className="font-serif font-normal italic tracking-[-0.01em] text-accent-deep">craft.</span>
           </h2>
           <p data-xp-in className="mt-7 max-w-[22rem] text-[17px] leading-[1.6] text-ink/80 md:text-[18px]">
             From a production ERP to full-stack websites and developer content — the places I&apos;ve been building.
@@ -77,12 +77,12 @@ function ExperienceShowcase() {
             <a
               href={resume.href}
               download={resume.file}
-              className="group flex items-center gap-3 rounded-full bg-accent px-8 py-4 text-[16px] font-semibold text-jet shadow-[0_0_40px_-8px_rgba(212,255,63,0.65)] transition-[translate] duration-300 hover:-translate-y-0.5"
+              className="group flex items-center gap-3 rounded-full bg-accent px-8 py-4 text-[16px] font-semibold text-jet shadow-[0_0_40px_-8px_rgba(198,181,232,0.65)] transition-[translate] duration-300 hover:-translate-y-0.5"
             >
               Download resume
               <span aria-hidden="true" className="text-[18px] transition-transform duration-300 group-hover:translate-x-1">→</span>
             </a>
-            <svg aria-hidden="true" viewBox="0 0 140 60" className="absolute -right-44 top-8 hidden h-14 w-36 text-accent md:block">
+            <svg aria-hidden="true" viewBox="0 0 140 60" className="absolute -right-44 top-8 hidden h-14 w-36 text-accent-deep md:block">
               <path d="M4 44 C 40 58, 92 52, 124 22" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
               <path d="M110 18 L126 19 L121 35" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
@@ -112,17 +112,17 @@ function ExperienceShowcase() {
                     transform: on
                       ? `translate(-50%, -50%) translateX(${pose.x}) translateY(calc(${pose.y} - 26px)) translateZ(90px) rotateY(${pose.ry * 0.25}deg) rotateZ(${pose.rz * 0.3}deg) scale(${Math.max(pose.s, 0.9) + 0.04})`
                       : `translate(-50%, -50%) translateX(${pose.x}) translateY(${pose.y}) translateZ(${pose.z}px) rotateY(${pose.ry}deg) rotateZ(${pose.rz}deg) scale(${pose.s})`,
-                    filter: on ? 'none' : 'brightness(0.8)',
+                    filter: on ? 'none' : 'saturate(0.85) opacity(0.92)',
                   }}
                 >
                   <article
                     className="relative overflow-hidden rounded-[28px] border-[1.5px] p-6 transition-[border-color,box-shadow] duration-500"
                     style={{
-                      borderColor: on ? 'rgba(212,255,63,0.95)' : EDGE[SLOT[i]].replace(/[\d.]+\)$/, '0.35)'),
-                      background: 'linear-gradient(165deg, #1b1b1b 0%, #121212 45%, #0c0c0c 100%)',
+                      borderColor: on ? 'rgba(198,181,232,0.95)' : EDGE[SLOT[i]].replace(/[\d.]+\)$/, '0.35)'),
+                      background: 'linear-gradient(165deg, #FFFCF7 0%, #FFFCF7 45%, #F8F4EE 100%)',
                       boxShadow: on
-                        ? '0 0 0 1px rgba(212,255,63,0.35), 0 0 70px -10px rgba(212,255,63,0.7), 0 60px 90px -40px rgba(0,0,0,0.95), inset 0 1px 0 rgba(255,255,255,0.1)'
-                        : `0 0 40px -18px ${EDGE[SLOT[i]]}, 0 50px 80px -40px rgba(0,0,0,0.95), inset 0 1px 0 rgba(255,255,255,0.06)`,
+                        ? '0 0 0 1px rgba(198,181,232,0.35), 0 0 70px -10px rgba(198,181,232,0.7), 0 60px 90px -40px rgba(41,39,34,0.16), inset 0 1px 0 rgba(255,255,255,0.1)'
+                        : `0 0 40px -18px ${EDGE[SLOT[i]]}, 0 50px 80px -40px rgba(41,39,34,0.16), inset 0 1px 0 rgba(255,255,255,0.06)`,
                     }}
                   >
                     <div className="flex items-start justify-between gap-4">
@@ -133,28 +133,28 @@ function ExperienceShowcase() {
                       <span
                         aria-hidden="true"
                         className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-[1.5px] text-[15px] transition-colors duration-500"
-                        style={{ borderColor: on ? '#d4ff3f' : 'rgba(212,255,63,0.5)', color: '#d4ff3f' }}
+                        style={{ borderColor: on ? '#C6B5E8' : 'rgba(198,181,232,0.5)', color: '#C6B5E8' }}
                       >
                         ↗
                       </span>
                     </div>
-                    <div className="mt-5 overflow-hidden rounded-[14px] border border-white/10 shadow-[0_20px_40px_-20px_rgba(0,0,0,0.9)]">
+                    <div className="mt-5 overflow-hidden rounded-[14px] border border-jet/10 shadow-[0_20px_40px_-20px_rgba(41,39,34,0.16)]">
                       <WorkPoster variant={XP_SCREENS[i % XP_SCREENS.length]} className="aspect-[16/10] w-full text-[calc(min(58vw,22rem)/22)] md:text-[calc(min(30vw,23rem)/22)]" />
                     </div>
                     <ul className="mt-5 flex flex-wrap gap-2">
                       {e.stack.map((t) => (
-                        <li key={t} className="rounded-full border border-white/12 bg-white/[0.06] px-3.5 py-1.5 text-[12px] font-medium text-ink/90">{t}</li>
+                        <li key={t} className="rounded-full border border-jet/12 bg-white/[0.06] px-3.5 py-1.5 text-[12px] font-medium text-ink/90">{t}</li>
                       ))}
                     </ul>
                     <p className="mt-4 text-[14.5px] leading-relaxed text-ink/80">{e.summary}</p>
-                    <p className="mt-3 font-serif text-[16px] italic text-accent">{e.company}</p>
+                    <p className="mt-3 font-serif text-[16px] italic text-accent-deep">{e.company}</p>
                   </article>
                 </div>
               </button>
             )
           })}
           {/* Coloured light pooling under the cards. */}
-          <span aria-hidden="true" className="pointer-events-none absolute bottom-[3%] left-1/2 h-20 w-[55%] -translate-x-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(212,255,63,0.4),transparent)] blur-2xl" />
+          <span aria-hidden="true" className="pointer-events-none absolute bottom-[3%] left-1/2 h-20 w-[55%] -translate-x-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(198,181,232,0.4),transparent)] blur-2xl" />
           <span aria-hidden="true" className="pointer-events-none absolute bottom-[6%] left-[8%] h-14 w-[30%] rounded-full bg-[radial-gradient(closest-side,rgba(110,110,255,0.3),transparent)] blur-2xl" />
           <span aria-hidden="true" className="pointer-events-none absolute bottom-[6%] right-[4%] h-14 w-[30%] rounded-full bg-[radial-gradient(closest-side,rgba(180,90,255,0.3),transparent)] blur-2xl" />
         </div>
@@ -163,12 +163,12 @@ function ExperienceShowcase() {
       {/* Bottom row: the current role on the left, arrows and progress on the right. */}
       <div className="mt-8 flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
         <p data-xp-in className="flex items-center gap-3 text-[11px] font-medium uppercase tracking-[0.28em] text-ink/45">
-          <span className="h-2 w-2 rounded-full bg-accent shadow-[0_0_10px_#d4ff3f]" />
+          <span className="h-2 w-2 rounded-full bg-accent shadow-[0_0_10px_#C6B5E8]" />
           Currently · {experience[0].company}
         </p>
         <div className="flex items-center gap-4">
-          <button type="button" onClick={() => step(-1)} aria-label="Previous role" className="flex h-12 w-12 items-center justify-center rounded-full border border-white/25 text-[18px] text-ink transition-colors hover:border-white/60">←</button>
-          <button type="button" onClick={() => step(1)} aria-label="Next role" className="flex h-12 w-12 items-center justify-center rounded-full bg-accent text-[18px] text-jet shadow-[0_0_24px_-4px_rgba(212,255,63,0.8)] transition-[translate] hover:-translate-y-0.5">→</button>
+          <button type="button" onClick={() => step(-1)} aria-label="Previous role" className="flex h-12 w-12 items-center justify-center rounded-full border border-jet/25 text-[18px] text-ink transition-colors hover:border-jet/60">←</button>
+          <button type="button" onClick={() => step(1)} aria-label="Next role" className="flex h-12 w-12 items-center justify-center rounded-full bg-accent text-[18px] text-jet shadow-[0_0_24px_-4px_rgba(198,181,232,0.8)] transition-[translate] hover:-translate-y-0.5">→</button>
           <div className="ml-4 w-40">
             <p className="text-[15px] text-ink"><span className="font-semibold">{n(focus)}</span> <span className="text-ink/40">/ {n(count - 1)}</span></p>
             <div className="mt-2.5 h-[3px] w-full rounded-full bg-white/10">
@@ -303,7 +303,7 @@ export default function About() {
 
         <div data-notes className="relative col-span-12 flex flex-wrap items-start justify-center gap-8 pt-2 sm:justify-start lg:col-span-4 lg:flex-col lg:items-end lg:gap-10 lg:pt-16">
           <p className="hidden items-center gap-2 self-start rounded-full border border-ink/15 px-4 py-2 font-mono text-[11px] tracking-[0.06em] text-ink/70 lg:flex lg:self-auto lg:-mb-4 lg:mr-40">
-            these notes move ;) <span aria-hidden="true" className="text-accent">↷</span>
+            these notes move ;) <span aria-hidden="true" className="text-accent-deep">↷</span>
           </p>
           {notes.map((n, i) => (
             <Note key={n.tag} n={n} className={i === 1 ? 'lg:mr-10' : ''} />
@@ -312,14 +312,14 @@ export default function About() {
       </div>
 
       {/* Experience sits on jet black lit by soft chartreuse and hot pink light. */}
-      <div id="experience" className="relative -mx-5 -mb-24 mt-24 scroll-mt-24 overflow-clip bg-[linear-gradient(180deg,#0b0b0b_0%,#0d0d0d_60%,#0b0b0b_100%)] px-5 py-16 text-ink md:-mx-10 md:-mb-40 md:mt-36 md:px-10 md:py-14 lg:px-16">
+      <div id="experience" className="relative -mx-5 -mb-24 mt-24 scroll-mt-24 overflow-clip bg-[linear-gradient(180deg,#F8F4EE_0%,#F8F4EE_60%,#F8F4EE_100%)] px-5 py-16 text-ink md:-mx-10 md:-mb-40 md:mt-36 md:px-10 md:py-14 lg:px-16">
         {/* Jet black with chartreuse light at the edges and thin glowing curves. */}
         <div aria-hidden="true" className="pointer-events-none absolute inset-0">
-          <div className="absolute -left-[15%] top-[10%] h-[80vh] w-[40vw] rounded-full bg-[radial-gradient(closest-side,rgba(212,255,63,0.16),transparent)] blur-3xl" />
-          <div className="absolute -right-[15%] top-[20%] h-[80vh] w-[40vw] rounded-full bg-[radial-gradient(closest-side,rgba(212,255,63,0.14),transparent)] blur-3xl" />
+          <div className="absolute -left-[15%] top-[10%] h-[80vh] w-[40vw] rounded-full bg-[radial-gradient(closest-side,rgba(198,181,232,0.16),transparent)] blur-3xl" />
+          <div className="absolute -right-[15%] top-[20%] h-[80vh] w-[40vw] rounded-full bg-[radial-gradient(closest-side,rgba(198,181,232,0.14),transparent)] blur-3xl" />
           <svg viewBox="0 0 1440 800" preserveAspectRatio="none" className="absolute inset-0 h-full w-full">
-            <path d="M-20 640 C 260 520, 420 260, 640 300 S 1040 120, 1460 60" fill="none" stroke="rgba(212,255,63,0.22)" strokeWidth="1.2" />
-            <path d="M-20 760 C 340 700, 760 560, 1100 620 S 1380 520, 1460 470" fill="none" stroke="rgba(212,255,63,0.12)" strokeWidth="1" />
+            <path d="M-20 640 C 260 520, 420 260, 640 300 S 1040 120, 1460 60" fill="none" stroke="rgba(198,181,232,0.22)" strokeWidth="1.2" />
+            <path d="M-20 760 C 340 700, 760 560, 1100 620 S 1380 520, 1460 470" fill="none" stroke="rgba(198,181,232,0.12)" strokeWidth="1" />
           </svg>
         </div>
         <ExperienceShowcase />
