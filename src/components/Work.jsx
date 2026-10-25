@@ -135,10 +135,10 @@ function Card({ c, i }) {
           <div className="absolute top-0 h-full" style={{ width: 'var(--cw)', left: `calc(var(--cw) / ${SLICES} * ${-j})` }}>
             <WorkPoster
               variant={c.variant}
-              className={`h-full w-full border-y border-white/30 text-[calc(var(--cw)/19)] ${j === 0 ? 'rounded-l-[14px] border-l' : ''} ${j === SLICES - 1 ? 'rounded-r-[14px] border-r' : ''}`}
+              className={`h-full w-full border-y border-black/10 text-[calc(var(--cw)/19)] ${j === 0 ? 'rounded-l-[14px] border-l' : ''} ${j === SLICES - 1 ? 'rounded-r-[14px] border-r' : ''}`}
             />
           </div>
-          <div data-shade className="pointer-events-none absolute inset-0 bg-black" />
+          <div data-shade className="pointer-events-none absolute inset-0 bg-[#ebe6da]" />
         </div>
       ))}
       <span className="sr-only">{`0${i + 1} · ${c.project}`}</span>
@@ -180,41 +180,23 @@ export default function Work() {
   )
 
   return (
-    <section id="work" ref={root} aria-labelledby="work-title" className="relative isolate bg-[radial-gradient(ellipse_at_50%_45%,#06122b_0%,#030818_55%,#01030a_100%)] text-ink">
+    <section id="work" ref={root} aria-labelledby="work-title" className="relative isolate bg-[radial-gradient(ellipse_at_50%_42%,#fbfaf6_0%,#f3f0e8_55%,#e9e4d8_100%)] text-jet">
       <div
         ref={stage}
         className="relative h-[100svh] select-none overflow-hidden"
       >
-        {/* A web of glowing, electric lines behind the cards, drifting slowly. */}
-        <svg aria-hidden="true" className="work-lines pointer-events-none absolute inset-[-6%] h-[112%] w-[112%]" viewBox="0 0 1440 900" preserveAspectRatio="none">
-          <defs>
-            <filter id="line-glow" x="-10%" y="-10%" width="120%" height="120%"><feGaussianBlur stdDeviation="7" /></filter>
-          </defs>
-          {[
-            ['M-60 700 C 220 380, 520 900, 820 540 S 1260 220, 1520 360', '#2d6bff'],
-            ['M-80 210 C 260 60, 540 520, 900 280 S 1300 80, 1520 220', '#2d6bff'],
-            ['M-40 880 C 360 620, 700 1000, 1060 700 S 1380 500, 1520 600', '#2d6bff'],
-            ['M180 -40 C 420 240, 120 560, 520 760 S 860 980, 980 1000', '#2d6bff'],
-            ['M1500 -20 C 1160 240, 1400 560, 1040 760 S 760 980, 620 1000', '#2d6bff'],
-            ['M-60 460 C 300 560, 600 180, 980 420 S 1320 700, 1520 520', '#2d6bff'],
-            ['M620 -40 C 760 200, 520 420, 820 620 S 1100 900, 1160 1000', '#2d6bff'],
-            ['M-40 60 C 240 300, 460 120, 700 360 S 1000 820, 1300 960', '#2d6bff'],
-          ].map(([d, c], i) => (
-            <g key={i}>
-              <path d={d} fill="none" stroke={c} strokeOpacity="0.45" strokeWidth="16" filter="url(#line-glow)" />
-              <path d={d} fill="none" stroke={c} strokeOpacity="0.9" strokeWidth="1.6" />
-            </g>
-          ))}
-        </svg>
-        <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_45%,rgba(0,0,0,0.55)_100%)]" />
+        {/* Light backdrop: soft pink and lime washes over a faint dot grid. */}
+        <div aria-hidden="true" className="pointer-events-none absolute inset-0 [background-image:radial-gradient(rgba(20,20,20,0.09)_1px,transparent_1px)] [background-size:26px_26px] [mask-image:radial-gradient(ellipse_at_center,black_40%,transparent_85%)]" />
+        <div aria-hidden="true" className="work-lines pointer-events-none absolute -left-[10%] top-[8%] h-[70vh] w-[55vw] rounded-full bg-[radial-gradient(closest-side,rgba(255,45,168,0.16),transparent)] blur-3xl" />
+        <div aria-hidden="true" className="work-lines pointer-events-none absolute -right-[8%] bottom-[0%] h-[70vh] w-[55vw] rounded-full bg-[radial-gradient(closest-side,rgba(212,255,63,0.35),transparent)] blur-3xl" />
 
-        <p className="pointer-events-none absolute left-5 top-24 z-20 font-mono text-[11px] uppercase tracking-[0.12em] text-muted md:left-10 md:top-28">(02) Selected work</p>
+        <p className="pointer-events-none absolute left-5 top-24 z-20 font-mono text-[11px] uppercase tracking-[0.12em] text-jet/45 md:left-10 md:top-28">(02) Selected work</p>
 
         <div className="absolute inset-0 z-0 [perspective:1600px] [perspective-origin:50%_50%]">
           <div className="absolute left-1/2 top-1/2 h-0 w-0 [transform-style:preserve-3d]">
             {/* The title stays behind the cards as they pass. */}
-            <h2 id="work-title" className="pointer-events-none absolute left-0 top-0 [transform:translate(-50%,-50%)_translateZ(-900px)] opacity-60">
-              <span data-work-title className="block whitespace-nowrap font-serif text-[16vw] leading-none text-ink md:text-[11vw]">My Works</span>
+            <h2 id="work-title" className="pointer-events-none absolute left-0 top-0 [transform:translate(-50%,-50%)_translateZ(-900px)] opacity-80">
+              <span data-work-title className="block whitespace-nowrap font-serif text-[16vw] leading-none text-jet md:text-[11vw]">My Works</span>
             </h2>
             <div ref={track} className="absolute left-0 top-0 h-0 w-0 [transform-style:preserve-3d]">
               {SPIRAL.map((v, i) => (
@@ -227,24 +209,24 @@ export default function Work() {
         {/* Core skills; the ones used in the front card light up. */}
         <ul aria-label="Core skills" className="pointer-events-none absolute left-5 right-5 top-32 z-20 flex flex-wrap gap-x-4 gap-y-1.5 font-mono text-[10px] uppercase tracking-[0.14em] md:left-auto md:right-10 md:top-28 md:flex-col md:items-end md:gap-2 md:text-[11px]">
           {SKILLS.map((k) => (
-            <li key={k} className={`transition-colors duration-500 ${active.skills.includes(k) ? 'text-accent' : 'text-ink/35'}`}>{k}</li>
+            <li key={k} className={`transition-colors duration-500 ${active.skills.includes(k) ? 'font-semibold text-pink' : 'text-jet/35'}`}>{k}</li>
           ))}
         </ul>
 
-        <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-56 bg-gradient-to-t from-black/80 to-transparent" />
+        <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-56 bg-gradient-to-t from-[#ece7dc] via-[#ece7dc]/70 to-transparent" />
 
         {/* Highlight of the card facing front. */}
         <div aria-live="polite" className="pointer-events-none absolute bottom-14 left-5 right-5 z-20 md:bottom-10 md:left-10 md:right-auto md:max-w-sm">
-          <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-muted">
-            <span className="text-accent">{String(front + 1).padStart(2, '0')}</span> / {String(CARDS.length).padStart(2, '0')} · Highlight
+          <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-jet/45">
+            <span className="text-pink">{String(front + 1).padStart(2, '0')}</span> / {String(CARDS.length).padStart(2, '0')} · Highlight
           </p>
           <div key={front} className="animate-[work-in_0.7s_cubic-bezier(0.22,1,0.36,1)]">
-            <p className="mt-3 font-serif text-[26px] italic leading-none text-ink md:text-[30px]">{active.project}</p>
-            <p className="mt-2 text-[14px] font-light leading-relaxed text-ink/65 md:text-[15px]">{active.highlight}</p>
+            <p className="mt-3 font-serif text-[26px] italic leading-none text-jet md:text-[30px]">{active.project}</p>
+            <p className="mt-2 text-[14px] leading-relaxed text-jet/65 md:text-[15px]">{active.highlight}</p>
           </div>
         </div>
 
-        <p className="pointer-events-none absolute bottom-6 right-5 z-20 font-mono text-[11px] uppercase tracking-[0.12em] text-ink/40 md:bottom-10 md:right-10">Scroll ↓</p>
+        <p className="pointer-events-none absolute bottom-6 right-5 z-20 font-mono text-[11px] uppercase tracking-[0.12em] text-jet/40 md:bottom-10 md:right-10">Scroll ↓</p>
       </div>
     </section>
   )
