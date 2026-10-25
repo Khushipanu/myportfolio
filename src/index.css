@@ -271,3 +271,8 @@ html.lenis body {
 .work-lines { animation: work-lines 18s ease-in-out infinite; }
 @media (prefers-reduced-motion: reduce) { .work-lines { animation: none; } }
 
+
+/* Experience: the 3D ribbon inside the open panel turns slowly. */
+@keyframes exp-ribbon { to { transform: rotate(360deg); } }
+.exp-ribbon { animation: exp-ribbon 40s linear infinite; }
+@media (prefers-reduced-motion: reduce) { .exp-ribbon { animation: none; } }

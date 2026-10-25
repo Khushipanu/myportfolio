@@ -21,44 +21,84 @@ function Icon({ i, className = '' }) {
   )
 }
 
-function Detail({ e, on = true, tone }) {
+function Detail({ e, on = true, tone = '#f5b544' }) {
   return (
     <>
-      <ul className="space-y-2 text-[13.5px] leading-snug text-jet/75 md:text-[14px]">
+      <ul className="space-y-2 text-[13.5px] leading-snug text-ink/80 md:text-[14px]">
         {e.points.map((pt, k) => (
           <li
             key={pt}
             className={`flex gap-3 transition-[opacity,transform] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${on ? 'translate-x-0 opacity-100' : '-translate-x-2 opacity-0'}`}
             style={{ transitionDelay: on ? `${0.2 + k * 0.05}s` : '0s' }}
           >
-            <span aria-hidden="true" className="mt-[0.5em] h-1 w-1 shrink-0 rounded-full bg-pink" style={tone ? { background: tone } : undefined} />
+            <span aria-hidden="true" className="mt-[0.1em] flex h-[1.05em] w-[1.05em] shrink-0 items-center justify-center rounded-full text-[0.7em] font-bold text-jet" style={{ background: tone }}>✓</span>
             {pt}
           </li>
         ))}
       </ul>
       <ul className="mt-4 flex flex-wrap gap-1.5" aria-label="Tools">
         {e.stack.map((t) => (
-          <li key={t} className="rounded-full border border-jet/15 px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-[0.12em] text-jet/60">{t}</li>
+          <li key={t} className="rounded-full border border-white/10 bg-white/[0.06] px-3 py-1 font-mono text-[10px] uppercase tracking-[0.12em] text-ink/75 backdrop-blur">{t}</li>
         ))}
       </ul>
     </>
   )
 }
 
-// Panel accents on the light band (a deeper lime so it reads on paper), in
-// the same order as `experience`.
-const tones = ['#8fb300', '#ff2da8', '#161616']
+// Glowing accents, in the same order as `experience`: amber, magenta, mint.
+const tones = ['#f5b544', '#ff4fb8', '#5eead4']
+
+// A slowly turning 3D ribbon drawn from tilted rings, in the panel's accent.
+function Ribbon({ c, className = '' }) {
+  return (
+    <svg aria-hidden="true" viewBox="-110 -110 220 220" className={`exp-ribbon ${className}`}>
+      <defs>
+        <linearGradient id={`rb-${c.slice(1)}`} x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stopColor={c} stopOpacity="0.95" />
+          <stop offset="1" stopColor={c} stopOpacity="0.05" />
+        </linearGradient>
+      </defs>
+      {Array.from({ length: 22 }, (_, k) => (
+        <ellipse
+          key={k}
+          rx={92 - k * 1.6}
+          ry={30 + k * 2.2}
+          fill="none"
+          stroke={`url(#rb-${c.slice(1)})`}
+          strokeWidth="0.9"
+          transform={`rotate(${k * 8.2})`}
+          opacity={0.25 + (k / 22) * 0.6}
+        />
+      ))}
+    </svg>
+  )
+}
 
 function ExperiencePanels() {
   const [open, setOpen] = useState(0)
   // Panels open as soon as the pointer reaches them.
   const hoverOpen = (i) => setOpen(i)
   const n = (i) => String(i + 1).padStart(2, '0')
+  // Cards tilt in 3D towards the pointer and settle back when it leaves.
+  const tilt = (ev) => {
+    const el = ev.currentTarget
+    const r = el.getBoundingClientRect()
+    const x = (ev.clientX - r.left) / r.width - 0.5
+    const y = (ev.clientY - r.top) / r.height - 0.5
+    el.style.setProperty('--mx', `${ev.clientX - r.left}px`)
+    el.style.setProperty('--my', `${ev.clientY - r.top}px`)
+    el.style.setProperty('--rx', `${(-y * 7).toFixed(2)}deg`)
+    el.style.setProperty('--ry', `${(x * 9).toFixed(2)}deg`)
+  }
+  const untilt = (ev) => {
+    ev.currentTarget.style.setProperty('--rx', '0deg')
+    ev.currentTarget.style.setProperty('--ry', '0deg')
+  }
 
   return (
     <>
-      {/* Wide screens: side-by-side dark panels, each with its own accent. */}
-      <ul data-panels className="mx-auto hidden h-[28rem] max-w-6xl gap-3 lg:flex" aria-label="Experience">
+      {/* Wide screens: glass panels side by side, each glowing in its own colour. */}
+      <ul data-panels className="mx-auto hidden h-[30rem] max-w-6xl gap-4 lg:flex" aria-label="Experience">
         {experience.map((e, i) => {
           const on = open === i
           const c = tones[i % tones.length]
@@ -67,80 +107,87 @@ function ExperiencePanels() {
               key={e.role}
               data-panel
               onPointerEnter={(ev) => ev.pointerType === 'mouse' && hoverOpen(i)}
-              onPointerMove={(ev) => {
-                const r = ev.currentTarget.getBoundingClientRect()
-                ev.currentTarget.style.setProperty('--mx', `${ev.clientX - r.left}px`)
-                ev.currentTarget.style.setProperty('--my', `${ev.clientY - r.top}px`)
-              }}
-              className={`group relative min-w-0 overflow-hidden rounded-[20px] border bg-[#fdfcf9] transition-[flex-grow,border-color,box-shadow] duration-[650ms] ease-[cubic-bezier(0.16,1,0.3,1)] ${
-                on ? 'grow-[2.6]' : 'grow border-jet/10 shadow-[0_10px_30px_-22px_rgba(0,0,0,0.25)] hover:border-jet/20'
-              }`}
-              style={{
-                flexBasis: 0,
-                borderColor: on ? `color-mix(in srgb, ${c} 45%, transparent)` : undefined,
-                boxShadow: on ? `0 30px 70px -40px color-mix(in srgb, ${c} 55%, transparent)` : undefined,
-              }}
+              onPointerMove={tilt}
+              onPointerLeave={untilt}
+              className={`group relative min-w-0 rounded-[22px] transition-[flex-grow] duration-[650ms] ease-[cubic-bezier(0.16,1,0.3,1)] [perspective:1400px] ${on ? 'grow-[2.6]' : 'grow'}`}
+              style={{ flexBasis: 0 }}
             >
-              {/* The accent glow fades in as the panel opens. */}
+              <div className="absolute inset-0 transition-transform duration-300 ease-out [transform-style:preserve-3d]" style={{ transform: 'rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg))' }}>
+              {/* Glow that spills out behind the card. */}
               <span
                 aria-hidden="true"
-                className={`pointer-events-none absolute inset-0 transition-opacity duration-[650ms] ease-out ${on ? 'opacity-100' : 'opacity-0'}`}
-                style={{ background: `radial-gradient(120% 90% at 100% 0%, color-mix(in srgb, ${c} 12%, transparent), transparent 60%)` }}
+                className={`pointer-events-none absolute -inset-3 rounded-[30px] blur-2xl transition-opacity duration-[650ms] ${on ? 'opacity-70' : 'opacity-0 group-hover:opacity-30'}`}
+                style={{ background: `radial-gradient(60% 60% at 30% 0%, ${c}, transparent 70%)`, transform: 'translateZ(-40px)' }}
               />
-              <span
-                aria-hidden="true"
-                className={`pointer-events-none absolute left-0 top-0 h-[2px] origin-left transition-transform duration-[650ms] ease-[cubic-bezier(0.16,1,0.3,1)] ${on ? 'scale-x-100' : 'scale-x-0'}`}
-                style={{ width: '100%', background: c }}
-              />
+              {/* The glass card. */}
+              <div
+                className="absolute inset-0 overflow-hidden rounded-[22px] border backdrop-blur-xl transition-[border-color,box-shadow] duration-[650ms]"
+                style={{
+                  borderColor: on ? `color-mix(in srgb, ${c} 70%, transparent)` : `color-mix(in srgb, ${c} 28%, transparent)`,
+                  background: `linear-gradient(160deg, color-mix(in srgb, ${c} ${on ? 16 : 10}%, #0e1220) 0%, #0b0e18 55%, color-mix(in srgb, ${c} 8%, #07090f) 100%)`,
+                  boxShadow: on
+                    ? `0 40px 80px -30px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255,255,255,0.12), 0 0 40px -10px ${c}`
+                    : '0 30px 60px -30px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.08)',
+                }}
+              >
+                <span aria-hidden="true" className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100 [background:radial-gradient(340px_circle_at_var(--mx,50%)_var(--my,50%),rgba(255,255,255,0.08),transparent_60%)]" />
+                <Ribbon c={c} className={`pointer-events-none absolute -right-28 bottom-[-22%] h-[78%] transition-opacity duration-700 ${on ? 'opacity-60' : 'opacity-0'}`} />
+              </div>
+
               <button
                 type="button"
                 onClick={() => setOpen(i)}
                 onFocus={() => setOpen(i)}
                 aria-expanded={on}
-                className="absolute inset-0 z-10 cursor-pointer text-left"
+                className="absolute inset-0 z-10 cursor-pointer rounded-[22px] text-left"
               >
                 <span className="sr-only">{`${e.role} at ${e.company}`}</span>
               </button>
 
-              {/* A soft spotlight follows the pointer. */}
-              <span aria-hidden="true" className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100 [background:radial-gradient(320px_circle_at_var(--mx,50%)_var(--my,50%),rgba(0,0,0,0.035),transparent_60%)]" />
-
-              <div className="pointer-events-none absolute left-6 right-6 top-6 flex items-center justify-between" style={{ color: c }}>
-                <span className="font-mono text-[11px] tracking-[0.14em]">{n(i)}</span>
-                <Icon i={i} className="h-5 w-5 opacity-80" />
-              </div>
-
-              {/* Closed: a large outlined number and a short summary. */}
-              <span
-                aria-hidden="true"
-                className={`pointer-events-none absolute left-6 top-14 font-serif text-[6.5rem] italic leading-none text-transparent transition-opacity duration-300 ${on ? 'opacity-0' : 'opacity-100 delay-150'}`}
-                style={{ WebkitTextStroke: `1px color-mix(in srgb, ${c} 70%, transparent)` }}
-              >
-                {n(i)}
-              </span>
-              <div
-                aria-hidden={on}
-                className={`pointer-events-none absolute bottom-6 left-6 right-6 transition-[opacity,transform] duration-300 ease-out ${on ? 'translate-y-2 opacity-0' : 'translate-y-0 opacity-100 delay-150'}`}
-              >
-                <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-jet/45">{e.period}</p>
-                <h3 className="mt-2 text-[19px] font-semibold leading-[1.2] tracking-[-0.01em] text-jet">{e.role}</h3>
-                <p className="mt-1 font-serif text-[16px] italic leading-snug" style={{ color: c }}>{e.company}</p>
-              </div>
-
-              {/* Open: full detail, at a fixed width so it never reflows while the panel resizes. */}
-              <div
-                aria-hidden={!on}
-                className={`pointer-events-none absolute bottom-0 left-0 top-0 flex w-[clamp(24rem,36vw,33rem)] flex-col justify-end p-7 transition-[opacity,transform] ease-[cubic-bezier(0.16,1,0.3,1)] ${
-                  on ? 'translate-y-0 opacity-100 duration-500 delay-150' : 'translate-y-2 opacity-0 duration-150'
-                }`}
-              >
-                <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-jet/50">{e.period}</p>
-                <h3 className="mt-2 text-[26px] font-semibold leading-tight tracking-[-0.02em] text-jet">{e.role}</h3>
-                <p className="mt-0.5 font-serif text-[18px] italic leading-snug" style={{ color: c }}>at {e.company}</p>
-                <p className="mt-3 text-[14px] leading-relaxed text-jet/60">{e.summary}</p>
-                <div className="mt-4">
-                  <Detail e={e} on={on} tone={c} />
+              {/* Content floats a little in front of the glass. */}
+              <div className="pointer-events-none absolute inset-0 [transform:translateZ(30px)] [transform-style:preserve-3d]">
+                <div className="absolute left-6 right-6 top-6 flex items-center justify-between">
+                  <span className="font-mono text-[12px] font-semibold tracking-[0.14em] text-ink/90">{n(i)}</span>
+                  {on ? (
+                    <span className="flex h-10 w-10 items-center justify-center rounded-full border text-[16px]" style={{ borderColor: c, color: c }}>→</span>
+                  ) : (
+                    <span style={{ color: c }}><Icon i={i} className="h-5 w-5" /></span>
+                  )}
                 </div>
+
+                {/* Closed: a large glowing number and a short summary. */}
+                <span
+                  aria-hidden="true"
+                  className={`absolute left-6 top-16 bg-clip-text pr-4 font-serif text-[6.5rem] italic leading-none text-transparent transition-opacity duration-300 ${on ? 'opacity-0' : 'opacity-100 delay-150'}`}
+                  style={{ backgroundImage: `linear-gradient(160deg, #fff, ${c} 60%)`, filter: `drop-shadow(0 0 18px color-mix(in srgb, ${c} 45%, transparent))` }}
+                >
+                  {n(i)}
+                </span>
+                <div
+                  aria-hidden={on}
+                  className={`absolute bottom-6 left-6 right-6 transition-[opacity,transform] duration-300 ease-out ${on ? 'translate-y-2 opacity-0' : 'translate-y-0 opacity-100 delay-150'}`}
+                >
+                  <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-ink/50">{e.period}</p>
+                  <h3 className="mt-2 text-[19px] font-semibold leading-[1.2] tracking-[-0.01em] text-ink">{e.role}</h3>
+                  <p className="mt-1 font-serif text-[16px] italic leading-snug" style={{ color: c }}>{e.company}</p>
+                </div>
+
+                {/* Open: full detail, at a fixed width so it never reflows while the panel resizes. */}
+                <div
+                  aria-hidden={!on}
+                  className={`absolute bottom-0 left-0 top-0 flex w-[clamp(24rem,36vw,33rem)] flex-col justify-end p-7 transition-[opacity,transform] ease-[cubic-bezier(0.16,1,0.3,1)] ${
+                    on ? 'translate-y-0 opacity-100 duration-500 delay-150' : 'translate-y-2 opacity-0 duration-150'
+                  }`}
+                >
+                  <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-ink/60">{e.period}</p>
+                  <h3 className="mt-2 text-[26px] font-semibold leading-tight tracking-[-0.02em] text-ink">{e.role}</h3>
+                  <p className="mt-0.5 font-serif text-[18px] italic leading-snug" style={{ color: c }}>at {e.company}</p>
+                  <p className="mt-3 text-[14px] leading-relaxed text-ink/65">{e.summary}</p>
+                  <div className="mt-4">
+                    <Detail e={e} on={on} tone={c} />
+                  </div>
+                </div>
+              </div>
               </div>
             </li>
           )
@@ -148,30 +195,37 @@ function ExperiencePanels() {
       </ul>
 
       {/* Phones and tablets: accordion rows. */}
-      <ul data-panels className="border-t border-jet/15 lg:hidden" aria-label="Experience">
+      <ul data-panels className="border-t border-white/10 lg:hidden" aria-label="Experience">
         {experience.map((e, i) => {
           const on = open === i
+          const c = tones[i % tones.length]
           return (
-            <li key={e.role} data-panel className="border-b border-jet/15">
+            <li key={e.role} data-panel className="border-b border-white/10">
               <button
                 type="button"
                 onClick={() => setOpen(on ? -1 : i)}
                 aria-expanded={on}
                 className="flex w-full items-center gap-4 py-5 text-left"
               >
-                <span className={`self-start pt-1.5 font-mono text-[11px] tracking-[0.12em] ${on ? 'text-pink' : 'text-jet/40'}`}>{n(i)}</span>
+                <span className="self-start pt-1.5 font-mono text-[11px] tracking-[0.12em]" style={{ color: c }}>{n(i)}</span>
                 <span className="flex-1">
-                  <span className={`block text-[20px] font-medium leading-tight tracking-[-0.01em] transition-colors ${on ? 'text-pink' : 'text-jet'}`}>{e.role}</span>
-                  <span className="mt-1 block font-serif text-[16px] italic text-jet/55">{e.company}</span>
-                  <span className="mt-1 block font-mono text-[10px] uppercase tracking-[0.14em] text-jet/45">{e.period}</span>
+                  <span className="block text-[20px] font-medium leading-tight tracking-[-0.01em] text-ink">{e.role}</span>
+                  <span className="mt-1 block font-serif text-[16px] italic" style={{ color: c }}>{e.company}</span>
+                  <span className="mt-1 block font-mono text-[10px] uppercase tracking-[0.14em] text-ink/45">{e.period}</span>
                 </span>
-                <span aria-hidden="true" className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full border transition-all duration-500 ${on ? 'rotate-45 border-jet bg-jet text-[#fbfaf7]' : 'border-jet/30 text-jet'}`}>+</span>
+                <span
+                  aria-hidden="true"
+                  className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full border transition-all duration-500 ${on ? 'rotate-45 text-jet' : 'text-ink'}`}
+                  style={{ borderColor: on ? c : 'rgba(244,241,234,0.3)', background: on ? c : 'transparent' }}
+                >
+                  +
+                </span>
               </button>
               <div className={`grid transition-[grid-template-rows] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${on ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}>
                 <div className="overflow-hidden">
                   <div className="pb-6 pl-9">
-                    <p className="mb-4 text-[15px] leading-relaxed text-jet/65">{e.summary}</p>
-                    <Detail e={e} />
+                    <p className="mb-4 text-[15px] leading-relaxed text-ink/65">{e.summary}</p>
+                    <Detail e={e} tone={c} />
                   </div>
                 </div>
               </div>
@@ -330,19 +384,19 @@ export default function About() {
         </div>
       </div>
 
-      {/* Experience sits on a light, paper-toned band that runs to the section's foot. */}
-      <div id="experience" className="relative -mx-5 -mb-24 mt-24 scroll-mt-24 overflow-hidden bg-[radial-gradient(ellipse_at_50%_40%,#fbfaf6_0%,#f3f0e8_55%,#e9e4d8_100%)] px-5 py-20 text-jet md:-mx-10 md:-mb-40 md:mt-36 md:px-10 md:py-28">
-        {/* Dotted grid and soft pink and lime washes behind the panels. */}
-        <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-0">
-          <div className="absolute inset-0 [background-image:radial-gradient(rgba(20,20,20,0.08)_1px,transparent_1px)] [background-size:24px_24px] [mask-image:radial-gradient(ellipse_at_center,#000_35%,transparent_80%)]" />
-          <div className="absolute -left-[10%] top-[10%] h-[60vh] w-[50vw] rounded-full bg-[radial-gradient(closest-side,rgba(255,45,168,0.14),transparent)] blur-3xl" />
-          <div className="absolute -right-[10%] bottom-[-10%] h-[60vh] w-[50vw] rounded-full bg-[radial-gradient(closest-side,rgba(212,255,63,0.32),transparent)] blur-3xl" />
+      {/* Experience sits on a deep navy band lit by warm amber, magenta and mint light. */}
+      <div id="experience" className="relative -mx-5 -mb-24 mt-24 scroll-mt-24 overflow-hidden bg-[linear-gradient(180deg,#0b0f1a_0%,#090c16_60%,#07090f_100%)] px-5 py-20 text-ink md:-mx-10 md:-mb-40 md:mt-36 md:px-10 md:py-28">
+        <div aria-hidden="true" className="pointer-events-none absolute inset-0">
+          <div className="absolute left-[20%] top-[-20%] h-[70vh] w-[60vw] rounded-full bg-[radial-gradient(closest-side,rgba(245,181,68,0.22),transparent)] blur-3xl" />
+          <div className="absolute -right-[10%] top-[30%] h-[60vh] w-[45vw] rounded-full bg-[radial-gradient(closest-side,rgba(94,234,212,0.12),transparent)] blur-3xl" />
+          <div className="absolute -left-[10%] bottom-[-10%] h-[60vh] w-[45vw] rounded-full bg-[radial-gradient(closest-side,rgba(255,79,184,0.12),transparent)] blur-3xl" />
         </div>
         <div data-focus-fade className="relative mb-10 flex items-end justify-between gap-6 md:mb-14">
           <h2 className="text-[9vw] font-extralight leading-[1.05] tracking-[-0.03em] md:text-[4.4vw]">
-            Experience<span className="text-pink">.</span>
+            <span className="text-ink/60">My</span>{' '}
+            <span className="bg-[linear-gradient(100deg,#ffe2a3,#f5b544_45%,#ff8a3d)] bg-clip-text font-normal text-transparent">Experience.</span>
           </h2>
-          <p className="hidden shrink-0 pb-3 font-mono text-[11px] uppercase tracking-[0.12em] text-jet/45 md:block">(04) Experience</p>
+          <p className="hidden shrink-0 pb-3 font-mono text-[11px] uppercase tracking-[0.12em] text-ink/45 md:block">(04) Experience</p>
         </div>
         <div className="relative">
           <ExperiencePanels />
