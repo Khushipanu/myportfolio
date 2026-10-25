@@ -35,7 +35,7 @@ Add live/source links for a project by setting `live` and `code` in `content.js`
 1. Loader
 2. Hero — interactive: a dot grid that lights up pink and chartreuse around the cursor, name letters that swell and turn pink as the cursor nears, a cycling "I build …" word and an info strip
 3. Statement — "Building digital experiences that matter", with project tiles floating past during a short hold
-4. Selected work — a stream of simple project cards flowing diagonally past "My Works" over glowing lines as you scroll; each card is a link (add a project URL as `href` in Work.jsx), and the card at the centre drives the highlight and skills
+4. Selected work — Visuvate-style globe: large project cards curved around "My Works", turning about a leaning axis so they travel from the lower left to the upper right as you scroll, over electric blue lines; each card is a link (add a project URL as `href` in Work.jsx), and the front card drives the highlight and skills
 5. About + Experience — a statement with hand-drawn marks and draggable sticky notes; three roles as expanding panels, each in its own colour
 6. Toolkit — "The stack behind my work": skill cards standing in a low charcoal box under warm desk light; hover a card to lift it out
 7. Let's Connect — a giant "Let's connect →" slides across, then bursts in a chartreuse and pink shockwave; a one-screen contact board rises out of it (main card with email, copy and local time; Gmail and resume tiles; social tiles; footer bar)
