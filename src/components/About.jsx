@@ -50,13 +50,8 @@ const tones = ['#d4ff3f', '#ff2da8', '#f4f1ea']
 
 function ExperiencePanels() {
   const [open, setOpen] = useState(0)
-  // Hover intent: a panel opens only once the pointer rests on it briefly, so
-  // sweeping across the row doesn't flick through every panel.
-  const hoverTimer = useRef(0)
-  const hoverOpen = (i) => {
-    clearTimeout(hoverTimer.current)
-    hoverTimer.current = setTimeout(() => setOpen(i), 80)
-  }
+  // Panels open as soon as the pointer reaches them.
+  const hoverOpen = (i) => setOpen(i)
   const n = (i) => String(i + 1).padStart(2, '0')
 
   return (
@@ -71,13 +66,12 @@ function ExperiencePanels() {
               key={e.role}
               data-panel
               onPointerEnter={(ev) => ev.pointerType === 'mouse' && hoverOpen(i)}
-              onPointerLeave={() => clearTimeout(hoverTimer.current)}
               onPointerMove={(ev) => {
                 const r = ev.currentTarget.getBoundingClientRect()
                 ev.currentTarget.style.setProperty('--mx', `${ev.clientX - r.left}px`)
                 ev.currentTarget.style.setProperty('--my', `${ev.clientY - r.top}px`)
               }}
-              className={`group relative min-w-0 overflow-hidden rounded-[22px] transition-[flex-grow,box-shadow,color] duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] ${
+              className={`group relative min-w-0 overflow-hidden rounded-[22px] transition-[flex-grow,box-shadow,color] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${
                 on ? 'grow-[3] shadow-[0_30px_60px_-28px_rgba(23,21,18,0.55)]' : 'grow shadow-[0_10px_30px_-20px_rgba(23,21,18,0.35)]'
               }`}
               style={{
@@ -89,7 +83,7 @@ function ExperiencePanels() {
               {/* The panel colour fades in, rather than swapping instantly. */}
               <span
                 aria-hidden="true"
-                className={`pointer-events-none absolute inset-0 transition-opacity duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] ${on ? 'opacity-100' : 'opacity-0'}`}
+                className={`pointer-events-none absolute inset-0 transition-opacity duration-300 ease-out ${on ? 'opacity-100' : 'opacity-0'}`}
                 style={{ background: `linear-gradient(160deg, color-mix(in srgb, ${c} 88%, #fff) 0%, ${c} 45%, color-mix(in srgb, ${c} 80%, #000) 100%)` }}
               />
               <button
@@ -118,7 +112,7 @@ function ExperiencePanels() {
               {/* Closed: a big outlined number in the panel colour. */}
               <span
                 aria-hidden="true"
-                className={`pointer-events-none absolute left-6 top-20 font-serif text-[9rem] italic leading-none text-transparent transition-[opacity,transform] duration-500 ease-out group-hover:-translate-y-2 ${on ? 'opacity-0' : 'opacity-100 delay-300'}`}
+                className={`pointer-events-none absolute left-6 top-20 font-serif text-[9rem] italic leading-none text-transparent transition-[opacity,transform] duration-300 ease-out group-hover:-translate-y-2 ${on ? 'opacity-0' : 'opacity-100 delay-150'}`}
                 style={{ WebkitTextStroke: `1.2px ${c}` }}
               >
                 {n(i)}
@@ -127,7 +121,7 @@ function ExperiencePanels() {
               {/* Closed: a short summary at the foot of the panel. */}
               <div
                 aria-hidden={on}
-                className={`pointer-events-none absolute bottom-6 left-6 right-6 transition-[opacity,transform] duration-500 ease-out ${on ? 'translate-y-2 opacity-0' : 'translate-y-0 opacity-100 delay-300'}`}
+                className={`pointer-events-none absolute bottom-6 left-6 right-6 transition-[opacity,transform] duration-300 ease-out ${on ? 'translate-y-2 opacity-0' : 'translate-y-0 opacity-100 delay-150'}`}
               >
                 <span className="mb-4 block h-1 w-10 rounded-full transition-all duration-500 group-hover:w-16" style={{ background: c }} />
                 <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-ink/55">{e.period}</p>
@@ -139,7 +133,7 @@ function ExperiencePanels() {
               <div
                 aria-hidden={!on}
                 className={`pointer-events-none absolute bottom-0 left-0 top-0 flex w-[clamp(27rem,42vw,40rem)] flex-col justify-end p-8 transition-[opacity,transform] ease-[cubic-bezier(0.22,1,0.36,1)] ${
-                  on ? 'translate-y-0 opacity-100 duration-500 delay-[250ms]' : 'translate-y-3 opacity-0 duration-200'
+                  on ? 'translate-y-0 opacity-100 duration-300 delay-[120ms]' : 'translate-y-3 opacity-0 duration-150'
                 }`}
               >
                 <p className="font-mono text-[11px] uppercase tracking-[0.14em] opacity-70">{e.period}</p>

@@ -270,3 +270,8 @@ html.lenis body {
 @keyframes work-lines { 0%, 100% { transform: translate3d(0, 0, 0) rotate(0deg); } 50% { transform: translate3d(-2%, 1.5%, 0) rotate(1.5deg); } }
 .work-lines { animation: work-lines 18s ease-in-out infinite; }
 @media (prefers-reduced-motion: reduce) { .work-lines { animation: none; } }
+
+/* Contact ID badge: a gentle sway from the lanyard. */
+@keyframes badge-sway { 0%, 100% { transform: rotate(-1.6deg); } 50% { transform: rotate(1.6deg); } }
+.badge-sway { transform-origin: 50% 0; animation: badge-sway 5s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) { .badge-sway { animation: none; } }

@@ -38,7 +38,7 @@ Add live/source links for a project by setting `live` and `code` in `content.js`
 4. Selected work — the five project cards on an S-shaped wave (right, left, right…) over electric blue lines; scrolling brings them to the front one by one, 1 → 5, then moves on. Each card is a link (add a project URL as `href` in Work.jsx), and the front card drives the highlight and skills
 5. About + Experience — a statement with hand-drawn marks and draggable sticky notes; three roles as expanding panels, each in its own colour
 6. Toolkit — "The stack behind my work": skill cards standing in a low charcoal box under warm desk light; hover a card to lift it out
-7. Let's Connect — a giant "Let's connect →" slides across, then glitches (letters scramble into code with an RGB split and scanlines) and switches off like a CRT; the contact screen boots up as a code editor (contact.js with linked email, phone and socials) beside a terminal of quick actions (send email, download resume, copy email, call), with a status bar and footer
+7. Let's Connect — a giant "Let's connect →" slides across, then glitches (letters scramble into code with an RGB split and scanlines) and switches off like a CRT; the contact screen pairs "Let's build something great." with email, Gmail, resume, phone and social links beside a developer ID badge on a lanyard that sways, tilts to the pointer and flips to show contact details
 
 The resume PDF lives in `public/Khushi_Panu_Resume.pdf`; replace that file to update the download.
 

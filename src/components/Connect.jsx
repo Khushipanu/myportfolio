@@ -7,8 +7,8 @@ import { profile, socials, resume } from '../data/content'
 // "Let's connect" slides across (letters falling into line as they reach the
 // middle, after guillaumezhu.com), then glitches — letters scramble into code
 // with an RGB split and scanlines — and switches off like a CRT. The contact
-// screen boots up in its place: a code editor describing how to reach Khushi
-// and a terminal of quick actions, all on one screen.
+// screen appears in its place: a pitch and every way to get in touch beside a
+// developer ID badge hanging from a lanyard, all on one screen.
 const gmail = `https://mail.google.com/mail/?view=cm&fs=1&to=${profile.email}`
 
 const LINE = "Let's connect →"
@@ -35,115 +35,143 @@ function useLocalTime() {
   return `${now} IST`
 }
 
-const social = Object.fromEntries(socials.map((s) => [s.label.toLowerCase(), s]))
-
-// The editor: one object literal describing how to reach Khushi. Values that
-// lead somewhere are links.
-const CODE = [
-  [{ c: 'cm', t: '// contact.js — open to new opportunities' }],
-  [{ c: 'kw', t: 'const ' }, { c: 'id', t: 'khushi' }, { c: 'pn', t: ' = {' }],
-  [{ c: 'pr', t: '  role: ' }, { c: 'st', t: '"Full Stack Developer"' }, { c: 'pn', t: ',' }],
-  [{ c: 'pr', t: '  status: ' }, { c: 'st', t: '"available for work"' }, { c: 'pn', t: ',' }, { c: 'live', t: '' }],
-  [{ c: 'pr', t: '  email: ' }, { c: 'st', t: `"${profile.email}"`, href: gmail }, { c: 'pn', t: ',' }],
-  [{ c: 'pr', t: '  phone: ' }, { c: 'st', t: `"${profile.phone}"`, href: profile.phoneHref, self: true }, { c: 'pn', t: ',' }],
-  [{ c: 'pr', t: '  location: ' }, { c: 'st', t: '"Haldwani, India"' }, { c: 'pn', t: ',' }],
-  [{ c: 'pr', t: '  linkedin: ' }, { c: 'st', t: `"${social.linkedin.handle}"`, href: social.linkedin.href }, { c: 'pn', t: ',' }],
-  [{ c: 'pr', t: '  github: ' }, { c: 'st', t: `"@${social.github.handle}"`, href: social.github.href }, { c: 'pn', t: ',' }],
-  [{ c: 'pr', t: '  leetcode: ' }, { c: 'st', t: `"@${social.leetcode.handle}"`, href: social.leetcode.href }, { c: 'pn', t: ',' }],
-  [{ c: 'pr', t: '  instagram: ' }, { c: 'st', t: `"@${social.instagram.handle}"`, href: social.instagram.href }, { c: 'pn', t: ',' }],
-  [{ c: 'pn', t: '}' }],
-  [],
-  [{ c: 'id', t: 'khushi' }, { c: 'pn', t: '.' }, { c: 'fn', t: 'connect' }, { c: 'pn', t: '(' }, { c: 'kw', t: 'you' }, { c: 'pn', t: ')' }, { c: 'cursor', t: '' }],
-]
-const TONE = { cm: 'text-ink/35 italic', kw: 'text-pink', id: 'text-ink', pn: 'text-ink/45', pr: 'text-ink/70', st: 'text-chartreuse', fn: 'text-[#8fb8ff]' }
-
-function Code() {
-  return (
-    <ol className="py-4 font-mono text-[clamp(12px,1.75svh,15px)] leading-[1.85]">
-      {CODE.map((line, i) => (
-        <li key={i} data-lc-line className="group flex pr-4 transition-colors duration-200 hover:bg-ink/[0.04]">
-          <span className="w-12 shrink-0 select-none pr-4 text-right text-ink/25">{i + 1}</span>
-          <span className="whitespace-pre">
-            {line.map((s, j) => {
-              if (s.c === 'live') {
-                return (
-                  <span key={j} className="ml-3 inline-flex translate-y-[-1px] items-center gap-1.5 rounded-full border border-chartreuse/30 px-2 py-0 align-middle text-[0.75em] not-italic text-chartreuse">
-                    <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-chartreuse" />live
-                  </span>
-                )
-              }
-              if (s.c === 'cursor') return <span key={j} aria-hidden="true" className="ml-1 inline-block h-[1.1em] w-[0.55em] translate-y-[0.2em] animate-pulse bg-chartreuse" />
-              if (s.href) {
-                return (
-                  <a
-                    key={j}
-                    href={s.href}
-                    {...(s.self ? {} : { target: '_blank', rel: 'noreferrer' })}
-                    className={`${TONE[s.c]} rounded-[3px] underline decoration-chartreuse/30 underline-offset-4 transition-colors duration-200 hover:bg-chartreuse/10 hover:decoration-chartreuse`}
-                  >
-                    {s.t}
-                  </a>
-                )
-              }
-              return <span key={j} className={TONE[s.c]}>{s.t}</span>
-            })}
-          </span>
-        </li>
-      ))}
-    </ol>
-  )
-}
-
-// The terminal: quick actions as commands, with their output printed below.
-function Terminal({ time }) {
-  const [log, setLog] = useState([`ready — local time in Haldwani is ${time}`])
-  const say = (line) => setLog((l) => [...l.slice(-2), line])
+// Copies the email address and briefly confirms it.
+function CopyEmail() {
+  const [copied, setCopied] = useState(false)
   const copy = async () => {
     try {
       await navigator.clipboard.writeText(profile.email)
-      say(`✓ copied ${profile.email} to clipboard`)
-    } catch {
-      say(`email: ${profile.email}`)
-    }
+      setCopied(true)
+      setTimeout(() => setCopied(false), 1800)
+    } catch { /* clipboard unavailable: the address is still visible */ }
   }
-  const row = 'group flex w-full items-center gap-3 rounded-[10px] px-3 py-2.5 text-left transition-colors duration-200'
   return (
-    <div className="flex h-full flex-col p-4 font-mono text-[clamp(12px,1.7svh,14px)]">
-      <p className="px-1 pb-3 text-[10px] uppercase tracking-[0.16em] text-ink/35">Quick actions</p>
-      <div className="space-y-1.5">
-        <a href={gmail} target="_blank" rel="noreferrer" onClick={() => say('opening gmail…')} className={`${row} bg-chartreuse text-jet hover:bg-[#e2ff6e]`}>
-          <span className="text-jet/50">$</span>
-          <span className="flex-1 font-semibold">send --email</span>
-          <span className="transition-transform duration-300 group-hover:translate-x-1">↗</span>
-        </a>
-        <a href={resume.href} download={resume.file} onClick={() => say(`downloading ${resume.file}…`)} className={`${row} border border-ink/12 text-ink hover:border-ink/30 hover:bg-ink/[0.05]`}>
-          <span className="text-pink">$</span>
-          <span className="flex-1">download resume.pdf</span>
-          <span className="text-ink/40 transition-transform duration-300 group-hover:translate-y-0.5">↓</span>
-        </a>
-        <button type="button" onClick={copy} className={`${row} border border-ink/12 text-ink hover:border-ink/30 hover:bg-ink/[0.05]`}>
-          <span className="text-pink">$</span>
-          <span className="flex-1">copy email</span>
-          <span className="text-ink/40">⧉</span>
-        </button>
-        <a href={profile.phoneHref} onClick={() => say(`calling ${profile.phone}…`)} className={`${row} border border-ink/12 text-ink hover:border-ink/30 hover:bg-ink/[0.05]`}>
-          <span className="text-pink">$</span>
-          <span className="flex-1">call {profile.phone}</span>
-          <span className="text-ink/40">☏</span>
-        </a>
+    <button
+      type="button"
+      onClick={copy}
+      className="shrink-0 rounded-full border border-ink/20 px-3.5 py-1.5 font-mono text-[10px] uppercase tracking-[0.14em] text-ink/70 transition-colors duration-200 hover:border-ink/50 hover:text-ink"
+    >
+      {copied ? 'Copied ✓' : 'Copy'}
+    </button>
+  )
+}
+
+// A developer ID badge hanging from a lanyard. It sways gently, tilts towards
+// the pointer, and flips over on click to show contact details.
+function Badge({ time }) {
+  const card = useRef(null)
+  const [flipped, setFlipped] = useState(false)
+  const onMove = (e) => {
+    const r = card.current.getBoundingClientRect()
+    const x = (e.clientX - r.left) / r.width - 0.5
+    const y = (e.clientY - r.top) / r.height - 0.5
+    card.current.style.setProperty('--tx', `${(-y * 14).toFixed(2)}deg`)
+    card.current.style.setProperty('--ty', `${(x * 18).toFixed(2)}deg`)
+    card.current.style.setProperty('--gx', `${((x + 0.5) * 100).toFixed(1)}%`)
+    card.current.style.setProperty('--gy', `${((y + 0.5) * 100).toFixed(1)}%`)
+  }
+  const onLeave = () => {
+    card.current.style.setProperty('--tx', '0deg')
+    card.current.style.setProperty('--ty', '0deg')
+  }
+  const face = 'absolute inset-0 overflow-hidden rounded-[22px] border border-ink/15 [backface-visibility:hidden]'
+  return (
+    <div className="badge-sway relative flex flex-col items-center [perspective:1400px]">
+      {/* Lanyard and clip. */}
+      <div aria-hidden="true" className="relative h-[clamp(60px,16svh,170px)] w-9 overflow-hidden bg-chartreuse">
+        <p className="absolute left-1/2 top-0 -translate-x-1/2 whitespace-nowrap font-mono text-[9px] font-bold uppercase leading-none tracking-[0.3em] text-jet [writing-mode:vertical-rl]">
+          khushi panu · dev · khushi panu · dev · khushi panu · dev
+        </p>
       </div>
-      <div className="mt-5 space-y-1 px-1 text-ink/55">
-        <p><span className="text-pink">$</span> <span className="text-ink">whoami</span></p>
-        <p>{profile.name.toLowerCase()} — full stack developer</p>
-        <p>stack: <span className="text-chartreuse">MERN</span> · React.js · Node.js · Express.js · MongoDB</p>
-      </div>
-      <div aria-live="polite" className="mt-auto space-y-1 border-t border-ink/10 pt-3 text-[0.9em] text-ink/50">
-        {log.map((l, i) => (
-          <p key={`${i}-${l}`}><span className="text-chartreuse">›</span> {l}</p>
-        ))}
-        <p><span className="text-pink">~</span> <span className="inline-block h-[1em] w-[0.5em] translate-y-[0.15em] animate-pulse bg-ink/70" /></p>
-      </div>
+      <div aria-hidden="true" className="-mt-1 h-5 w-14 rounded-b-[10px] rounded-t-[4px] border border-ink/30 bg-gradient-to-b from-[#d9d9d9] to-[#8a8a8a]" />
+      <button
+        ref={card}
+        type="button"
+        onPointerMove={onMove}
+        onPointerLeave={onLeave}
+        onClick={() => setFlipped((f) => !f)}
+        aria-label={flipped ? 'Show the front of the ID badge' : 'Flip the ID badge to see contact details'}
+        data-cursor="Flip"
+        className="relative -mt-1 h-[clamp(340px,54svh,500px)] w-[clamp(240px,38svh,350px)] cursor-pointer text-left transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] [transform-style:preserve-3d]"
+        style={{ transform: `rotateX(var(--tx,0deg)) rotateY(calc(var(--ty,0deg) + ${flipped ? 180 : 0}deg))` }}
+      >
+        {/* Front */}
+        <div className={`${face} flex flex-col bg-[#121212]`}>
+          <span aria-hidden="true" className="pointer-events-none absolute inset-0 z-10 opacity-60 mix-blend-soft-light [background:radial-gradient(420px_circle_at_var(--gx,50%)_var(--gy,30%),rgba(255,255,255,0.35),transparent_60%)]" />
+          <div className="flex items-center justify-between bg-chartreuse px-5 py-3 font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-jet">
+            <span>Dev pass</span>
+            <span className="h-2 w-12 rounded-full bg-jet/80" />
+            <span>2026</span>
+          </div>
+          <div className="relative mx-5 mt-5 flex aspect-[5/3] items-end overflow-hidden rounded-[14px] bg-[radial-gradient(circle_at_75%_25%,#ff2da8,#7a1250_45%,#1a0a14)] p-4">
+            <span className="absolute -right-2 -top-6 font-black leading-none tracking-[-0.06em] text-jet/35 [font-size:clamp(90px,15svh,140px)]">KP</span>
+            <span className="relative flex items-center gap-2 rounded-full bg-jet/70 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.14em] text-chartreuse backdrop-blur">
+              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-chartreuse" />Available for work
+            </span>
+          </div>
+          <div className="flex flex-1 flex-col px-5 pt-4">
+            <p className="text-[clamp(24px,4svh,34px)] font-black leading-none tracking-[-0.04em] text-ink">{profile.name}</p>
+            <p className="mt-1.5 font-mono text-[11px] uppercase tracking-[0.14em] text-ink/55">Full Stack Developer</p>
+            <div className="mt-3 flex flex-wrap gap-1.5">
+              {['MERN', 'React.js', 'Node.js', 'MongoDB'].map((t) => (
+                <span key={t} className="rounded-full border border-ink/15 px-2.5 py-0.5 font-mono text-[10px] text-ink/70">{t}</span>
+              ))}
+            </div>
+            <div className="mt-auto flex items-end justify-between gap-4 border-t border-ink/10 py-4">
+              <div>
+                <p className="font-mono text-[9px] uppercase tracking-[0.16em] text-ink/40">ID</p>
+                <p className="font-mono text-[12px] text-ink">KP-2026</p>
+              </div>
+              <span aria-hidden="true" className="h-9 flex-1 [background:repeating-linear-gradient(90deg,#f4f1ea_0_2px,transparent_2px_4px,#f4f1ea_4px_5px,transparent_5px_9px)] opacity-80" />
+            </div>
+          </div>
+        </div>
+        {/* Back */}
+        <div className={`${face} flex flex-col bg-ink p-6 text-jet [transform:rotateY(180deg)]`}>
+          <p className="font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-jet/50">Contact</p>
+          <dl className="mt-5 space-y-4 text-[15px]">
+            {[
+              ['Email', profile.email],
+              ['Phone', profile.phone],
+              ['Based in', 'Haldwani, India'],
+              ['Local time', time],
+              ...socials.map((s) => [s.label, `@${s.handle}`]),
+            ].map(([k, v]) => (
+              <div key={k} className="flex items-baseline justify-between gap-4 border-b border-jet/10 pb-2">
+                <dt className="font-mono text-[10px] uppercase tracking-[0.14em] text-jet/50">{k}</dt>
+                <dd className="truncate font-semibold">{v}</dd>
+              </div>
+            ))}
+          </dl>
+          <p className="mt-auto font-mono text-[10px] uppercase tracking-[0.14em] text-jet/40">Tap to flip back</p>
+        </div>
+      </button>
+      <p className="mt-4 font-mono text-[10px] uppercase tracking-[0.16em] text-ink/35">Click the badge to flip it</p>
     </div>
+  )
+}
+
+// Social links whose label rolls up on hover.
+function Socials() {
+  return (
+    <ul className="flex flex-wrap gap-2">
+      {socials.map((l) => (
+        <li key={l.label}>
+          <a
+            href={l.href}
+            target="_blank"
+            rel="noreferrer"
+            className="group flex items-center gap-2 overflow-hidden rounded-full border border-ink/15 py-2 pl-4 pr-3 transition-colors duration-200 hover:border-ink/40 hover:bg-ink/[0.04]"
+          >
+            <span className="relative block h-[1.3em] overflow-hidden text-[14px] font-semibold leading-[1.3]">
+              <span className="block transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:-translate-y-full">{l.label}</span>
+              <span aria-hidden="true" className="absolute left-0 top-full block whitespace-nowrap text-chartreuse transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:-translate-y-full">{l.label}</span>
+            </span>
+            <span aria-hidden="true" className="text-[11px] text-ink/40 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-chartreuse">↗</span>
+          </a>
+        </li>
+      ))}
+    </ul>
   )
 }
 
@@ -174,7 +202,7 @@ export default function Connect() {
         gsap.set(panel.current, { position: 'absolute', inset: 0, zIndex: 20 })
         const reveal = gsap.timeline({ paused: true })
           .from('[data-lc-reveal]', { y: 40, autoAlpha: 0, duration: 0.4, ease: 'power3.out', stagger: 0.08 })
-          .from('[data-lc-line]', { x: -14, autoAlpha: 0, duration: 0.25, ease: 'power2.out', stagger: 0.035 }, 0.25)
+          
 
         const start = () => window.innerWidth * 0.75
         // Ends with "connect →" across the screen, so the glitch plays where it is seen.
@@ -272,7 +300,7 @@ export default function Connect() {
   return (
     <footer id="contact" ref={root} className="relative bg-jet text-ink">
       <div ref={pin} className="relative flex min-h-[60svh] flex-col justify-center overflow-hidden md:h-[100svh]">
-        <p data-lc-hint className="absolute left-5 top-24 font-mono text-[11px] uppercase tracking-[0.12em] text-ink/50 md:left-10 md:top-28">(06) Contact</p>
+        <p data-lc-hint className="absolute left-5 top-24 hidden font-mono text-[11px] uppercase tracking-[0.12em] text-ink/50 md:left-10 md:top-28">(06) Contact</p>
 
         {/* Part 1: the giant sentence. */}
         <a href={gmail} target="_blank" rel="noreferrer" aria-label="Let's connect — write to me on Gmail" className="block w-full">
@@ -301,45 +329,52 @@ export default function Connect() {
           <div data-lc-dot className="absolute left-1/2 top-1/2 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white opacity-0 shadow-[0_0_30px_10px_rgba(212,255,63,0.7)]" />
         </div>
 
-        {/* Part 2: the contact screen — an editor and a terminal. */}
-        <div ref={panel} className="relative flex flex-col px-5 pb-5 md:px-10 md:pb-5 md:pt-24">
-          <div data-lc-reveal className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-            <h2 className="text-[clamp(44px,min(6vw,10svh),104px)] font-black leading-[0.9] tracking-[-0.05em]">
-              Let&apos;s connect
-              <span aria-hidden="true" className="ml-[0.08em] inline-block h-[0.72em] w-[0.42em] translate-y-[0.04em] animate-pulse bg-chartreuse" />
-            </h2>
-            <p className="max-w-sm font-mono text-[12px] leading-relaxed text-ink/55 md:pb-2 md:text-right md:text-[13px]">
-              Open to new opportunities. Hiring, or have a project in mind? I&apos;d love to hear from you.
-            </p>
-          </div>
-
-          <div data-lc-reveal className="mt-6 flex min-h-0 flex-1 flex-col overflow-hidden rounded-[16px] border border-ink/12 bg-[#0f0f0f]/95 shadow-[0_40px_120px_-40px_rgba(212,255,63,0.18)] md:mt-8">
-            {/* Window bar with tabs. */}
-            <div className="flex items-center gap-4 border-b border-ink/10 bg-ink/[0.03] px-4 py-2.5 font-mono text-[11px]">
-              <span className="flex gap-1.5">
-                <span className="h-2.5 w-2.5 rounded-full bg-pink" />
-                <span className="h-2.5 w-2.5 rounded-full bg-chartreuse" />
-                <span className="h-2.5 w-2.5 rounded-full bg-ink/25" />
-              </span>
-              <span className="rounded-[6px] border border-ink/12 bg-jet px-3 py-1 text-ink">contact.js</span>
-              <span className="hidden px-1 text-ink/35 sm:inline">resume.pdf</span>
-              <span className="ml-auto hidden text-ink/30 md:inline">~/khushi-panu/portfolio</span>
-            </div>
-            <div className="grid min-h-0 flex-1 md:grid-cols-[1.5fr_1fr]">
-              <div className="min-w-0 overflow-x-auto">
-                <Code />
+        {/* Part 2: the contact screen. */}
+        <div ref={panel} className="relative flex flex-col px-5 pb-5 pt-10 md:px-10 md:pb-5 md:pt-0">
+          <div className="grid min-h-0 flex-1 items-center gap-12 md:grid-cols-[1.25fr_1fr] md:gap-10">
+            <div>
+              <p data-lc-reveal className="font-mono text-[11px] uppercase tracking-[0.14em] text-ink/45">(06) Contact</p>
+              <h2 data-lc-reveal className="mt-5 text-[clamp(52px,min(7.2vw,12svh),128px)] font-black leading-[0.86] tracking-[-0.055em]">
+                Let&apos;s build
+                <br />
+                something <span className="font-serif font-normal italic tracking-[-0.02em] text-chartreuse">great</span>.
+              </h2>
+              <p data-lc-reveal className="mt-6 max-w-md text-[16px] leading-relaxed text-ink/60 md:text-[18px]">
+                Open to new opportunities. Hiring, or have a project in mind? I&apos;d love to hear from you.
+              </p>
+              <div data-lc-reveal className="mt-7 flex flex-wrap items-center gap-3">
+                <a href={gmail} target="_blank" rel="noreferrer" className="link-underline text-[clamp(18px,1.8vw,26px)] font-semibold tracking-[-0.02em]">
+                  {profile.email}
+                </a>
+                <CopyEmail />
               </div>
-              <div className="border-t border-ink/10 bg-black/30 md:border-l md:border-t-0">
-                <Terminal time={time} />
+              <div data-lc-reveal className="mt-7 flex flex-wrap items-center gap-3">
+                <a
+                  href={gmail}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="group flex items-center gap-3 rounded-full bg-chartreuse py-2 pl-2 pr-6 font-mono text-[12px] font-semibold uppercase tracking-[0.12em] text-jet shadow-[0_0_40px_-8px_rgba(212,255,63,0.6)] transition-[translate] duration-200 hover:-translate-y-0.5"
+                >
+                  <span className="flex h-10 w-10 items-center justify-center rounded-full bg-jet text-chartreuse transition-transform duration-300 group-hover:rotate-45">↗</span>
+                  Say hello on Gmail
+                </a>
+                <a
+                  href={resume.href}
+                  download={resume.file}
+                  className="flex items-center gap-2.5 rounded-full border border-ink/25 px-6 py-[0.95rem] font-mono text-[12px] uppercase tracking-[0.12em] text-ink transition-colors duration-200 hover:border-ink/60 hover:bg-ink/5"
+                >
+                  Resume <span aria-hidden="true">↓</span>
+                </a>
+                <a href={profile.phoneHref} className="px-2 font-mono text-[12px] uppercase tracking-[0.12em] text-ink/55 transition-colors hover:text-ink">
+                  {profile.phone}
+                </a>
+              </div>
+              <div data-lc-reveal className="mt-8">
+                <Socials />
               </div>
             </div>
-            {/* Status bar. */}
-            <div className="flex flex-wrap items-center gap-x-5 gap-y-1 border-t border-ink/10 bg-chartreuse/[0.06] px-4 py-2 font-mono text-[10px] uppercase tracking-[0.12em] text-ink/50">
-              <span className="flex items-center gap-2 text-chartreuse"><span className="h-1.5 w-1.5 rounded-full bg-chartreuse" />Available for work</span>
-              <span>⎇ main</span>
-              <span className="ml-auto">Haldwani · {time}</span>
-              <span className="hidden md:inline">UTF-8</span>
-              <span className="hidden md:inline">JavaScript</span>
+            <div data-lc-reveal className="flex justify-center md:self-start">
+              <Badge time={time} />
             </div>
           </div>
 
