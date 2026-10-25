@@ -185,10 +185,26 @@ export default function Work() {
         ref={stage}
         className="relative h-[100svh] select-none overflow-hidden"
       >
-        {/* Light backdrop: soft pink and lime washes over a faint dot grid. */}
-        <div aria-hidden="true" className="pointer-events-none absolute inset-0 [background-image:radial-gradient(rgba(20,20,20,0.09)_1px,transparent_1px)] [background-size:26px_26px] [mask-image:radial-gradient(ellipse_at_center,black_40%,transparent_85%)]" />
-        <div aria-hidden="true" className="work-lines pointer-events-none absolute -left-[10%] top-[8%] h-[70vh] w-[55vw] rounded-full bg-[radial-gradient(closest-side,rgba(255,45,168,0.16),transparent)] blur-3xl" />
-        <div aria-hidden="true" className="work-lines pointer-events-none absolute -right-[8%] bottom-[0%] h-[70vh] w-[55vw] rounded-full bg-[radial-gradient(closest-side,rgba(212,255,63,0.35),transparent)] blur-3xl" />
+        {/* Light backdrop: a slowly drifting mesh of pink, peach, lime and lilac
+            light, a perspective grid floor, fine grain and giant outlined type. */}
+        <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden">
+          <div className="mesh-a absolute -left-[12%] -top-[18%] h-[75vh] w-[60vw] rounded-full bg-[radial-gradient(closest-side,rgba(255,45,168,0.30),transparent)] blur-3xl" />
+          <div className="mesh-b absolute -right-[14%] top-[6%] h-[70vh] w-[55vw] rounded-full bg-[radial-gradient(closest-side,rgba(255,170,110,0.32),transparent)] blur-3xl" />
+          <div className="mesh-c absolute -bottom-[22%] left-[18%] h-[75vh] w-[60vw] rounded-full bg-[radial-gradient(closest-side,rgba(212,255,63,0.45),transparent)] blur-3xl" />
+          <div className="mesh-a absolute -bottom-[10%] -right-[10%] h-[55vh] w-[40vw] rounded-full bg-[radial-gradient(closest-side,rgba(180,160,255,0.30),transparent)] blur-3xl" />
+
+          {/* Grid floor receding into the distance. */}
+          <div className="absolute inset-x-[-25%] bottom-[-8%] h-[55%] origin-bottom [transform:perspective(700px)_rotateX(62deg)] [background-image:linear-gradient(rgba(22,22,22,0.10)_1px,transparent_1px),linear-gradient(90deg,rgba(22,22,22,0.10)_1px,transparent_1px)] [background-size:64px_64px] [mask-image:linear-gradient(to_top,black_10%,transparent_85%)]" />
+
+          {/* Giant outlined word sitting behind everything. */}
+          <p className="absolute left-1/2 top-[6%] -translate-x-1/2 select-none whitespace-nowrap font-display text-[22vw] font-black uppercase leading-none tracking-[-0.04em] text-transparent [-webkit-text-stroke:1.5px_rgba(22,22,22,0.07)]">
+            Projects
+          </p>
+
+          {/* Fine grain over the whole backdrop. */}
+          <div className="absolute inset-0 opacity-[0.22] mix-blend-multiply [background-image:url(&quot;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.6'/%3E%3C/svg%3E&quot;)]" />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_55%,rgba(120,100,70,0.12)_100%)]" />
+        </div>
 
         <p className="pointer-events-none absolute left-5 top-24 z-20 font-mono text-[11px] uppercase tracking-[0.12em] text-jet/45 md:left-10 md:top-28">(02) Selected work</p>
 

@@ -288,7 +288,7 @@ export default function Connect() {
   return (
     <footer id="contact" ref={root} className="relative bg-jet text-ink">
       <div ref={pin} className="relative flex min-h-[60svh] flex-col justify-center overflow-hidden md:h-[100svh]">
-        <p data-lc-hint className="absolute left-5 top-24 hidden font-mono text-[11px] uppercase tracking-[0.12em] text-ink/50 md:left-10 md:top-28">(06) Contact</p>
+        <p data-lc-hint className="absolute left-5 top-24 hidden font-mono text-[11px] uppercase tracking-[0.12em] text-ink/50 md:left-10 md:top-28">(05) Contact</p>
 
         {/* Part 1: the giant sentence. */}
         <a href={gmail} target="_blank" rel="noreferrer" aria-label="Let's connect — write to me on Gmail" className="block w-full">
@@ -321,7 +321,7 @@ export default function Connect() {
         <div ref={panel} className="relative flex flex-col px-5 pb-5 pt-10 md:px-10 md:pb-5 md:pt-0">
           <div className="grid min-h-0 flex-1 items-center gap-12 md:grid-cols-[1.25fr_1fr] md:gap-10">
             <div>
-              <p data-lc-reveal className="font-mono text-[11px] uppercase tracking-[0.14em] text-ink/45">(06) Contact</p>
+              <p data-lc-reveal className="font-mono text-[11px] uppercase tracking-[0.14em] text-ink/45">(05) Contact</p>
               <h2 data-lc-reveal className="mt-5 text-[clamp(52px,min(7.2vw,12svh),128px)] font-black leading-[0.86] tracking-[-0.055em]">
                 Let&apos;s build
                 <br />

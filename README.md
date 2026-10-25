@@ -33,12 +33,11 @@ Add live/source links for a project by setting `live` and `code` in `content.js`
 ## Sections
 
 1. Loader
-2. Hero — interactive: a dot grid that lights up pink and chartreuse around the cursor, name letters that swell and turn pink as the cursor nears, a cycling "I build …" word and an info strip
+2. Hero — the bold uppercase name, whose letters widen and grow bolder as the cursor nears, a cycling "I build …" word and an info strip
 3. Statement — "Building digital experiences that matter", with project tiles floating past during a short hold
-4. Selected work — project cards wind round a leaning spiral on a light, paper-toned backdrop with soft pink and lime washes: one faces you in the middle, neighbours sit above-right and below-left, side cards bend away; scrolling turns the spiral so projects 1 → 5 pass the front. Each card is a link (add a project URL as `href` in Work.jsx), and the front card drives the highlight and skills
-5. About + Experience — a statement with hand-drawn marks and draggable sticky notes; three roles as expanding panels, each in its own colour
-6. Toolkit — "The stack behind my work": skill cards standing in a low charcoal box under warm desk light; hover a card to lift it out
-7. Let's Connect — a giant "Let's connect →" slides across, then glitches (letters scramble into code with an RGB split and scanlines) and switches off like a CRT; the contact screen pairs "Let's build something great." with email, Gmail, resume, phone and social links beside a message form (topic, name, email, message) that opens a ready-to-send Gmail draft
+4. Selected work — project cards wind round a leaning spiral over a light backdrop (a drifting mesh of pink, peach, lime and lilac light, a grid floor, fine grain and a giant outlined "Projects"): one faces you in the middle, neighbours sit above-right and below-left, side cards bend away; scrolling turns the spiral so projects 1 → 5 pass the front. Each card is a link (add a project URL as `href` in Work.jsx), and the front card drives the highlight and skills
+5. About + Experience — a statement with hand-drawn marks and draggable sticky notes; three roles as glass panels on a deep navy band, glowing amber, magenta and mint, that tilt in 3D and expand on hover
+6. Let's Connect — a giant "Let's connect →" slides across, then glitches (letters scramble into code with an RGB split and scanlines) and switches off like a CRT; the contact screen pairs "Let's build something great." with email, Gmail, resume, phone and social links beside a message form (topic, name, email, message) that opens a ready-to-send Gmail draft
 
 The resume PDF lives in `public/Khushi_Panu_Resume.pdf`; replace that file to update the download.
 

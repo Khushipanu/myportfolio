@@ -7,7 +7,6 @@ import Hero from './components/Hero'
 import Statement from './components/Statement'
 import Work from './components/Work'
 import About from './components/About'
-import SkillMix from './components/SkillMix'
 import Connect from './components/Connect'
 
 export default function App() {
@@ -30,7 +29,6 @@ export default function App() {
         <Statement />
         <Work />
         <About />
-        <SkillMix />
       </main>
       <Connect />
       <div className="grain" aria-hidden="true" />

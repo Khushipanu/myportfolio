@@ -266,10 +266,14 @@ html.lenis body {
 @keyframes cycle-in { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 .cycle-in { animation: cycle-in 0.5s cubic-bezier(0.22, 1, 0.36, 1); }
 
-/* Work globe: the glowing lines drift slowly. */
-@keyframes work-lines { 0%, 100% { transform: translate3d(0, 0, 0) rotate(0deg); } 50% { transform: translate3d(-2%, 1.5%, 0) rotate(1.5deg); } }
-.work-lines { animation: work-lines 18s ease-in-out infinite; }
-@media (prefers-reduced-motion: reduce) { .work-lines { animation: none; } }
+/* Work: the colour mesh behind the spiral drifts slowly. */
+@keyframes mesh-a { 0%, 100% { transform: translate3d(0, 0, 0) scale(1); } 50% { transform: translate3d(8%, 6%, 0) scale(1.12); } }
+@keyframes mesh-b { 0%, 100% { transform: translate3d(0, 0, 0) scale(1.05); } 50% { transform: translate3d(-10%, 8%, 0) scale(0.95); } }
+@keyframes mesh-c { 0%, 100% { transform: translate3d(0, 0, 0) scale(1); } 50% { transform: translate3d(6%, -8%, 0) scale(1.1); } }
+.mesh-a { animation: mesh-a 16s ease-in-out infinite; }
+.mesh-b { animation: mesh-b 20s ease-in-out infinite; }
+.mesh-c { animation: mesh-c 18s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) { .mesh-a, .mesh-b, .mesh-c { animation: none; } }
 
 
 /* Experience: the 3D ribbon inside the open panel turns slowly. */
