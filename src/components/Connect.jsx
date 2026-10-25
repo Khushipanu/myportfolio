@@ -5,14 +5,14 @@ import { profile, socials, resume } from '../data/content'
 
 // Closing section, one scroll-driven scene on wide screens: a giant
 // "Let's connect" slides across (letters falling into line as they reach the
-// middle, after guillaumezhu.com), then bursts apart in a burst of light and
-// the contact panel rises out of it. Then the links and the footer bar.
-const SUBJECT = "Let's work together"
-const MESSAGE = "Hi Khushi, I came across your portfolio and would love to talk about an opportunity with you."
+// middle, after guillaumezhu.com), then glitches — letters scramble into code
+// with an RGB split and scanlines — and switches off like a CRT. The contact
+// screen boots up in its place: a code editor describing how to reach Khushi
+// and a terminal of quick actions, all on one screen.
 const gmail = `https://mail.google.com/mail/?view=cm&fs=1&to=${profile.email}`
-const gmailDraft = `${gmail}&su=${encodeURIComponent(SUBJECT)}&body=${encodeURIComponent(MESSAGE)}`
 
 const LINE = "Let's connect →"
+const GLYPHS = '01<>/{}[]=;$#_*+'
 // Fixed pseudo-random values per index, so they are the same on every render.
 const jitter = (i) => {
   const r = (n) => {
@@ -22,77 +22,128 @@ const jitter = (i) => {
   return { y: (r(1) - 0.5) * 2, rot: (r(2) - 0.5) * 2, k: r(3) }
 }
 
-// Light streaks thrown out by the burst.
-const SPARK_COLORS = ['#d4ff3f', '#ff2da8', '#f4f1ea']
-const SPARKS = Array.from({ length: 40 }, (_, i) => {
-  const j = jitter(i + 40)
-  return {
-    a: (i / 40) * Math.PI * 2 + j.rot * 0.15,
-    d: 0.35 + j.k * 0.75,
-    len: 14 + Math.round(j.k * 46),
-    color: SPARK_COLORS[i % 3],
-  }
-})
-
 const clamp01 = (v) => Math.min(1, Math.max(0, v))
 const smooth = (k) => k * k * (3 - 2 * k)
 
-function LocalTime() {
+function useLocalTime() {
   const fmt = () => new Intl.DateTimeFormat('en-IN', { hour: 'numeric', minute: '2-digit', hour12: true, timeZone: 'Asia/Kolkata' }).format(new Date())
   const [now, setNow] = useState(fmt)
   useEffect(() => {
     const id = setInterval(() => setNow(fmt()), 30000)
     return () => clearInterval(id)
   }, [])
-  return <>{now} IST</>
+  return `${now} IST`
 }
 
-function CopyEmail() {
-  const [copied, setCopied] = useState(false)
+const social = Object.fromEntries(socials.map((s) => [s.label.toLowerCase(), s]))
+
+// The editor: one object literal describing how to reach Khushi. Values that
+// lead somewhere are links.
+const CODE = [
+  [{ c: 'cm', t: '// contact.js — open to new opportunities' }],
+  [{ c: 'kw', t: 'const ' }, { c: 'id', t: 'khushi' }, { c: 'pn', t: ' = {' }],
+  [{ c: 'pr', t: '  role: ' }, { c: 'st', t: '"Full Stack Developer"' }, { c: 'pn', t: ',' }],
+  [{ c: 'pr', t: '  status: ' }, { c: 'st', t: '"available for work"' }, { c: 'pn', t: ',' }, { c: 'live', t: '' }],
+  [{ c: 'pr', t: '  email: ' }, { c: 'st', t: `"${profile.email}"`, href: gmail }, { c: 'pn', t: ',' }],
+  [{ c: 'pr', t: '  phone: ' }, { c: 'st', t: `"${profile.phone}"`, href: profile.phoneHref, self: true }, { c: 'pn', t: ',' }],
+  [{ c: 'pr', t: '  location: ' }, { c: 'st', t: '"Haldwani, India"' }, { c: 'pn', t: ',' }],
+  [{ c: 'pr', t: '  linkedin: ' }, { c: 'st', t: `"${social.linkedin.handle}"`, href: social.linkedin.href }, { c: 'pn', t: ',' }],
+  [{ c: 'pr', t: '  github: ' }, { c: 'st', t: `"@${social.github.handle}"`, href: social.github.href }, { c: 'pn', t: ',' }],
+  [{ c: 'pr', t: '  leetcode: ' }, { c: 'st', t: `"@${social.leetcode.handle}"`, href: social.leetcode.href }, { c: 'pn', t: ',' }],
+  [{ c: 'pr', t: '  instagram: ' }, { c: 'st', t: `"@${social.instagram.handle}"`, href: social.instagram.href }, { c: 'pn', t: ',' }],
+  [{ c: 'pn', t: '}' }],
+  [],
+  [{ c: 'id', t: 'khushi' }, { c: 'pn', t: '.' }, { c: 'fn', t: 'connect' }, { c: 'pn', t: '(' }, { c: 'kw', t: 'you' }, { c: 'pn', t: ')' }, { c: 'cursor', t: '' }],
+]
+const TONE = { cm: 'text-ink/35 italic', kw: 'text-pink', id: 'text-ink', pn: 'text-ink/45', pr: 'text-ink/70', st: 'text-chartreuse', fn: 'text-[#8fb8ff]' }
+
+function Code() {
+  return (
+    <ol className="py-4 font-mono text-[clamp(12px,1.75svh,15px)] leading-[1.85]">
+      {CODE.map((line, i) => (
+        <li key={i} data-lc-line className="group flex pr-4 transition-colors duration-200 hover:bg-ink/[0.04]">
+          <span className="w-12 shrink-0 select-none pr-4 text-right text-ink/25">{i + 1}</span>
+          <span className="whitespace-pre">
+            {line.map((s, j) => {
+              if (s.c === 'live') {
+                return (
+                  <span key={j} className="ml-3 inline-flex translate-y-[-1px] items-center gap-1.5 rounded-full border border-chartreuse/30 px-2 py-0 align-middle text-[0.75em] not-italic text-chartreuse">
+                    <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-chartreuse" />live
+                  </span>
+                )
+              }
+              if (s.c === 'cursor') return <span key={j} aria-hidden="true" className="ml-1 inline-block h-[1.1em] w-[0.55em] translate-y-[0.2em] animate-pulse bg-chartreuse" />
+              if (s.href) {
+                return (
+                  <a
+                    key={j}
+                    href={s.href}
+                    {...(s.self ? {} : { target: '_blank', rel: 'noreferrer' })}
+                    className={`${TONE[s.c]} rounded-[3px] underline decoration-chartreuse/30 underline-offset-4 transition-colors duration-200 hover:bg-chartreuse/10 hover:decoration-chartreuse`}
+                  >
+                    {s.t}
+                  </a>
+                )
+              }
+              return <span key={j} className={TONE[s.c]}>{s.t}</span>
+            })}
+          </span>
+        </li>
+      ))}
+    </ol>
+  )
+}
+
+// The terminal: quick actions as commands, with their output printed below.
+function Terminal({ time }) {
+  const [log, setLog] = useState([`ready — local time in Haldwani is ${time}`])
+  const say = (line) => setLog((l) => [...l.slice(-2), line])
   const copy = async () => {
     try {
       await navigator.clipboard.writeText(profile.email)
-      setCopied(true)
-      setTimeout(() => setCopied(false), 1800)
-    } catch { /* clipboard unavailable: the address is still visible */ }
+      say(`✓ copied ${profile.email} to clipboard`)
+    } catch {
+      say(`email: ${profile.email}`)
+    }
   }
+  const row = 'group flex w-full items-center gap-3 rounded-[10px] px-3 py-2.5 text-left transition-colors duration-200'
   return (
-    <button
-      type="button"
-      onClick={copy}
-      className="shrink-0 rounded-full border border-ink/20 px-3.5 py-1.5 font-mono text-[10px] uppercase tracking-[0.14em] text-ink/70 transition-colors duration-300 hover:border-ink/50 hover:text-ink"
-    >
-      {copied ? 'Copied ✓' : 'Copy'}
-    </button>
-  )
-}
-
-// Every tile carries a soft light that follows the pointer.
-const TILE = 'group relative overflow-hidden rounded-[22px] transition-[translate] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]'
-function Shine({ tint = 'rgba(244,241,234,0.08)' }) {
-  return (
-    <span
-      aria-hidden="true"
-      className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100"
-      style={{ background: `radial-gradient(320px circle at var(--sx,50%) var(--sy,50%), ${tint}, transparent 70%)` }}
-    />
-  )
-}
-
-// Heading letters hop up as the pointer passes over them.
-function Hop({ text }) {
-  return (
-    <span aria-label={text} className="inline-block whitespace-nowrap">
-      {text.split('').map((c, i) => (
-        <span
-          key={i}
-          aria-hidden="true"
-          className="inline-block whitespace-pre transition-transform duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] hover:-translate-y-[0.14em] hover:-rotate-6"
-        >
-          {c}
-        </span>
-      ))}
-    </span>
+    <div className="flex h-full flex-col p-4 font-mono text-[clamp(12px,1.7svh,14px)]">
+      <p className="px-1 pb-3 text-[10px] uppercase tracking-[0.16em] text-ink/35">Quick actions</p>
+      <div className="space-y-1.5">
+        <a href={gmail} target="_blank" rel="noreferrer" onClick={() => say('opening gmail…')} className={`${row} bg-chartreuse text-jet hover:bg-[#e2ff6e]`}>
+          <span className="text-jet/50">$</span>
+          <span className="flex-1 font-semibold">send --email</span>
+          <span className="transition-transform duration-300 group-hover:translate-x-1">↗</span>
+        </a>
+        <a href={resume.href} download={resume.file} onClick={() => say(`downloading ${resume.file}…`)} className={`${row} border border-ink/12 text-ink hover:border-ink/30 hover:bg-ink/[0.05]`}>
+          <span className="text-pink">$</span>
+          <span className="flex-1">download resume.pdf</span>
+          <span className="text-ink/40 transition-transform duration-300 group-hover:translate-y-0.5">↓</span>
+        </a>
+        <button type="button" onClick={copy} className={`${row} border border-ink/12 text-ink hover:border-ink/30 hover:bg-ink/[0.05]`}>
+          <span className="text-pink">$</span>
+          <span className="flex-1">copy email</span>
+          <span className="text-ink/40">⧉</span>
+        </button>
+        <a href={profile.phoneHref} onClick={() => say(`calling ${profile.phone}…`)} className={`${row} border border-ink/12 text-ink hover:border-ink/30 hover:bg-ink/[0.05]`}>
+          <span className="text-pink">$</span>
+          <span className="flex-1">call {profile.phone}</span>
+          <span className="text-ink/40">☏</span>
+        </a>
+      </div>
+      <div className="mt-5 space-y-1 px-1 text-ink/55">
+        <p><span className="text-pink">$</span> <span className="text-ink">whoami</span></p>
+        <p>{profile.name.toLowerCase()} — full stack developer</p>
+        <p>stack: <span className="text-chartreuse">MERN</span> · React.js · Node.js · Express.js · MongoDB</p>
+      </div>
+      <div aria-live="polite" className="mt-auto space-y-1 border-t border-ink/10 pt-3 text-[0.9em] text-ink/50">
+        {log.map((l, i) => (
+          <p key={`${i}-${l}`}><span className="text-chartreuse">›</span> {l}</p>
+        ))}
+        <p><span className="text-pink">~</span> <span className="inline-block h-[1em] w-[0.5em] translate-y-[0.15em] animate-pulse bg-ink/70" /></p>
+      </div>
+    </div>
   )
 }
 
@@ -101,6 +152,7 @@ export default function Connect() {
   const pin = useRef(null)
   const track = useRef(null)
   const panel = useRef(null)
+  const time = useLocalTime()
 
   useGSAP(
     () => {
@@ -108,78 +160,78 @@ export default function Connect() {
       // Wide screens: the whole scene plays while the section is held.
       mm.add(`${MOTION_OK} and (min-width: 768px)`, () => {
         const chars = gsap.utils.toArray('[data-lc-char]', track.current)
-        const sparks = gsap.utils.toArray('[data-lc-spark]', pin.current)
-        const bloom = pin.current.querySelector('[data-lc-bloom]')
-        const after = pin.current.querySelector('[data-lc-after]')
+        const original = chars.map((c) => c.textContent)
+        const scan = pin.current.querySelector('[data-lc-scan]')
+        const grid = pin.current.querySelector('[data-lc-grid]')
+        const dot = pin.current.querySelector('[data-lc-dot]')
         const hints = gsap.utils.toArray('[data-lc-hint]', pin.current)
         const jit = chars.map((_, i) => jitter(i))
         let offsets = []
-        let lineY = 0
-        const measure = () => {
-          offsets = chars.map((c) => c.offsetLeft + c.offsetWidth / 2)
-          const t = track.current.getBoundingClientRect()
-          lineY = t.top - pin.current.getBoundingClientRect().top + t.height / 2
-        }
+        const measure = () => { offsets = chars.map((c) => c.offsetLeft + c.offsetWidth / 2) }
         measure()
 
-        // The panel sits over the scene and rises in once the burst clears.
+        // The contact screen sits over the scene and boots up after the switch-off.
         gsap.set(panel.current, { position: 'absolute', inset: 0, zIndex: 20 })
         const reveal = gsap.timeline({ paused: true })
-          .from('[data-lc-reveal]', { y: 70, autoAlpha: 0, scale: 0.94, duration: 0.5, ease: 'power3.out', stagger: 0.06 })
+          .from('[data-lc-reveal]', { y: 40, autoAlpha: 0, duration: 0.4, ease: 'power3.out', stagger: 0.08 })
+          .from('[data-lc-line]', { x: -14, autoAlpha: 0, duration: 0.25, ease: 'power2.out', stagger: 0.035 }, 0.25)
 
         const start = () => window.innerWidth * 0.75
-        const end = () => window.innerWidth * 0.42 - track.current.scrollWidth
+        // Ends with "connect →" across the screen, so the glitch plays where it is seen.
+        const end = () => window.innerWidth * 0.86 - track.current.scrollWidth
         const slide = () => start() - end()
-        const burst = () => window.innerHeight * 0.65
-        const rise = () => window.innerHeight * 0.45
-        const total = () => slide() + burst() * 0.7 + rise()
+        const glitch = () => window.innerHeight * 0.75
+        const boot = () => window.innerHeight * 0.5
+        const total = () => slide() + glitch() * 0.85 + boot()
 
         const render = (s) => {
           const vw = window.innerWidth
-          const vh = pin.current.offsetHeight
           const D = slide()
           const x = s < D ? start() - s : end()
-          track.current.style.transform = `translate3d(${x}px,0,0)`
           const h = String(1 - clamp01((s - D * 0.7) / (D * 0.3)))
           hints.forEach((el) => { el.style.opacity = h })
 
-          // A brief pull inwards, then the letters fly apart.
-          const u = clamp01((s - D) / burst())
-          const pull = u < 0.12 ? smooth(u / 0.12) : Math.max(0, 1 - (u - 0.12) / 0.08)
-          const b = clamp01((u - 0.12) / 0.88)
-          const blast = 1 - (1 - b) ** 3
+          // 0 → 1 across the glitch: scramble, then the CRT switch-off.
+          const u = clamp01((s - D) / glitch())
+          const scramble = clamp01(u / 0.45)
+          const noise = Math.sin(u * Math.PI) * (u < 0.55 ? 1 : 0)
+          const off = clamp01((u - 0.5) / 0.3) // squash to a line
+          const shrink = clamp01((u - 0.78) / 0.14) // line to a dot
+          const tick = Math.floor(s / 14)
 
           chars.forEach((c, i) => {
             const lx = x + offsets[i]
             if (u === 0) {
+              if (c.textContent !== original[i]) c.textContent = original[i]
+              // Letters right of centre are scattered; all settle as the slide ends.
               const k = clamp01((lx - vw * 0.5) / (vw * 0.45))
-              const e = smooth(k)
-              c.style.opacity = ''
+              const e = smooth(k) * clamp01((D - s) / (vw * 0.35))
+              c.style.textShadow = ''
               c.style.transform = `translate3d(0, ${(jit[i].y * e * 0.55).toFixed(3)}em, 0) rotate(${(jit[i].rot * e * 28).toFixed(2)}deg)`
               return
             }
-            const vx = lx - vw / 2
-            const vy = lineY - vh / 2 + jit[i].y * 60
-            const a = Math.atan2(vy, vx) + jit[i].rot * 0.5
-            const d = vw * (0.35 + jit[i].k * 0.45) * blast - 40 * pull
-            const dx = Math.cos(a) * d
-            const dy = Math.sin(a) * d
-            c.style.opacity = String(1 - smooth(clamp01(b * 1.25)))
-            c.style.transform = `translate3d(${dx.toFixed(1)}px, ${dy.toFixed(1)}px, 0) rotate(${(jit[i].rot * 260 * blast).toFixed(1)}deg) scale(${(1 - 0.25 * pull - 0.5 * blast).toFixed(3)})`
+            // Letters flip to code glyphs, left to right.
+            const flipped = original[i] !== ' ' && scramble > (i / chars.length) * 0.8
+            const glyph = flipped ? GLYPHS[(tick + i * 7) % GLYPHS.length] : original[i]
+            if (c.textContent !== glyph) c.textContent = glyph
+            const o = (noise * 6 * (0.4 + jit[(i + tick) % chars.length].k)).toFixed(1)
+            c.style.textShadow = noise > 0.02 ? `${o}px 0 rgba(255,45,168,0.85), ${-o}px 0 rgba(212,255,63,0.85)` : ''
+            const slice = noise > 0.3 && (tick + i) % 5 === 0 ? jit[i].rot * 18 * noise : 0
+            c.style.transform = `translate3d(${slice.toFixed(1)}px, 0, 0)`
           })
 
-          // Light: a bright bloom that fades into a soft afterglow.
-          bloom.style.opacity = String(b > 0 ? (b < 0.15 ? b / 0.15 : 1 - smooth(clamp01((b - 0.15) / 0.6))) : 0)
-          bloom.style.transform = `translate(-50%,-50%) scale(${0.15 + blast * 2.2})`
-          after.style.opacity = String(smooth(clamp01((b - 0.3) / 0.7)))
-          sparks.forEach((el, j) => {
-            const p = SPARKS[j]
-            const d = p.d * Math.max(vw, vh) * 0.62 * blast
-            el.style.opacity = String(b > 0 ? Math.min(1, b * 10) * (1 - smooth(b)) : 0)
-            el.style.transform = `translate(${(Math.cos(p.a) * d).toFixed(1)}px, ${(Math.sin(p.a) * d).toFixed(1)}px) rotate(${p.a}rad) scaleX(${(1.6 - blast).toFixed(3)})`
-          })
+          // CRT switch-off: the line squashes flat and bright, then shrinks away.
+          const sy = 1 - 0.985 * smooth(off)
+          const sx = 1 + 0.15 * smooth(off) - smooth(shrink)
+          track.current.style.transformOrigin = `${(vw / 2 - x).toFixed(1)}px 50%`
+          track.current.style.transform = `translate3d(${x}px,0,0) scale(${Math.max(0, sx).toFixed(3)}, ${sy.toFixed(3)})`
+          track.current.style.filter = off > 0 ? `brightness(${(1 + off * 2.5).toFixed(2)})` : ''
+          track.current.style.opacity = String(1 - smooth(clamp01((u - 0.86) / 0.1)))
+          dot.style.opacity = String(shrink > 0 ? Math.sin(Math.min(1, shrink * 1.2) * Math.PI) : 0)
+          scan.style.opacity = String(Math.min(0.5, noise * 0.6 + off * (1 - shrink) * 0.4))
 
-          const r = clamp01((s - D - burst() * 0.7) / rise())
+          const r = clamp01((s - D - glitch() * 0.85) / boot())
+          grid.style.opacity = String(smooth(clamp01((u - 0.8) / 0.2)))
           reveal.progress(r)
           panel.current.style.pointerEvents = r > 0.6 ? 'auto' : 'none'
         }
@@ -197,7 +249,8 @@ export default function Connect() {
         return () => {
           reveal.progress(1).kill()
           panel.current.style.pointerEvents = ''
-          chars.forEach((c) => { c.style.opacity = ''; c.style.transform = '' })
+          Object.assign(track.current.style, { transform: '', transformOrigin: '', filter: '', opacity: '' })
+          chars.forEach((c, i) => { c.textContent = original[i]; c.style.textShadow = ''; c.style.transform = '' })
         }
       })
       // Small screens: plain reveals.
@@ -215,14 +268,6 @@ export default function Connect() {
     },
     { scope: root },
   )
-
-  const onTileMove = (e) => {
-    const t = e.target.closest('[data-tile]')
-    if (!t) return
-    const r = t.getBoundingClientRect()
-    t.style.setProperty('--sx', `${e.clientX - r.left}px`)
-    t.style.setProperty('--sy', `${e.clientY - r.top}px`)
-  }
 
   return (
     <footer id="contact" ref={root} className="relative bg-jet text-ink">
@@ -249,113 +294,53 @@ export default function Connect() {
         </a>
         <p data-lc-hint className="absolute bottom-8 left-5 hidden font-mono text-[11px] uppercase tracking-[0.12em] text-ink/50 md:left-10 md:block">Keep scrolling ↓</p>
 
-        {/* The burst: a bloom of light, streaks, then a soft afterglow. */}
+        {/* Glitch layers: scanlines, the CRT's last dot, and the grid the contact screen boots onto. */}
         <div aria-hidden="true" className="pointer-events-none absolute inset-0 hidden md:block">
-          <div data-lc-after className="absolute inset-0 opacity-0 [background:radial-gradient(60%_55%_at_30%_40%,rgba(212,255,63,0.06),transparent_70%),radial-gradient(50%_50%_at_80%_70%,rgba(255,45,168,0.08),transparent_70%)]" />
-          <div data-lc-bloom className="absolute left-1/2 top-1/2 h-[60vmin] w-[60vmin] rounded-full opacity-0 blur-md [background:radial-gradient(closest-side,rgba(255,255,255,0.9),rgba(255,255,255,0)_22%,transparent_52%,rgba(212,255,63,0.75)_66%,rgba(255,45,168,0.55)_80%,transparent)]" />
-          {SPARKS.map((p, j) => (
-            <span key={j} className="absolute left-1/2 top-1/2 h-0 w-0">
-              <span
-                data-lc-spark
-                className="absolute left-0 top-0 block h-[3px] origin-left rounded-full opacity-0"
-                style={{ width: p.len, background: `linear-gradient(90deg, transparent, ${p.color})` }}
-              />
-            </span>
-          ))}
+          <div data-lc-grid className="absolute inset-0 opacity-0 [background-image:linear-gradient(rgba(212,255,63,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(212,255,63,0.05)_1px,transparent_1px)] [background-size:48px_48px] [mask-image:radial-gradient(ellipse_at_center,black_30%,transparent_80%)]" />
+          <div data-lc-scan className="absolute inset-0 opacity-0 [background:repeating-linear-gradient(0deg,rgba(255,255,255,0.08)_0px,rgba(255,255,255,0.08)_1px,transparent_1px,transparent_4px)]" />
+          <div data-lc-dot className="absolute left-1/2 top-1/2 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white opacity-0 shadow-[0_0_30px_10px_rgba(212,255,63,0.7)]" />
         </div>
 
-        {/* Part 2: one screen with every way to get in touch, rising out of the burst. */}
-        <div ref={panel} onPointerMove={onTileMove} className="relative flex flex-col px-5 pb-5 md:px-10 md:pb-5 md:pt-24">
-          <div data-lc-panel className="grid min-h-0 flex-1 grid-cols-2 gap-3 md:grid-cols-12 md:grid-rows-[1fr_1fr_minmax(0,0.8fr)]">
-            {/* Main tile */}
-            <div data-tile data-lc-reveal className={`${TILE} col-span-2 flex flex-col justify-between gap-10 border border-ink/12 bg-paper-2 p-6 md:col-span-7 md:row-span-2 md:p-9`}>
-              <Shine tint="rgba(212,255,63,0.07)" />
-              <span aria-hidden="true" className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-[radial-gradient(closest-side,rgba(255,45,168,0.22),transparent)] blur-2xl" />
-              <div className="relative flex flex-wrap items-center justify-between gap-3 font-mono text-[11px] uppercase tracking-[0.14em]">
-                <span className="flex items-center gap-2.5 rounded-full border border-chartreuse/40 px-4 py-1.5 text-chartreuse">
-                  <span className="relative flex h-2 w-2">
-                    <span className="absolute inset-0 animate-ping rounded-full bg-chartreuse/60" />
-                    <span className="relative h-2 w-2 rounded-full bg-chartreuse" />
-                  </span>
-                  Available for work
-                </span>
-                <span className="text-ink/50">Haldwani · <LocalTime /></span>
+        {/* Part 2: the contact screen — an editor and a terminal. */}
+        <div ref={panel} className="relative flex flex-col px-5 pb-5 md:px-10 md:pb-5 md:pt-24">
+          <div data-lc-reveal className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+            <h2 className="text-[clamp(44px,min(6vw,10svh),104px)] font-black leading-[0.9] tracking-[-0.05em]">
+              Let&apos;s connect
+              <span aria-hidden="true" className="ml-[0.08em] inline-block h-[0.72em] w-[0.42em] translate-y-[0.04em] animate-pulse bg-chartreuse" />
+            </h2>
+            <p className="max-w-sm font-mono text-[12px] leading-relaxed text-ink/55 md:pb-2 md:text-right md:text-[13px]">
+              Open to new opportunities. Hiring, or have a project in mind? I&apos;d love to hear from you.
+            </p>
+          </div>
+
+          <div data-lc-reveal className="mt-6 flex min-h-0 flex-1 flex-col overflow-hidden rounded-[16px] border border-ink/12 bg-[#0f0f0f]/95 shadow-[0_40px_120px_-40px_rgba(212,255,63,0.18)] md:mt-8">
+            {/* Window bar with tabs. */}
+            <div className="flex items-center gap-4 border-b border-ink/10 bg-ink/[0.03] px-4 py-2.5 font-mono text-[11px]">
+              <span className="flex gap-1.5">
+                <span className="h-2.5 w-2.5 rounded-full bg-pink" />
+                <span className="h-2.5 w-2.5 rounded-full bg-chartreuse" />
+                <span className="h-2.5 w-2.5 rounded-full bg-ink/25" />
+              </span>
+              <span className="rounded-[6px] border border-ink/12 bg-jet px-3 py-1 text-ink">contact.js</span>
+              <span className="hidden px-1 text-ink/35 sm:inline">resume.pdf</span>
+              <span className="ml-auto hidden text-ink/30 md:inline">~/khushi-panu/portfolio</span>
+            </div>
+            <div className="grid min-h-0 flex-1 md:grid-cols-[1.5fr_1fr]">
+              <div className="min-w-0 overflow-x-auto">
+                <Code />
               </div>
-              <div className="relative">
-                <h2 className="text-[clamp(44px,min(6.4vw,11svh),112px)] font-black leading-[0.88] tracking-[-0.05em]">
-                  <Hop text="Let's" />{' '}
-                  <Hop text="connect" />
-                  <span className="text-chartreuse">.</span>
-                </h2>
-                <p className="mt-4 max-w-md text-[16px] leading-relaxed text-ink/65 md:text-[18px]">
-                  Open to new opportunities. Hiring, or have a project in mind? I&apos;d love to hear from you.
-                </p>
-                <div className="mt-6 flex flex-wrap items-center gap-x-4 gap-y-3 border-t border-ink/10 pt-5">
-                  <a href={gmail} target="_blank" rel="noreferrer" className="link-underline text-[clamp(18px,1.9vw,28px)] font-semibold tracking-[-0.02em] text-ink">
-                    {profile.email}
-                  </a>
-                  <CopyEmail />
-                  <a href={profile.phoneHref} className="ml-auto font-mono text-[12px] uppercase tracking-[0.12em] text-ink/60 transition-colors hover:text-ink">
-                    {profile.phone}
-                  </a>
-                </div>
+              <div className="border-t border-ink/10 bg-black/30 md:border-l md:border-t-0">
+                <Terminal time={time} />
               </div>
             </div>
-
-            {/* Gmail */}
-            <a
-              data-tile
-              data-lc-reveal
-              href={gmail}
-              target="_blank"
-              rel="noreferrer"
-              className={`${TILE} col-span-2 flex flex-col justify-between gap-4 bg-chartreuse p-6 text-jet hover:-translate-y-1 md:col-span-5 md:p-[clamp(20px,3svh,32px)]`}
-            >
-              <Shine tint="rgba(255,255,255,0.45)" />
-              <div className="relative flex items-start justify-between">
-                <span className="font-mono text-[11px] font-semibold uppercase tracking-[0.14em] text-jet/70">Email · Gmail</span>
-                <span className="flex h-12 w-12 items-center justify-center rounded-full bg-jet text-[18px] text-chartreuse transition-transform duration-500 group-hover:rotate-45">↗</span>
-              </div>
-              <span className="relative text-[clamp(28px,min(3.4vw,5.4svh),60px)] font-black leading-[0.92] tracking-[-0.04em]">Say hello<br />on Gmail</span>
-            </a>
-
-            {/* Resume */}
-            <a
-              data-tile
-              data-lc-reveal
-              href={resume.href}
-              download={resume.file}
-              className={`${TILE} col-span-2 flex flex-col justify-between gap-4 bg-ink p-6 text-jet hover:-translate-y-1 md:col-span-5 md:p-[clamp(20px,3svh,32px)]`}
-            >
-              <Shine tint="rgba(255,45,168,0.12)" />
-              <div className="relative flex items-start justify-between">
-                <span className="font-mono text-[11px] font-semibold uppercase tracking-[0.14em] text-jet/60">Resume · PDF</span>
-                <span className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-full bg-jet text-[18px] text-ink">
-                  <span className="transition-transform duration-500 group-hover:translate-y-1">↓</span>
-                </span>
-              </div>
-              <span className="relative text-[clamp(28px,min(3.4vw,5.4svh),60px)] font-black leading-[0.92] tracking-[-0.04em]">Download<br />my resume</span>
-            </a>
-
-            {/* Socials */}
-            {socials.map((l, i) => (
-              <a
-                key={l.label}
-                data-tile
-                data-lc-reveal
-                href={l.href}
-                target="_blank"
-                rel="noreferrer"
-                className={`${TILE} col-span-1 flex flex-col justify-between gap-6 border border-ink/12 bg-paper-2 p-5 hover:-translate-y-1 hover:border-ink/30 md:col-span-3 md:p-6`}
-              >
-                <Shine />
-                <div className="relative flex items-start justify-between gap-3">
-                  <span className="truncate font-mono text-[11px] uppercase tracking-[0.12em] text-ink/45">@{l.handle}</span>
-                  <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-ink/20 text-[14px] transition-[transform,background-color,border-color,color] duration-500 group-hover:rotate-45 group-hover:border-transparent ${i % 2 ? 'group-hover:bg-pink group-hover:text-jet' : 'group-hover:bg-chartreuse group-hover:text-jet'}`}>↗</span>
-                </div>
-                <span className="relative text-[clamp(22px,min(2.3vw,4.4svh),38px)] font-black leading-none tracking-[-0.04em] transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:translate-x-1">{l.label}</span>
-              </a>
-            ))}
+            {/* Status bar. */}
+            <div className="flex flex-wrap items-center gap-x-5 gap-y-1 border-t border-ink/10 bg-chartreuse/[0.06] px-4 py-2 font-mono text-[10px] uppercase tracking-[0.12em] text-ink/50">
+              <span className="flex items-center gap-2 text-chartreuse"><span className="h-1.5 w-1.5 rounded-full bg-chartreuse" />Available for work</span>
+              <span>⎇ main</span>
+              <span className="ml-auto">Haldwani · {time}</span>
+              <span className="hidden md:inline">UTF-8</span>
+              <span className="hidden md:inline">JavaScript</span>
+            </div>
           </div>
 
           <div data-lc-reveal className="mt-4 flex flex-col gap-2 font-mono text-[11px] uppercase tracking-[0.12em] text-ink/40 md:flex-row md:items-center md:justify-between">
