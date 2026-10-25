@@ -1,27 +1,28 @@
 import { useEffect, useRef, useState } from 'react'
 import { gsap, useGSAP, ScrollTrigger, MOTION_OK, prefersReducedMotion } from '../lib/gsap'
-import Art from './Art'
+import WorkPoster from './WorkPoster'
 
 // Visuvate-style "works" globe: the five project screens, repeated, sit on a
 // sphere around the "My Works" title, each card curved along the globe (built
 // from thin vertical slices) with its back showing as it turns away. The
 // section is held while scrolling spins and tilts the globe, which also
 // drifts slowly on its own. The card facing front drives the highlight and
-// lights up its skills.
+// lights up its skills. Each card is a link: add a project's URL as `href`
+// and its cards open it.
 const CARDS = [
-  { variant: 'movie', label: 'MovieThrill — home', project: 'MovieThrill', highlight: 'Movie data from The Movie Database (TMDB) API, fetched with Axios.', skills: ['React.js', 'Tailwind CSS', 'JavaScript'] },
-  { variant: 'lms', label: 'LMS — courses', project: 'Learning Management System', highlight: 'JWT authentication with student and instructor roles (RBAC).', skills: ['Node.js', 'Express.js', 'MongoDB'] },
-  { variant: 'erp', label: 'ERP — records', project: 'ERP · Ruhanix', highlight: 'Reusable React.js components for ERP modules, forms and data views.', skills: ['React.js', 'JavaScript'] },
-  { variant: 'movieDetail', label: 'MovieThrill — details', project: 'MovieThrill', highlight: 'App-wide state managed with Redux Toolkit and React-Redux.', skills: ['React.js', 'Redux Toolkit'] },
-  { variant: 'lmsPlayer', label: 'LMS — lesson', project: 'Learning Management System', highlight: 'Course purchasing and streaming on a full MERN stack.', skills: ['MongoDB', 'Express.js', 'React.js', 'Node.js'] },
+  { variant: 'movie', label: 'MovieThrill — home', project: 'MovieThrill', highlight: 'Movie data from The Movie Database (TMDB) API, fetched with Axios.', skills: ['React.js', 'Tailwind CSS', 'JavaScript'], href: null },
+  { variant: 'lms', label: 'LMS — courses', project: 'Learning Management System', highlight: 'JWT authentication with student and instructor roles (RBAC).', skills: ['Node.js', 'Express.js', 'MongoDB'], href: null },
+  { variant: 'erp', label: 'ERP — records', project: 'ERP · Ruhanix', highlight: 'Reusable React.js components for ERP modules, forms and data views.', skills: ['React.js', 'JavaScript'], href: null },
+  { variant: 'movieDetail', label: 'MovieThrill — details', project: 'MovieThrill', highlight: 'App-wide state managed with Redux Toolkit and React-Redux.', skills: ['React.js', 'Redux Toolkit'], href: null },
+  { variant: 'lmsPlayer', label: 'LMS — lesson', project: 'Learning Management System', highlight: 'Course purchasing and streaming on a full MERN stack.', skills: ['MongoDB', 'Express.js', 'React.js', 'Node.js'], href: null },
 ]
 const SKILLS = ['React.js', 'Node.js', 'Express.js', 'MongoDB', 'Redux Toolkit', 'Tailwind CSS', 'JavaScript']
-const SLICES = 4
+const SLICES = 6
 // Three bands of cards: above, around and below the equator.
 const ROWS = [
-  { lat: 36, n: 5, off: 0.5 },
-  { lat: 0, n: 6, off: 0 },
-  { lat: -36, n: 5, off: 0 },
+  { lat: 40, n: 4, off: 0.5 },
+  { lat: 0, n: 5, off: 0 },
+  { lat: -40, n: 4, off: 0 },
 ]
 const SPOTS = ROWS.flatMap((r, ri) =>
   Array.from({ length: r.n }, (_, k) => ({ lat: r.lat, lon: ((k + r.off) / r.n) * 360, v: (ri * 2 + k) % CARDS.length })),
@@ -43,12 +44,12 @@ function useGlobe(stageRef, globeRef, progressRef, onFront) {
     const layout = () => {
       const w = stage.clientWidth
       const h = stage.clientHeight
-      const R = w < 768 ? Math.min(w * 0.46, h * 0.3) : Math.min(w * 0.27, h * 0.42)
-      const cw = R * 0.7
+      const R = w < 768 ? Math.min(w * 0.5, h * 0.32) : Math.min(w * 0.3, h * 0.5)
+      const cw = R * 0.78
       const ch = cw * 0.68
       globe.style.setProperty('--cw', `${cw}px`)
       globe.style.setProperty('--ch', `${ch}px`)
-      globe.style.setProperty('--sw', `${cw / SLICES + 0.6}px`)
+      globe.style.setProperty('--sw', `${cw / SLICES + 1.2}px`)
       const d = (cw / SLICES) / R / RAD
       bend = Array.from({ length: SLICES }, (_, j) => (j - (SLICES - 1) / 2) * d)
       SPOTS.forEach((p, i) => {
@@ -62,7 +63,7 @@ function useGlobe(stageRef, globeRef, progressRef, onFront) {
     const s = { rot: 0, tilt: 12, drift: 0 }
     let front = -1
     const draw = () => {
-      globe.style.transform = `rotateX(${s.tilt.toFixed(3)}deg) rotateY(${(s.rot + s.drift).toFixed(3)}deg)`
+      globe.style.transform = `rotateZ(-14deg) rotateX(${s.tilt.toFixed(3)}deg) rotateY(${(s.rot + s.drift).toFixed(3)}deg)`
       const st = Math.sin(s.tilt * RAD)
       const ct = Math.cos(s.tilt * RAD)
       let best = -1
@@ -116,9 +117,11 @@ function useGlobe(stageRef, globeRef, progressRef, onFront) {
   }, [stageRef, globeRef, progressRef, onFront])
 }
 
-function Card({ variant }) {
+function Card({ c }) {
+  const Tag = c.href ? 'a' : 'div'
+  const link = c.href ? { href: c.href, target: '_blank', rel: 'noreferrer' } : { title: `${c.project} — link coming soon` }
   return (
-    <div data-card className="absolute left-0 top-0 [transform-style:preserve-3d]">
+    <Tag data-card data-cursor={c.href ? 'Open' : 'Soon'} aria-label={c.label} {...link} className="absolute left-0 top-0 block cursor-pointer [transform-style:preserve-3d]">
       {Array.from({ length: SLICES }).map((_, j) => (
         <div
           key={j}
@@ -127,15 +130,15 @@ function Card({ variant }) {
           style={{ width: 'var(--sw)', height: 'var(--ch)' }}
         >
           <div className="absolute top-0 h-full" style={{ width: 'var(--cw)', left: `calc(var(--cw) / ${SLICES} * ${-j})` }}>
-            <Art
-              variant={variant}
-              className={`h-full w-full border-y border-white/25 text-[calc(var(--cw)/19)] ${j === 0 ? 'rounded-l-[10px] border-l' : ''} ${j === SLICES - 1 ? 'rounded-r-[10px] border-r' : ''}`}
+            <WorkPoster
+              variant={c.variant}
+              className={`h-full w-full border-y border-white/30 text-[calc(var(--cw)/19)] ${j === 0 ? 'rounded-l-[12px] border-l' : ''} ${j === SLICES - 1 ? 'rounded-r-[12px] border-r' : ''}`}
             />
           </div>
           <div data-shade className="pointer-events-none absolute inset-0 bg-black" />
         </div>
       ))}
-    </div>
+    </Tag>
   )
 }
 
@@ -200,7 +203,7 @@ export default function Work() {
 
         <p className="pointer-events-none absolute left-5 top-24 z-20 font-mono text-[11px] uppercase tracking-[0.12em] text-muted md:left-10 md:top-28">(02) Selected work</p>
 
-        <div className="absolute inset-0 [perspective:1600px] [perspective-origin:50%_50%]">
+        <div className="absolute inset-0 z-0 [perspective:1600px] [perspective-origin:50%_50%]">
           <div className="absolute left-1/2 top-1/2 h-0 w-0 [transform-style:preserve-3d]">
             {/* The title sits at the globe's centre: back cards pass behind it, front cards over it. */}
             <h2 id="work-title" className="pointer-events-none absolute left-0 top-0 [transform:translate(-50%,-50%)]">
@@ -208,7 +211,7 @@ export default function Work() {
             </h2>
             <div ref={globe} className="absolute left-0 top-0 h-0 w-0 [transform-style:preserve-3d]">
               {SPOTS.map((p, i) => (
-                <Card key={i} variant={CARDS[p.v].variant} />
+                <Card key={i} c={CARDS[p.v]} />
               ))}
             </div>
           </div>
@@ -220,6 +223,8 @@ export default function Work() {
             <li key={k} className={`transition-colors duration-500 ${active.skills.includes(k) ? 'text-accent' : 'text-ink/35'}`}>{k}</li>
           ))}
         </ul>
+
+        <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-56 bg-gradient-to-t from-black/80 to-transparent" />
 
         {/* Highlight of the card facing front. */}
         <div aria-live="polite" className="pointer-events-none absolute bottom-14 left-5 right-5 z-20 md:bottom-10 md:left-10 md:right-auto md:max-w-sm">
