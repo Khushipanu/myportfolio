@@ -8,7 +8,7 @@ import { profile, socials, resume } from '../data/content'
 // middle, after guillaumezhu.com), then glitches — letters scramble into code
 // with an RGB split and scanlines — and switches off like a CRT. The contact
 // screen appears in its place: a pitch and every way to get in touch beside a
-// developer ID badge hanging from a lanyard, all on one screen.
+// short message form that opens a ready-to-send Gmail draft, all on one screen.
 const gmail = `https://mail.google.com/mail/?view=cm&fs=1&to=${profile.email}`
 
 const LINE = "Let's connect →"
@@ -56,98 +56,86 @@ function CopyEmail() {
   )
 }
 
-// A developer ID badge hanging from a lanyard. It sways gently, tilts towards
-// the pointer, and flips over on click to show contact details.
-function Badge({ time }) {
-  const card = useRef(null)
-  const [flipped, setFlipped] = useState(false)
-  const onMove = (e) => {
-    const r = card.current.getBoundingClientRect()
-    const x = (e.clientX - r.left) / r.width - 0.5
-    const y = (e.clientY - r.top) / r.height - 0.5
-    card.current.style.setProperty('--tx', `${(-y * 14).toFixed(2)}deg`)
-    card.current.style.setProperty('--ty', `${(x * 18).toFixed(2)}deg`)
-    card.current.style.setProperty('--gx', `${((x + 0.5) * 100).toFixed(1)}%`)
-    card.current.style.setProperty('--gy', `${((y + 0.5) * 100).toFixed(1)}%`)
+// A short message form. Sending opens a Gmail draft to Khushi with the
+// topic, message and sender's details already filled in.
+const TOPICS = ['Job opportunity', 'Freelance project', 'Collaboration', 'Just saying hi']
+function ContactForm({ time }) {
+  const [topic, setTopic] = useState(TOPICS[0])
+  const [name, setName] = useState('')
+  const [from, setFrom] = useState('')
+  const [msg, setMsg] = useState('')
+  const send = (e) => {
+    e.preventDefault()
+    const subject = `${topic}${name ? ` — from ${name}` : ''}`
+    const sign = [name && `— ${name}`, from].filter(Boolean)
+    const body = [msg || 'Hi Khushi,', ...(sign.length ? ['', ...sign] : [])].join('\n')
+    window.open(`${gmail}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`, '_blank', 'noopener')
   }
-  const onLeave = () => {
-    card.current.style.setProperty('--tx', '0deg')
-    card.current.style.setProperty('--ty', '0deg')
-  }
-  const face = 'absolute inset-0 overflow-hidden rounded-[22px] border border-ink/15 [backface-visibility:hidden]'
+  const field = 'w-full border-b border-ink/15 bg-transparent pb-2.5 pt-1 text-[16px] text-ink placeholder:text-ink/30 outline-none focus-visible:outline-none transition-colors duration-200 focus:border-chartreuse'
+  const label = 'font-mono text-[10px] uppercase tracking-[0.16em] text-ink/45'
   return (
-    <div className="badge-sway relative flex flex-col items-center [perspective:1400px]">
-      {/* Lanyard and clip. */}
-      <div aria-hidden="true" className="relative h-[clamp(60px,16svh,170px)] w-9 overflow-hidden bg-chartreuse">
-        <p className="absolute left-1/2 top-0 -translate-x-1/2 whitespace-nowrap font-mono text-[9px] font-bold uppercase leading-none tracking-[0.3em] text-jet [writing-mode:vertical-rl]">
-          khushi panu · dev · khushi panu · dev · khushi panu · dev
-        </p>
+    <form
+      onSubmit={send}
+      className="relative w-full max-w-[34rem] overflow-hidden rounded-[24px] border border-ink/10 bg-[#131313]/90 p-6 shadow-[0_50px_120px_-50px_rgba(212,255,63,0.25)] backdrop-blur md:p-8"
+    >
+      <span aria-hidden="true" className="pointer-events-none absolute -right-20 -top-24 h-64 w-64 rounded-full bg-[radial-gradient(closest-side,rgba(255,45,168,0.22),transparent)] blur-2xl" />
+      <div className="relative flex items-center justify-between gap-4">
+        <p className="text-[22px] font-semibold tracking-[-0.02em]">Send a message</p>
+        <span className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.14em] text-ink/45">
+          <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-chartreuse" />
+          {time}
+        </span>
       </div>
-      <div aria-hidden="true" className="-mt-1 h-5 w-14 rounded-b-[10px] rounded-t-[4px] border border-ink/30 bg-gradient-to-b from-[#d9d9d9] to-[#8a8a8a]" />
+
+      <fieldset className="relative mt-6">
+        <legend className={label}>What&apos;s it about?</legend>
+        <div className="mt-3 flex flex-wrap gap-2">
+          {TOPICS.map((t) => (
+            <button
+              key={t}
+              type="button"
+              onClick={() => setTopic(t)}
+              aria-pressed={topic === t}
+              className={`rounded-full border px-3.5 py-1.5 text-[13px] transition-colors duration-200 ${
+                topic === t ? 'border-chartreuse bg-chartreuse text-jet' : 'border-ink/15 text-ink/70 hover:border-ink/40 hover:text-ink'
+              }`}
+            >
+              {t}
+            </button>
+          ))}
+        </div>
+      </fieldset>
+
+      <div className="relative mt-6 grid gap-5 sm:grid-cols-2">
+        <label className="block">
+          <span className={label}>Your name</span>
+          <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Jane Doe" autoComplete="name" className={field} />
+        </label>
+        <label className="block">
+          <span className={label}>Your email</span>
+          <input type="email" value={from} onChange={(e) => setFrom(e.target.value)} placeholder="jane@company.com" autoComplete="email" className={field} />
+        </label>
+      </div>
+      <label className="relative mt-5 block">
+        <span className={label}>Message</span>
+        <textarea
+          value={msg}
+          onChange={(e) => setMsg(e.target.value)}
+          rows={3}
+          placeholder="Tell me a little about the role or project…"
+          className={`${field} resize-none`}
+        />
+      </label>
+
       <button
-        ref={card}
-        type="button"
-        onPointerMove={onMove}
-        onPointerLeave={onLeave}
-        onClick={() => setFlipped((f) => !f)}
-        aria-label={flipped ? 'Show the front of the ID badge' : 'Flip the ID badge to see contact details'}
-        data-cursor="Flip"
-        className="relative -mt-1 h-[clamp(340px,54svh,500px)] w-[clamp(240px,38svh,350px)] cursor-pointer text-left transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] [transform-style:preserve-3d]"
-        style={{ transform: `rotateX(var(--tx,0deg)) rotateY(calc(var(--ty,0deg) + ${flipped ? 180 : 0}deg))` }}
+        type="submit"
+        className="group relative mt-7 flex w-full items-center justify-between rounded-full bg-chartreuse py-2 pl-6 pr-2 font-mono text-[12px] font-semibold uppercase tracking-[0.14em] text-jet shadow-[0_0_40px_-10px_rgba(212,255,63,0.7)] transition-[translate] duration-200 hover:-translate-y-0.5"
       >
-        {/* Front */}
-        <div className={`${face} flex flex-col bg-[#121212]`}>
-          <span aria-hidden="true" className="pointer-events-none absolute inset-0 z-10 opacity-60 mix-blend-soft-light [background:radial-gradient(420px_circle_at_var(--gx,50%)_var(--gy,30%),rgba(255,255,255,0.35),transparent_60%)]" />
-          <div className="flex items-center justify-between bg-chartreuse px-5 py-3 font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-jet">
-            <span>Dev pass</span>
-            <span className="h-2 w-12 rounded-full bg-jet/80" />
-            <span>2026</span>
-          </div>
-          <div className="relative mx-5 mt-5 flex aspect-[5/3] items-end overflow-hidden rounded-[14px] bg-[radial-gradient(circle_at_75%_25%,#ff2da8,#7a1250_45%,#1a0a14)] p-4">
-            <span className="absolute -right-2 -top-6 font-black leading-none tracking-[-0.06em] text-jet/35 [font-size:clamp(90px,15svh,140px)]">KP</span>
-            <span className="relative flex items-center gap-2 rounded-full bg-jet/70 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.14em] text-chartreuse backdrop-blur">
-              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-chartreuse" />Available for work
-            </span>
-          </div>
-          <div className="flex flex-1 flex-col px-5 pt-4">
-            <p className="text-[clamp(24px,4svh,34px)] font-black leading-none tracking-[-0.04em] text-ink">{profile.name}</p>
-            <p className="mt-1.5 font-mono text-[11px] uppercase tracking-[0.14em] text-ink/55">Full Stack Developer</p>
-            <div className="mt-3 flex flex-wrap gap-1.5">
-              {['MERN', 'React.js', 'Node.js', 'MongoDB'].map((t) => (
-                <span key={t} className="rounded-full border border-ink/15 px-2.5 py-0.5 font-mono text-[10px] text-ink/70">{t}</span>
-              ))}
-            </div>
-            <div className="mt-auto flex items-end justify-between gap-4 border-t border-ink/10 py-4">
-              <div>
-                <p className="font-mono text-[9px] uppercase tracking-[0.16em] text-ink/40">ID</p>
-                <p className="font-mono text-[12px] text-ink">KP-2026</p>
-              </div>
-              <span aria-hidden="true" className="h-9 flex-1 [background:repeating-linear-gradient(90deg,#f4f1ea_0_2px,transparent_2px_4px,#f4f1ea_4px_5px,transparent_5px_9px)] opacity-80" />
-            </div>
-          </div>
-        </div>
-        {/* Back */}
-        <div className={`${face} flex flex-col bg-ink p-6 text-jet [transform:rotateY(180deg)]`}>
-          <p className="font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-jet/50">Contact</p>
-          <dl className="mt-5 space-y-4 text-[15px]">
-            {[
-              ['Email', profile.email],
-              ['Phone', profile.phone],
-              ['Based in', 'Haldwani, India'],
-              ['Local time', time],
-              ...socials.map((s) => [s.label, `@${s.handle}`]),
-            ].map(([k, v]) => (
-              <div key={k} className="flex items-baseline justify-between gap-4 border-b border-jet/10 pb-2">
-                <dt className="font-mono text-[10px] uppercase tracking-[0.14em] text-jet/50">{k}</dt>
-                <dd className="truncate font-semibold">{v}</dd>
-              </div>
-            ))}
-          </dl>
-          <p className="mt-auto font-mono text-[10px] uppercase tracking-[0.14em] text-jet/40">Tap to flip back</p>
-        </div>
+        Send via Gmail
+        <span className="flex h-10 w-10 items-center justify-center rounded-full bg-jet text-chartreuse transition-transform duration-300 group-hover:rotate-45">↗</span>
       </button>
-      <p className="mt-4 font-mono text-[10px] uppercase tracking-[0.16em] text-ink/35">Click the badge to flip it</p>
-    </div>
+      <p className="relative mt-3 text-center font-mono text-[10px] uppercase tracking-[0.14em] text-ink/35">Opens a ready-to-send Gmail draft</p>
+    </form>
   )
 }
 
@@ -373,8 +361,8 @@ export default function Connect() {
                 <Socials />
               </div>
             </div>
-            <div data-lc-reveal className="flex justify-center md:self-start">
-              <Badge time={time} />
+            <div data-lc-reveal className="flex justify-center md:justify-end">
+              <ContactForm time={time} />
             </div>
           </div>
 

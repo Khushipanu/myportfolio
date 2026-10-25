@@ -271,7 +271,3 @@ html.lenis body {
 .work-lines { animation: work-lines 18s ease-in-out infinite; }
 @media (prefers-reduced-motion: reduce) { .work-lines { animation: none; } }
 
-/* Contact ID badge: a gentle sway from the lanyard. */
-@keyframes badge-sway { 0%, 100% { transform: rotate(-1.6deg); } 50% { transform: rotate(1.6deg); } }
-.badge-sway { transform-origin: 50% 0; animation: badge-sway 5s ease-in-out infinite; }
-@media (prefers-reduced-motion: reduce) { .badge-sway { animation: none; } }
