@@ -76,7 +76,7 @@ export default function Statement() {
         {tiles.map((t, i) => (
           <div key={i} data-tile className={`absolute top-0 z-0 hidden md:block ${t.className}`} style={{ transform: 'translateY(110vh)' }}>
             {t.kind === 'art' ? (
-              <Art variant={t.variant} className="aspect-[4/3] w-full rounded-[10px] text-[0.8vw] shadow-[0_40px_80px_-30px_rgba(26,25,23,0.45)] ring-1 ring-ink/10" />
+              <Art variant={t.variant} className="aspect-[4/3] w-full rounded-[10px] text-[0.8vw] shadow-[0_40px_80px_-30px_rgba(36,27,53,0.45)] ring-1 ring-ink/10" />
             ) : (
               <Tag label={t.label} />
             )}

@@ -20,7 +20,7 @@ const FAN = [
 ]
 // Which slot each role takes: the current role stands in the middle.
 const SLOT = [1, 0, 2]
-const EDGE = ['rgba(198,181,232,0.45)', 'rgba(198,181,232,0.9)', 'rgba(180,120,255,0.55)']
+const EDGE = ['rgba(167,139,250,0.45)', 'rgba(167,139,250,0.9)', 'rgba(113,81,181,0.55)']
 
 function ExperienceShowcase() {
   const root = useRef(null)
@@ -77,7 +77,7 @@ function ExperienceShowcase() {
             <a
               href={resume.href}
               download={resume.file}
-              className="group flex items-center gap-3 rounded-full bg-accent px-8 py-4 text-[16px] font-semibold text-jet shadow-[0_0_40px_-8px_rgba(198,181,232,0.65)] transition-[translate] duration-300 hover:-translate-y-0.5"
+              className="group flex items-center gap-3 rounded-full bg-accent px-8 py-4 text-[16px] font-semibold text-jet shadow-[0_0_40px_-8px_rgba(167,139,250,0.65)] transition-[translate] duration-300 hover:-translate-y-0.5"
             >
               Download resume
               <span aria-hidden="true" className="text-[18px] transition-transform duration-300 group-hover:translate-x-1">→</span>
@@ -118,11 +118,11 @@ function ExperienceShowcase() {
                   <article
                     className="relative overflow-hidden rounded-[28px] border-[1.5px] p-6 transition-[border-color,box-shadow] duration-500"
                     style={{
-                      borderColor: on ? 'rgba(198,181,232,0.95)' : EDGE[SLOT[i]].replace(/[\d.]+\)$/, '0.35)'),
-                      background: 'linear-gradient(165deg, #FFFCF7 0%, #FFFCF7 45%, #F8F4EE 100%)',
+                      borderColor: on ? 'rgba(167,139,250,0.95)' : EDGE[SLOT[i]].replace(/[\d.]+\)$/, '0.35)'),
+                      background: 'linear-gradient(165deg, #FBF8FF 0%, #FBF8FF 45%, #F5F0FF 100%)',
                       boxShadow: on
-                        ? '0 0 0 1px rgba(198,181,232,0.35), 0 0 70px -10px rgba(198,181,232,0.7), 0 60px 90px -40px rgba(41,39,34,0.16), inset 0 1px 0 rgba(255,255,255,0.1)'
-                        : `0 0 40px -18px ${EDGE[SLOT[i]]}, 0 50px 80px -40px rgba(41,39,34,0.16), inset 0 1px 0 rgba(255,255,255,0.06)`,
+                        ? '0 0 0 1px rgba(167,139,250,0.35), 0 0 70px -10px rgba(167,139,250,0.7), 0 60px 90px -40px rgba(36,27,53,0.16), inset 0 1px 0 rgba(255,255,255,0.1)'
+                        : `0 0 40px -18px ${EDGE[SLOT[i]]}, 0 50px 80px -40px rgba(36,27,53,0.16), inset 0 1px 0 rgba(255,255,255,0.06)`,
                     }}
                   >
                     <div className="flex items-start justify-between gap-4">
@@ -133,12 +133,12 @@ function ExperienceShowcase() {
                       <span
                         aria-hidden="true"
                         className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-[1.5px] text-[15px] transition-colors duration-500"
-                        style={{ borderColor: on ? '#C6B5E8' : 'rgba(198,181,232,0.5)', color: '#C6B5E8' }}
+                        style={{ borderColor: on ? '#A78BFA' : 'rgba(167,139,250,0.5)', color: '#A78BFA' }}
                       >
                         ↗
                       </span>
                     </div>
-                    <div className="mt-5 overflow-hidden rounded-[14px] border border-jet/10 shadow-[0_20px_40px_-20px_rgba(41,39,34,0.16)]">
+                    <div className="mt-5 overflow-hidden rounded-[14px] border border-jet/10 shadow-[0_20px_40px_-20px_rgba(36,27,53,0.16)]">
                       <WorkPoster variant={XP_SCREENS[i % XP_SCREENS.length]} className="aspect-[16/10] w-full text-[calc(min(58vw,22rem)/22)] md:text-[calc(min(30vw,23rem)/22)]" />
                     </div>
                     <ul className="mt-5 flex flex-wrap gap-2">
@@ -154,21 +154,21 @@ function ExperienceShowcase() {
             )
           })}
           {/* Coloured light pooling under the cards. */}
-          <span aria-hidden="true" className="pointer-events-none absolute bottom-[3%] left-1/2 h-20 w-[55%] -translate-x-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(198,181,232,0.4),transparent)] blur-2xl" />
-          <span aria-hidden="true" className="pointer-events-none absolute bottom-[6%] left-[8%] h-14 w-[30%] rounded-full bg-[radial-gradient(closest-side,rgba(110,110,255,0.3),transparent)] blur-2xl" />
-          <span aria-hidden="true" className="pointer-events-none absolute bottom-[6%] right-[4%] h-14 w-[30%] rounded-full bg-[radial-gradient(closest-side,rgba(180,90,255,0.3),transparent)] blur-2xl" />
+          <span aria-hidden="true" className="pointer-events-none absolute bottom-[3%] left-1/2 h-20 w-[55%] -translate-x-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(167,139,250,0.4),transparent)] blur-2xl" />
+          <span aria-hidden="true" className="pointer-events-none absolute bottom-[6%] left-[8%] h-14 w-[30%] rounded-full bg-[radial-gradient(closest-side,rgba(167,139,250,0.3),transparent)] blur-2xl" />
+          <span aria-hidden="true" className="pointer-events-none absolute bottom-[6%] right-[4%] h-14 w-[30%] rounded-full bg-[radial-gradient(closest-side,rgba(113,81,181,0.3),transparent)] blur-2xl" />
         </div>
       </div>
 
       {/* Bottom row: the current role on the left, arrows and progress on the right. */}
       <div className="mt-8 flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
         <p data-xp-in className="flex items-center gap-3 text-[11px] font-medium uppercase tracking-[0.28em] text-ink/45">
-          <span className="h-2 w-2 rounded-full bg-accent shadow-[0_0_10px_#C6B5E8]" />
+          <span className="h-2 w-2 rounded-full bg-accent shadow-[0_0_10px_#A78BFA]" />
           Currently · {experience[0].company}
         </p>
         <div className="flex items-center gap-4">
           <button type="button" onClick={() => step(-1)} aria-label="Previous role" className="flex h-12 w-12 items-center justify-center rounded-full border border-jet/25 text-[18px] text-ink transition-colors hover:border-jet/60">←</button>
-          <button type="button" onClick={() => step(1)} aria-label="Next role" className="flex h-12 w-12 items-center justify-center rounded-full bg-accent text-[18px] text-jet shadow-[0_0_24px_-4px_rgba(198,181,232,0.8)] transition-[translate] hover:-translate-y-0.5">→</button>
+          <button type="button" onClick={() => step(1)} aria-label="Next role" className="flex h-12 w-12 items-center justify-center rounded-full bg-accent text-[18px] text-jet shadow-[0_0_24px_-4px_rgba(167,139,250,0.8)] transition-[translate] hover:-translate-y-0.5">→</button>
           <div className="ml-4 w-40">
             <p className="text-[15px] text-ink"><span className="font-semibold">{n(focus)}</span> <span className="text-ink/40">/ {n(count - 1)}</span></p>
             <div className="mt-2.5 h-[3px] w-full rounded-full bg-white/10">
@@ -218,7 +218,7 @@ function Note({ n, className = '' }) {
       data-note
       onPointerDown={onDown}
       style={{ background: n.bg, rotate: `${n.rot}deg` }}
-      className={`relative w-[15.5rem] cursor-grab touch-none select-none rounded-[6px] px-5 pb-4 pt-6 text-coal shadow-[0_18px_40px_-14px_rgba(26,25,23,0.35)] active:cursor-grabbing ${className}`}
+      className={`relative w-[15.5rem] cursor-grab touch-none select-none rounded-[6px] px-5 pb-4 pt-6 text-coal shadow-[0_18px_40px_-14px_rgba(36,27,53,0.35)] active:cursor-grabbing ${className}`}
     >
       <span aria-hidden="true" className="absolute -top-2.5 left-1/2 h-5 w-20 -translate-x-1/2 rotate-[-2deg] bg-white/35 backdrop-blur-[1px]" />
       <p className="font-serif text-[21px] italic leading-[1.2]">{n.text}</p>
@@ -312,14 +312,14 @@ export default function About() {
       </div>
 
       {/* Experience sits on jet black lit by soft chartreuse and hot pink light. */}
-      <div id="experience" className="relative -mx-5 -mb-24 mt-24 scroll-mt-24 overflow-clip bg-[linear-gradient(180deg,#F8F4EE_0%,#F8F4EE_60%,#F8F4EE_100%)] px-5 py-16 text-ink md:-mx-10 md:-mb-40 md:mt-36 md:px-10 md:py-14 lg:px-16">
+      <div id="experience" className="relative -mx-5 -mb-24 mt-24 scroll-mt-24 overflow-clip bg-[linear-gradient(180deg,#F5F0FF_0%,#F5F0FF_60%,#F5F0FF_100%)] px-5 py-16 text-ink md:-mx-10 md:-mb-40 md:mt-36 md:px-10 md:py-14 lg:px-16">
         {/* Jet black with chartreuse light at the edges and thin glowing curves. */}
         <div aria-hidden="true" className="pointer-events-none absolute inset-0">
-          <div className="absolute -left-[15%] top-[10%] h-[80vh] w-[40vw] rounded-full bg-[radial-gradient(closest-side,rgba(198,181,232,0.16),transparent)] blur-3xl" />
-          <div className="absolute -right-[15%] top-[20%] h-[80vh] w-[40vw] rounded-full bg-[radial-gradient(closest-side,rgba(198,181,232,0.14),transparent)] blur-3xl" />
+          <div className="absolute -left-[15%] top-[10%] h-[80vh] w-[40vw] rounded-full bg-[radial-gradient(closest-side,rgba(167,139,250,0.16),transparent)] blur-3xl" />
+          <div className="absolute -right-[15%] top-[20%] h-[80vh] w-[40vw] rounded-full bg-[radial-gradient(closest-side,rgba(167,139,250,0.14),transparent)] blur-3xl" />
           <svg viewBox="0 0 1440 800" preserveAspectRatio="none" className="absolute inset-0 h-full w-full">
-            <path d="M-20 640 C 260 520, 420 260, 640 300 S 1040 120, 1460 60" fill="none" stroke="rgba(198,181,232,0.22)" strokeWidth="1.2" />
-            <path d="M-20 760 C 340 700, 760 560, 1100 620 S 1380 520, 1460 470" fill="none" stroke="rgba(198,181,232,0.12)" strokeWidth="1" />
+            <path d="M-20 640 C 260 520, 420 260, 640 300 S 1040 120, 1460 60" fill="none" stroke="rgba(167,139,250,0.22)" strokeWidth="1.2" />
+            <path d="M-20 760 C 340 700, 760 560, 1100 620 S 1380 520, 1460 470" fill="none" stroke="rgba(167,139,250,0.12)" strokeWidth="1" />
           </svg>
         </div>
         <ExperienceShowcase />

@@ -76,9 +76,9 @@ function ContactForm({ time }) {
   return (
     <form
       onSubmit={send}
-      className="relative w-full max-w-[34rem] overflow-hidden rounded-[24px] border border-ink/10 bg-[#FFFCF7]/90 p-6 shadow-[0_50px_120px_-50px_rgba(198,181,232,0.25)] backdrop-blur md:p-8"
+      className="relative w-full max-w-[34rem] overflow-hidden rounded-[24px] border border-ink/10 bg-[#FBF8FF]/90 p-6 shadow-[0_50px_120px_-50px_rgba(167,139,250,0.25)] backdrop-blur md:p-8"
     >
-      <span aria-hidden="true" className="pointer-events-none absolute -right-20 -top-24 h-64 w-64 rounded-full bg-[radial-gradient(closest-side,rgba(226,160,140,0.22),transparent)] blur-2xl" />
+      <span aria-hidden="true" className="pointer-events-none absolute -right-20 -top-24 h-64 w-64 rounded-full bg-[radial-gradient(closest-side,rgba(113,81,181,0.22),transparent)] blur-2xl" />
       <div className="relative flex items-center justify-between gap-4">
         <p className="text-[22px] font-semibold tracking-[-0.02em]">Send a message</p>
         <span className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.14em] text-ink/45">
@@ -129,7 +129,7 @@ function ContactForm({ time }) {
 
       <button
         type="submit"
-        className="group relative mt-7 flex w-full items-center justify-between rounded-full bg-chartreuse py-2 pl-6 pr-2 font-mono text-[12px] font-semibold uppercase tracking-[0.14em] text-jet shadow-[0_0_40px_-10px_rgba(198,181,232,0.7)] transition-[translate] duration-200 hover:-translate-y-0.5"
+        className="group relative mt-7 flex w-full items-center justify-between rounded-full bg-chartreuse py-2 pl-6 pr-2 font-mono text-[12px] font-semibold uppercase tracking-[0.14em] text-jet shadow-[0_0_40px_-10px_rgba(167,139,250,0.7)] transition-[translate] duration-200 hover:-translate-y-0.5"
       >
         Send via Gmail
         <span className="flex h-10 w-10 items-center justify-center rounded-full bg-jet text-accent-deep transition-transform duration-300 group-hover:rotate-45">↗</span>
@@ -231,7 +231,7 @@ export default function Connect() {
             const glyph = flipped ? GLYPHS[(tick + i * 7) % GLYPHS.length] : original[i]
             if (c.textContent !== glyph) c.textContent = glyph
             const o = (noise * 6 * (0.4 + jit[(i + tick) % chars.length].k)).toFixed(1)
-            c.style.textShadow = noise > 0.02 ? `${o}px 0 rgba(226,160,140,0.85), ${-o}px 0 rgba(198,181,232,0.85)` : ''
+            c.style.textShadow = noise > 0.02 ? `${o}px 0 rgba(113,81,181,0.85), ${-o}px 0 rgba(167,139,250,0.85)` : ''
             const slice = noise > 0.3 && (tick + i) % 5 === 0 ? jit[i].rot * 18 * noise : 0
             c.style.transform = `translate3d(${slice.toFixed(1)}px, 0, 0)`
           })
@@ -312,9 +312,9 @@ export default function Connect() {
 
         {/* Glitch layers: scanlines, the CRT's last dot, and the grid the contact screen boots onto. */}
         <div aria-hidden="true" className="pointer-events-none absolute inset-0 hidden md:block">
-          <div data-lc-grid className="absolute inset-0 opacity-0 [background-image:linear-gradient(rgba(198,181,232,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(198,181,232,0.05)_1px,transparent_1px)] [background-size:48px_48px] [mask-image:radial-gradient(ellipse_at_center,black_30%,transparent_80%)]" />
+          <div data-lc-grid className="absolute inset-0 opacity-0 [background-image:linear-gradient(rgba(167,139,250,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(167,139,250,0.05)_1px,transparent_1px)] [background-size:48px_48px] [mask-image:radial-gradient(ellipse_at_center,black_30%,transparent_80%)]" />
           <div data-lc-scan className="absolute inset-0 opacity-0 [background:repeating-linear-gradient(0deg,rgba(255,255,255,0.08)_0px,rgba(255,255,255,0.08)_1px,transparent_1px,transparent_4px)]" />
-          <div data-lc-dot className="absolute left-1/2 top-1/2 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white opacity-0 shadow-[0_0_30px_10px_rgba(198,181,232,0.7)]" />
+          <div data-lc-dot className="absolute left-1/2 top-1/2 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white opacity-0 shadow-[0_0_30px_10px_rgba(167,139,250,0.7)]" />
         </div>
 
         {/* Part 2: the contact screen. */}
@@ -341,7 +341,7 @@ export default function Connect() {
                   href={gmail}
                   target="_blank"
                   rel="noreferrer"
-                  className="group flex items-center gap-3 rounded-full bg-chartreuse py-2 pl-2 pr-6 font-mono text-[12px] font-semibold uppercase tracking-[0.12em] text-jet shadow-[0_0_40px_-8px_rgba(198,181,232,0.6)] transition-[translate] duration-200 hover:-translate-y-0.5"
+                  className="group flex items-center gap-3 rounded-full bg-chartreuse py-2 pl-2 pr-6 font-mono text-[12px] font-semibold uppercase tracking-[0.12em] text-jet shadow-[0_0_40px_-8px_rgba(167,139,250,0.6)] transition-[translate] duration-200 hover:-translate-y-0.5"
                 >
                   <span className="flex h-10 w-10 items-center justify-center rounded-full bg-jet text-accent-deep transition-transform duration-300 group-hover:rotate-45">↗</span>
                   Say hello on Gmail

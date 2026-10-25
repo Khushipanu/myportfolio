@@ -94,7 +94,7 @@ export default function Hero({ ready }) {
 
   return (
     <section id="top" ref={root} className="relative isolate flex min-h-[100svh] flex-col overflow-hidden bg-paper px-5 pb-6 pt-28 text-ink md:px-10 md:pb-8 md:pt-32">
-      <div aria-hidden="true" className="pointer-events-none absolute -right-[10%] top-[10%] -z-10 h-[60vh] w-[45vw] rounded-full bg-[radial-gradient(closest-side,rgba(226,160,140,0.12),transparent)] blur-2xl" />
+      <div aria-hidden="true" className="pointer-events-none absolute -right-[10%] top-[10%] -z-10 h-[60vh] w-[45vw] rounded-full bg-[radial-gradient(closest-side,rgba(113,81,181,0.12),transparent)] blur-2xl" />
 
       <div className="flex items-center justify-between gap-6">
         <span data-hero-fade className="inline-flex items-center gap-2.5 rounded-full border border-ink/20 bg-paper/70 px-3.5 py-1.5 font-mono text-[11px] uppercase tracking-[0.14em] text-ink/80 backdrop-blur-sm">

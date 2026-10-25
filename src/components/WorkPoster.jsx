@@ -2,14 +2,14 @@
 // in code in the site palette: warm cream with lavender, blush pink, sage and
 // butter yellow, and warm charcoal text. Everything is sized in em, so the
 // parent's font size scales the whole screen.
-const CARD = '#fffcf7'
-const PAGE = '#f8f4ee'
-const TEXT = '#292722'
-const LAV = '#c6b5e8'
-const PINK = '#f0cfc5'
-const SAGE = '#e4e9d9'
-const YELLOW = '#f1dca5'
-const LINE = '#d8d0c6'
+const CARD = '#FBF8FF'
+const PAGE = '#F5F0FF'
+const TEXT = '#241B35'
+const LAV = '#A78BFA'
+const PINK = '#E1D2FA'
+const SAGE = '#F0EAFE'
+const YELLOW = '#CBB6F8'
+const LINE = '#DCCFF5'
 
 function Nav({ name, accent }) {
   return (

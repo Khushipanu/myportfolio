@@ -66,7 +66,7 @@ export default function Nav({ ready }) {
       ref={root}
       className={`fixed inset-x-0 top-0 z-50 flex items-center justify-between px-5 transition-[translate,background-color,padding,box-shadow] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] md:px-10 ${
         hidden && !open ? '-translate-y-full' : ''
-      } ${atTop || open ? 'py-4 md:py-6' : 'bg-paper/80 py-3 shadow-[0_1px_0_rgba(26,25,23,0.08)] backdrop-blur-md md:py-4'}`}
+      } ${atTop || open ? 'py-4 md:py-6' : 'bg-paper/80 py-3 shadow-[0_1px_0_rgba(36,27,53,0.08)] backdrop-blur-md md:py-4'}`}
     >
       <a
         href="#top"
