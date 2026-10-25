@@ -2,13 +2,12 @@ import { useEffect, useRef, useState } from 'react'
 import { gsap, useGSAP, ScrollTrigger, MOTION_OK, prefersReducedMotion } from '../lib/gsap'
 import WorkPoster from './WorkPoster'
 
-// Visuvate-style "works" globe: the five project screens, repeated, sit on a
-// sphere around the "My Works" title, each card curved along the globe (built
-// from thin vertical slices) with its back showing as it turns away. The
-// section is held while scrolling spins and tilts the globe, which also
-// drifts slowly on its own. The card facing front drives the highlight and
-// lights up its skills. Each card is a link: add a project's URL as `href`
-// and its cards open it.
+// Visuvate-style "works" stream: simple project cards flow in from the lower
+// left, swing past the "My Works" title close to the viewer and drift away to
+// the upper right, in two staggered lanes. The section is held while scrolling moves
+// the stream, which also drifts slowly on its own. The card passing the
+// centre drives the highlight and lights up its skills. Each card is a link:
+// add a project's URL as `href` and its cards open it.
 const CARDS = [
   { variant: 'movie', label: 'MovieThrill — home', project: 'MovieThrill', highlight: 'Movie data from The Movie Database (TMDB) API, fetched with Axios.', skills: ['React.js', 'Tailwind CSS', 'JavaScript'], href: null },
   { variant: 'lms', label: 'LMS — courses', project: 'Learning Management System', highlight: 'JWT authentication with student and instructor roles (RBAC).', skills: ['Node.js', 'Express.js', 'MongoDB'], href: null },
@@ -17,71 +16,57 @@ const CARDS = [
   { variant: 'lmsPlayer', label: 'LMS — lesson', project: 'Learning Management System', highlight: 'Course purchasing and streaming on a full MERN stack.', skills: ['MongoDB', 'Express.js', 'React.js', 'Node.js'], href: null },
 ]
 const SKILLS = ['React.js', 'Node.js', 'Express.js', 'MongoDB', 'Redux Toolkit', 'Tailwind CSS', 'JavaScript']
-const SLICES = 5
-// Five bands of cards wrap the globe, as in the reference.
-const ROWS = [
-  { lat: 58, n: 4, off: 0.25 },
-  { lat: 29, n: 6, off: 0.5 },
-  { lat: 0, n: 7, off: 0 },
-  { lat: -29, n: 6, off: 0.5 },
-  { lat: -58, n: 4, off: 0.75 },
-]
-const SPOTS = ROWS.flatMap((r, ri) =>
-  Array.from({ length: r.n }, (_, k) => ({ lat: r.lat, lon: ((k + r.off) / r.n) * 360, v: (ri * 2 + k) % CARDS.length })),
+const LANES = [-0.5, 0.5]
+const PER_LANE = 4
+// Every card's lane and starting place along the stream; the lanes are
+// staggered and each cycles through all five projects.
+const FLOW = LANES.flatMap((lane, li) =>
+  Array.from({ length: PER_LANE }, (_, k) => ({ lane, t0: (k + li / LANES.length) / PER_LANE, v: (k * 2 + li * 3) % CARDS.length })),
 )
 const RAD = Math.PI / 180
 
-function useGlobe(stageRef, globeRef, progressRef, onFront) {
+function useStream(stageRef, flowRef, progressRef, onFront) {
   useEffect(() => {
     const stage = stageRef.current
-    const globe = globeRef.current
-    const cards = [...globe.querySelectorAll('[data-card]')]
-    const slices = cards.map((c) => [...c.querySelectorAll('[data-slice]')])
-    const shades = cards.map((c) => [...c.querySelectorAll('[data-shade]')])
+    const cards = [...flowRef.current.querySelectorAll('[data-card]')]
+    const shades = cards.map((c) => c.querySelector('[data-shade]'))
     const still = prefersReducedMotion()
-    // Each card bends around its own axis through the globe's centre; this
-    // is each slice's angle along that bend.
-    let bend = []
+    const g = { w: 0, h: 0, cw: 0 }
 
     const layout = () => {
-      const w = stage.clientWidth
-      const h = stage.clientHeight
-      const R = w < 768 ? Math.min(w * 0.62, h * 0.4) : Math.min(w * 0.34, h * 0.62)
-      const cw = R * 0.6
-      const ch = cw * 0.7
-      globe.style.setProperty('--cw', `${cw}px`)
-      globe.style.setProperty('--ch', `${ch}px`)
-      globe.style.setProperty('--sw', `${cw / SLICES + 1.2}px`)
-      const d = (cw / SLICES) / R / RAD
-      bend = Array.from({ length: SLICES }, (_, j) => (j - (SLICES - 1) / 2) * d)
-      SPOTS.forEach((p, i) => {
-        slices[i].forEach((el, j) => {
-          el.style.transform = `rotateY(${p.lon}deg) rotateX(${p.lat}deg) rotateY(${bend[j].toFixed(3)}deg) translateZ(${R.toFixed(1)}px) translate(-50%, -50%)`
-        })
-      })
+      g.w = stage.clientWidth
+      g.h = stage.clientHeight
+      g.cw = g.w < 768 ? g.w * 0.6 : Math.min(g.w * 0.22, g.h * 0.4)
+      flowRef.current.style.setProperty('--cw', `${g.cw}px`)
+      flowRef.current.style.setProperty('--ch', `${g.cw * 0.7}px`)
       draw()
     }
 
-    const s = { rot: 0, tilt: 12, drift: 0 }
+    const s = { flow: 0, drift: 0 }
     let front = -1
     const draw = () => {
-      globe.style.transform = `rotateZ(-14deg) rotateX(${s.tilt.toFixed(3)}deg) rotateY(${(s.rot + s.drift).toFixed(3)}deg)`
-      const st = Math.sin(s.tilt * RAD)
-      const ct = Math.cos(s.tilt * RAD)
+      const { w, h } = g
+      const mobile = w < 768
       let best = -1
-      let bestZ = -2
-      SPOTS.forEach((p, i) => {
-        const sl = Math.sin(p.lat * RAD)
-        const cl = Math.cos(p.lat * RAD)
-        const l = (p.lon + s.rot + s.drift) * RAD
-        for (let j = 0; j < SLICES; j++) {
-          // How squarely this slice faces the viewer, from -1 (away) to 1.
-          const sd = Math.sin(bend[j] * RAD)
-          const cd = Math.cos(bend[j] * RAD)
-          const z = -cd * sl * st + (-sd * Math.sin(l) + cd * cl * Math.cos(l)) * ct
-          shades[i][j].style.opacity = (z < 0 ? 0.55 + 0.4 * Math.min(1, -z * 2) : (1 - z) * 0.55).toFixed(3)
-          if (j === 1 && p.lat === 0 && z > bestZ) { bestZ = z; best = p.v }
-        }
+      let bestD = 9
+      FLOW.forEach((c, i) => {
+        const t = (((c.t0 + s.flow + s.drift) % 1) + 1) % 1
+        const u = t * 2 - 1 // -1 lower left … 1 upper right
+        // Along a gentle diagonal arc that bulges towards the viewer.
+        const along = mobile ? { x: u * w * 0.55, y: -u * h * 0.55 } : { x: u * w * 0.72, y: -u * h * 0.58 }
+        const perp = c.lane * (mobile ? g.cw * 1.1 : g.cw * 1.2)
+        const x = along.x + perp * 0.55
+        const y = along.y + perp * 0.75 + Math.sin(u * Math.PI) * -h * 0.04
+        const z = Math.cos(u * Math.PI * 0.5) * g.cw * 2 - g.cw * 1.1
+        const ry = -u * 58
+        const rx = u * 14
+        const rz = -u * 8 - 6
+        const fade = Math.min(1, (1 - Math.abs(u)) * 4)
+        cards[i].style.transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, ${z.toFixed(1)}px) rotateY(${ry.toFixed(2)}deg) rotateX(${rx.toFixed(2)}deg) rotateZ(${rz.toFixed(2)}deg)`
+        cards[i].style.opacity = fade.toFixed(3)
+        cards[i].style.zIndex = String(Math.round(z + 2000))
+        shades[i].style.opacity = (Math.min(0.7, Math.abs(u) ** 1.5 * 0.7)).toFixed(3)
+        if (Math.abs(u) < bestD) { bestD = Math.abs(u); best = c.v }
       })
       if (best !== front) {
         front = best
@@ -99,11 +84,9 @@ function useGlobe(stageRef, globeRef, progressRef, onFront) {
       const dt = last ? Math.min(64, now - last) : 16.7
       last = now
       if (!visible) return
-      const p = progressRef.current
       const k = still ? 1 : 1 - Math.pow(1 - 0.08, dt / 16.7)
-      s.rot += (p * 300 - s.rot) * k
-      s.tilt += (12 - p * 26 - s.tilt) * k
-      if (!still) s.drift += dt * 0.005
+      s.flow += (progressRef.current * 1.4 - s.flow) * k
+      if (!still) s.drift += dt * 0.000018
       draw()
     }
 
@@ -116,30 +99,23 @@ function useGlobe(stageRef, globeRef, progressRef, onFront) {
       ro.disconnect()
       io.disconnect()
     }
-  }, [stageRef, globeRef, progressRef, onFront])
+  }, [stageRef, flowRef, progressRef, onFront])
 }
 
 function Card({ c }) {
   const Tag = c.href ? 'a' : 'div'
   const link = c.href ? { href: c.href, target: '_blank', rel: 'noreferrer' } : { title: `${c.project} — link coming soon` }
   return (
-    <Tag data-card data-cursor={c.href ? 'Open' : 'Soon'} aria-label={c.label} {...link} className="absolute left-0 top-0 block cursor-pointer [transform-style:preserve-3d]">
-      {Array.from({ length: SLICES }).map((_, j) => (
-        <div
-          key={j}
-          data-slice
-          className="absolute left-0 top-0 overflow-hidden [backface-visibility:visible]"
-          style={{ width: 'var(--sw)', height: 'var(--ch)' }}
-        >
-          <div className="absolute top-0 h-full" style={{ width: 'var(--cw)', left: `calc(var(--cw) / ${SLICES} * ${-j})` }}>
-            <WorkPoster
-              variant={c.variant}
-              className={`h-full w-full border-y border-white/30 text-[calc(var(--cw)/19)] ${j === 0 ? 'rounded-l-[12px] border-l' : ''} ${j === SLICES - 1 ? 'rounded-r-[12px] border-r' : ''}`}
-            />
-          </div>
-          <div data-shade className="pointer-events-none absolute inset-0 bg-black" />
-        </div>
-      ))}
+    <Tag
+      data-card
+      data-cursor={c.href ? 'Open' : 'Soon'}
+      aria-label={c.label}
+      {...link}
+      className="absolute left-0 top-0 block cursor-pointer will-change-transform [backface-visibility:visible]"
+      style={{ width: 'var(--cw)', height: 'var(--ch)', marginLeft: 'calc(var(--cw) / -2)', marginTop: 'calc(var(--ch) / -2)' }}
+    >
+      <WorkPoster variant={c.variant} className="h-full w-full rounded-[14px] border border-white/30 text-[calc(var(--cw)/19)] shadow-[0_30px_60px_-20px_rgba(0,0,0,0.8)]" />
+      <span data-shade className="pointer-events-none absolute inset-0 rounded-[14px] bg-black" />
     </Tag>
   )
 }
@@ -147,10 +123,10 @@ function Card({ c }) {
 export default function Work() {
   const root = useRef(null)
   const stage = useRef(null)
-  const globe = useRef(null)
+  const flow = useRef(null)
   const [front, setFront] = useState(0)
   const progress = useRef(0)
-  useGlobe(stage, globe, progress, setFront)
+  useStream(stage, flow, progress, setFront)
   const active = CARDS[front]
 
   useGSAP(
@@ -183,7 +159,7 @@ export default function Work() {
         ref={stage}
         className="relative h-[100svh] select-none overflow-hidden"
       >
-        {/* A web of glowing, electric lines behind the globe, drifting slowly. */}
+        {/* A web of glowing, electric lines behind the stream, drifting slowly. */}
         <svg aria-hidden="true" className="work-lines pointer-events-none absolute inset-[-6%] h-[112%] w-[112%]" viewBox="0 0 1440 900" preserveAspectRatio="none">
           <defs>
             <filter id="line-glow" x="-10%" y="-10%" width="120%" height="120%"><feGaussianBlur stdDeviation="7" /></filter>
@@ -199,8 +175,8 @@ export default function Work() {
             ['M-40 60 C 240 300, 460 120, 700 360 S 1000 820, 1300 960', '#ff2da8'],
           ].map(([d, c], i) => (
             <g key={i}>
-              <path d={d} fill="none" stroke={c} strokeOpacity="0.35" strokeWidth="14" filter="url(#line-glow)" />
-              <path d={d} fill="none" stroke={c} strokeOpacity="0.85" strokeWidth="1.4" />
+              <path d={d} fill="none" stroke={c} strokeOpacity="0.22" strokeWidth="14" filter="url(#line-glow)" />
+              <path d={d} fill="none" stroke={c} strokeOpacity="0.55" strokeWidth="1.3" />
             </g>
           ))}
         </svg>
@@ -210,12 +186,12 @@ export default function Work() {
 
         <div className="absolute inset-0 z-0 [perspective:1600px] [perspective-origin:50%_50%]">
           <div className="absolute left-1/2 top-1/2 h-0 w-0 [transform-style:preserve-3d]">
-            {/* The title sits at the globe's centre: back cards pass behind it, front cards over it. */}
+            {/* The title sits mid-stream: far cards pass behind it, near cards over it. */}
             <h2 id="work-title" className="pointer-events-none absolute left-0 top-0 [transform:translate(-50%,-50%)]">
               <span data-work-title className="block whitespace-nowrap font-serif text-[16vw] leading-none text-ink md:text-[11vw]">My Works</span>
             </h2>
-            <div ref={globe} className="absolute left-0 top-0 h-0 w-0 [transform-style:preserve-3d]">
-              {SPOTS.map((p, i) => (
+            <div ref={flow} className="absolute left-0 top-0 h-0 w-0 [transform-style:preserve-3d]">
+              {FLOW.map((p, i) => (
                 <Card key={i} c={CARDS[p.v]} />
               ))}
             </div>
