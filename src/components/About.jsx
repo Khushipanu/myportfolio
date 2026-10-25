@@ -41,14 +41,23 @@ function ExperienceShowcase() {
           stagger: 0.08,
           scrollTrigger: { trigger: root.current, start: 'top 70%' },
         })
-        gsap.from('[data-xp-card]', {
-          y: 140,
-          autoAlpha: 0,
-          duration: 1.3,
-          ease: 'expo.out',
-          stagger: 0.1,
-          scrollTrigger: { trigger: root.current, start: 'top 65%' },
-        })
+        // The cards drop in from above one after another, tumbling in 3D
+        // and settling into the fan with a soft bounce.
+        gsap.fromTo(
+          '[data-xp-card]',
+          { y: () => -window.innerHeight * 0.8, rotateX: 70, rotateZ: (i) => [-14, 6, 16][i % 3], z: -300, autoAlpha: 0 },
+          {
+            y: 0,
+            rotateX: 0,
+            rotateZ: 0,
+            z: 0,
+            autoAlpha: 1,
+            duration: 1.4,
+            ease: 'back.out(1.1)',
+            stagger: 0.18,
+            scrollTrigger: { trigger: root.current, start: 'top 55%', toggleActions: 'play none none reverse' },
+          },
+        )
       })
       return () => mm.revert()
     },
