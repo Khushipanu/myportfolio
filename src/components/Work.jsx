@@ -33,7 +33,7 @@ function useWave(stageRef, trackRef, progressRef, onFront) {
       g.w = stage.clientWidth
       g.h = stage.clientHeight
       const mobile = g.w < 768
-      g.cw = mobile ? g.w * 0.66 : Math.min(g.w * 0.27, g.h * 0.52)
+      g.cw = mobile ? g.w * 0.6 : Math.min(g.w * 0.25, g.h * 0.46)
       g.ch = g.cw * 0.7
       // Each card bends round a vertical cylinder, like a sheet of paper.
       const r = g.cw * 1.15
@@ -57,8 +57,9 @@ function useWave(stageRef, trackRef, progressRef, onFront) {
     const draw = () => {
       const { w, h, cw } = g
       const mobile = w < 768
-      const amp = mobile ? w * 0.18 : w * 0.22
-      const gap = mobile ? h * 0.32 : h * 0.36
+      // Cards sit close together, so the ones above and below stay in view.
+      const amp = mobile ? w * 0.16 : w * 0.19
+      const gap = mobile ? h * 0.25 : h * 0.27
       let best = 0
       let bestD = 9
       cards.forEach((c, i) => {
@@ -162,7 +163,7 @@ export default function Work() {
         ScrollTrigger.create({
           trigger: root.current,
           start: 'top top',
-          end: () => `+=${CARDS.length * 70}%`,
+          end: () => `+=${CARDS.length * 38}%`,
           pin: stage.current,
           onUpdate: (self) => { progress.current = self.progress },
         })
