@@ -5,13 +5,15 @@ import { skillGroups } from '../data/content'
 // Toolkit: each skill group is a card, standing in a fanned row. Hovering a
 // card (or its entry in the list below) lifts it to show everything in it.
 // On smaller screens the cards become a swipeable row.
+// Light theme: soft lime and pink tints, paper and sand, with one ink card
+// and one hot pink card for contrast.
 const palette = [
-  { bg: '#d4ff3f', ink: '#0b0b0b' },
-  { bg: '#ff2da8', ink: '#0b0b0b' },
-  { bg: '#f4f1ea', ink: '#0b0b0b' },
-  { bg: '#1c1c1c', ink: '#f4f1ea', ring: true },
-  { bg: '#d4ff3f', ink: '#0b0b0b' },
-  { bg: '#ff2da8', ink: '#0b0b0b' },
+  { bg: '#e9f8b8', ink: '#161616' },
+  { bg: '#ffd3ea', ink: '#161616' },
+  { bg: '#fdfcf9', ink: '#161616', ring: true },
+  { bg: '#161616', ink: '#fbfaf7' },
+  { bg: '#e4ddcf', ink: '#161616' },
+  { bg: '#ff2da8', ink: '#161616' },
 ]
 // Each card leans and rises a little differently, like a fanned hand of cards.
 const poses = [
@@ -38,12 +40,12 @@ function BoxCard({ g, i, active, setActive }) {
     >
       <div
         data-box-card
-        className={`h-full w-full origin-bottom rounded-[18px] p-5 shadow-[0_24px_50px_-20px_rgba(0,0,0,0.8)] transition-[transform,filter] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] xl:p-6 ${c.ring ? 'ring-1 ring-ink/15' : ''}`}
+        className={`h-full w-full origin-bottom rounded-[18px] p-5 shadow-[0_24px_50px_-24px_rgba(40,30,20,0.35)] transition-[transform,filter] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] xl:p-6 ${c.ring ? 'ring-1 ring-jet/10' : ''}`}
         style={{
-          background: `linear-gradient(165deg, color-mix(in srgb, ${c.bg} 90%, #fff), ${c.bg} 55%, color-mix(in srgb, ${c.bg} 88%, #000))`,
+          background: `linear-gradient(165deg, color-mix(in srgb, ${c.bg} 85%, #fff), ${c.bg} 55%, color-mix(in srgb, ${c.bg} 95%, #000))`,
           color: c.ink,
           transform: `translateY(${up ? -90 : pose.lift}px) rotate(${up ? 0 : pose.rot}deg)`,
-          filter: dim ? 'brightness(0.5)' : 'none',
+          filter: dim ? 'saturate(0.6) opacity(0.55)' : 'none',
         }}
       >
         <div className="flex items-center justify-between">
@@ -97,10 +99,11 @@ export default function SkillMix() {
   )
 
   return (
-    <section ref={root} aria-labelledby="skills-title" className="relative isolate overflow-hidden px-5 py-24 md:px-10 md:py-36">
-      <div aria-hidden="true" className="glow glow-mint -z-10 left-[5%] top-[30%] h-[60vh] w-[45vw]" />
-      <div aria-hidden="true" className="glow glow-deep -z-10 right-[5%] top-[20%] h-[60vh] w-[45vw]" />
-      <p className="relative font-mono text-[11px] uppercase tracking-[0.12em] text-muted">(05) Toolkit</p>
+    <section ref={root} aria-labelledby="skills-title" className="relative isolate overflow-hidden bg-[radial-gradient(ellipse_at_50%_40%,#fbfaf6_0%,#f3f0e8_55%,#e9e4d8_100%)] px-5 py-24 text-jet md:px-10 md:py-36">
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 [background-image:radial-gradient(rgba(20,20,20,0.08)_1px,transparent_1px)] [background-size:24px_24px] [mask-image:radial-gradient(ellipse_at_center,#000_30%,transparent_80%)]" />
+      <div aria-hidden="true" className="pointer-events-none absolute -left-[8%] top-[25%] -z-10 h-[60vh] w-[45vw] rounded-full bg-[radial-gradient(closest-side,rgba(212,255,63,0.3),transparent)] blur-3xl" />
+      <div aria-hidden="true" className="pointer-events-none absolute -right-[8%] top-[10%] -z-10 h-[60vh] w-[45vw] rounded-full bg-[radial-gradient(closest-side,rgba(255,45,168,0.14),transparent)] blur-3xl" />
+      <p className="relative font-mono text-[11px] uppercase tracking-[0.12em] text-jet/45">(05) Toolkit</p>
 
       <div data-tk-head className="relative mx-auto mt-10 max-w-3xl text-center">
         <h2 id="skills-title" className="text-[10vw] font-semibold leading-[1.02] tracking-[-0.04em] md:text-[4.8vw]">
@@ -114,7 +117,7 @@ export default function SkillMix() {
             </svg>
           </span>
         </h2>
-        <p className="mt-5 text-[16px] text-ink/60 md:text-[18px]">
+        <p className="mt-5 text-[16px] text-jet/60 md:text-[18px]">
           Six groups of tools I use every day. <span className="hidden lg:inline">Hover a card to see it all.</span>
         </p>
       </div>
@@ -126,7 +129,7 @@ export default function SkillMix() {
             <BoxCard key={g.label} g={g} i={i} active={active} setActive={setActive} />
           ))}
         </ul>
-        <span aria-hidden="true" className="pointer-events-none absolute inset-x-[8%] bottom-0 h-10 rounded-full bg-black/60 blur-2xl" />
+        <span aria-hidden="true" className="pointer-events-none absolute inset-x-[8%] bottom-0 h-10 rounded-full bg-[#5a4a30]/15 blur-2xl" />
       </div>
 
       {/* The list under the cards: hovering an entry lifts its card. */}
@@ -136,13 +139,13 @@ export default function SkillMix() {
             key={g.label}
             onPointerEnter={() => setActive(i)}
             onPointerLeave={() => setActive(null)}
-            className={`cursor-default border-t pt-4 transition-colors duration-500 ${active === i ? 'border-accent' : 'border-ink/15'}`}
+            className={`cursor-default border-t pt-4 transition-colors duration-500 ${active === i ? 'border-pink' : 'border-jet/15'}`}
           >
             <p className="flex items-baseline gap-2">
-              <span className={`font-mono text-[11px] transition-colors ${active === i ? 'text-accent' : 'text-muted'}`}>{n(i)}</span>
-              <span className={`text-[16px] font-medium transition-colors ${active === i ? 'text-accent' : 'text-ink'}`}>{g.label}</span>
+              <span className={`font-mono text-[11px] transition-colors ${active === i ? 'text-pink' : 'text-jet/40'}`}>{n(i)}</span>
+              <span className={`text-[16px] font-medium transition-colors ${active === i ? 'text-pink' : 'text-jet'}`}>{g.label}</span>
             </p>
-            <p className="mt-1.5 text-[12px] leading-snug text-ink/45">{g.items.slice(0, 3).join(' · ')}{g.items.length > 3 ? ' …' : ''}</p>
+            <p className="mt-1.5 text-[12px] leading-snug text-jet/45">{g.items.slice(0, 3).join(' · ')}{g.items.length > 3 ? ' …' : ''}</p>
           </li>
         ))}
       </ul>
@@ -158,8 +161,8 @@ export default function SkillMix() {
             <div
               key={g.label}
               data-group
-              className="w-[62vw] shrink-0 snap-start rounded-[18px] p-5 sm:w-[38vw]"
-              style={{ background: `linear-gradient(160deg, ${c.bg}, color-mix(in srgb, ${c.bg} 85%, #000))`, color: c.ink }}
+              className="w-[62vw] shrink-0 snap-start rounded-[18px] p-5 shadow-[0_16px_40px_-24px_rgba(40,30,20,0.35)] ring-1 ring-jet/5 sm:w-[38vw]"
+              style={{ background: `linear-gradient(160deg, ${c.bg}, color-mix(in srgb, ${c.bg} 94%, #000))`, color: c.ink }}
             >
               <p className="flex items-center justify-between font-mono text-[10px] uppercase tracking-[0.14em] opacity-70">
                 <span>{n(i)}</span>
