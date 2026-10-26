@@ -167,13 +167,18 @@ export default function Connect() {
   const pin = useRef(null)
   const track = useRef(null)
   const panel = useRef(null)
+  const stage = useRef(null)
   const time = useLocalTime()
 
   useGSAP(
     () => {
       const mm = gsap.matchMedia()
-      // Wide screens: the whole scene plays while the section is held.
-      mm.add(`${MOTION_OK} and (min-width: 768px)`, () => {
+      // The whole scene plays while the section is held. On wide screens the
+      // contact screen then boots up in place; on phones it is too tall for
+      // one screen, so it follows on below once the letters have faded.
+      mm.add({ ok: MOTION_OK, wide: '(min-width: 768px)' }, (ctx) => {
+        if (!ctx.conditions.ok) return
+        const wide = ctx.conditions.wide
         const chars = gsap.utils.toArray('[data-lc-char]', track.current)
         const grid = pin.current.querySelector('[data-lc-grid]')
         const bloom = pin.current.querySelector('[data-lc-bloom]')
@@ -184,18 +189,29 @@ export default function Connect() {
         measure()
 
         // The contact screen sits over the scene and boots up after the switch-off.
-        gsap.set(panel.current, { position: 'absolute', inset: 0, zIndex: 20 })
-        const reveal = gsap.timeline({ paused: true })
-          .from('[data-lc-reveal]', { y: 40, autoAlpha: 0, duration: 0.4, ease: 'power3.out', stagger: 0.08 })
-          
+        let reveal
+        if (wide) {
+          gsap.set(panel.current, { position: 'absolute', inset: 0, zIndex: 20 })
+          reveal = gsap.timeline({ paused: true })
+            .from('[data-lc-reveal]', { y: 40, autoAlpha: 0, duration: 0.4, ease: 'power3.out', stagger: 0.08 })
+        } else {
+          gsap.from('[data-lc-reveal]', {
+            y: 40,
+            autoAlpha: 0,
+            duration: 1,
+            ease: 'expo.out',
+            stagger: 0.1,
+            scrollTrigger: { trigger: panel.current, start: 'top 80%' },
+          })
+        }
 
         const start = () => window.innerWidth * 0.75
         // Ends with "connect →" across the screen, so the glitch plays where it is seen.
         const end = () => window.innerWidth * 0.86 - track.current.scrollWidth
         const slide = () => start() - end()
-        const glitch = () => window.innerHeight * 0.75
-        const boot = () => window.innerHeight * 0.5
-        const total = () => slide() + glitch() * 0.85 + boot()
+        const glitch = () => window.innerHeight * (wide ? 0.75 : 0.6)
+        const boot = () => (wide ? window.innerHeight * 0.5 : 0)
+        const total = () => slide() + glitch() * (wide ? 0.85 : 1) + boot()
 
         const render = (s) => {
           const vw = window.innerWidth
@@ -228,39 +244,30 @@ export default function Connect() {
           bloom.style.opacity = String(Math.sin(u * Math.PI) * 0.9)
           bloom.style.transform = `translate(-50%,-50%) scale(${(0.6 + u * 0.9).toFixed(3)})`
 
-          const r = clamp01((s - D - glitch() * 0.85) / boot())
           grid.style.opacity = String(smooth(clamp01((u - 0.8) / 0.2)))
+          if (!wide) return
+          const r = clamp01((s - D - glitch() * 0.85) / boot())
           reveal.progress(r)
           panel.current.style.pointerEvents = r > 0.6 ? 'auto' : 'none'
         }
         render(0)
         ScrollTrigger.create({
-          trigger: pin.current,
+          trigger: wide ? pin.current : stage.current,
           start: 'top top',
           end: () => `+=${total()}`,
-          pin: true,
+          pin: wide ? true : stage.current,
+          pinSpacing: true,
           scrub: 0.5,
           invalidateOnRefresh: true,
           onRefresh: measure,
           onUpdate: (self) => render(self.progress * total()),
         })
         return () => {
-          reveal.progress(1).kill()
+          reveal?.progress(1).kill()
           panel.current.style.pointerEvents = ''
           track.current.style.transform = ''
           chars.forEach((c) => { c.style.opacity = ''; c.style.filter = ''; c.style.transform = '' })
         }
-      })
-      // Small screens: plain reveals.
-      mm.add(`${MOTION_OK} and (max-width: 767px)`, () => {
-        gsap.from('[data-lc-reveal]', {
-          y: 40,
-          autoAlpha: 0,
-          duration: 1,
-          ease: 'expo.out',
-          stagger: 0.1,
-          scrollTrigger: { trigger: panel.current, start: 'top 75%' },
-        })
       })
       return () => mm.revert()
     },
@@ -269,7 +276,8 @@ export default function Connect() {
 
   return (
     <footer id="contact" ref={root} className="relative bg-paper text-ink">
-      <div ref={pin} className="relative flex min-h-[60svh] flex-col justify-center overflow-hidden md:h-[100svh]">
+      <div ref={pin} className="relative flex flex-col overflow-hidden md:h-[100svh] md:justify-center">
+        <div ref={stage} className="relative flex h-[100svh] items-center overflow-hidden md:absolute md:inset-0">
         <p data-lc-hint className="absolute left-5 top-24 hidden font-mono text-[11px] uppercase tracking-[0.12em] text-ink/50 md:left-10 md:top-28">(05) Contact</p>
 
         {/* Part 1: the giant sentence. */}
@@ -277,9 +285,8 @@ export default function Connect() {
           <span
             ref={track}
             aria-hidden="true"
-            className="block px-5 pb-16 pt-40 text-[19vw] font-black leading-[0.95] tracking-[-0.05em] md:inline-block md:whitespace-nowrap md:px-0 md:py-0 md:text-[17vw] md:will-change-transform"
+            className="inline-block whitespace-nowrap px-5 text-[34vw] motion-reduce:whitespace-normal motion-reduce:text-[19vw] md:px-0 font-black leading-[0.95] tracking-[-0.05em] will-change-transform md:text-[17vw]"
           >
-            {/* Words stay whole when the line wraps on small screens. */}
             {LINE.split(' ').map((word, w, words) => (
               <span key={w} className={`inline-block whitespace-nowrap ${word === '→' ? 'text-accent-deep' : ''}`}>
                 {word.split('').map((c, i) => (
@@ -290,16 +297,17 @@ export default function Connect() {
             ))}
           </span>
         </a>
-        <p data-lc-hint className="absolute bottom-8 left-5 hidden font-mono text-[11px] uppercase tracking-[0.12em] text-ink/50 md:left-10 md:block">Keep scrolling ↓</p>
+        <p data-lc-hint className="absolute bottom-8 left-5 font-mono text-[11px] uppercase tracking-[0.12em] text-ink/50 md:left-10">Keep scrolling ↓</p>
 
         {/* The bloom behind the fading letters, and the grid the contact screen sits on. */}
-        <div aria-hidden="true" className="pointer-events-none absolute inset-0 hidden md:block">
+        <div aria-hidden="true" className="pointer-events-none absolute inset-0">
           <div data-lc-grid className="absolute inset-0 opacity-0 [background-image:linear-gradient(rgba(167,139,250,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(167,139,250,0.05)_1px,transparent_1px)] [background-size:48px_48px] [mask-image:radial-gradient(ellipse_at_center,black_30%,transparent_80%)]" />
           <div data-lc-bloom className="absolute left-1/2 top-1/2 h-[80vmin] w-[80vmin] rounded-full opacity-0 blur-2xl [background:radial-gradient(closest-side,rgba(167,139,250,0.45),rgba(225,210,250,0.35)_50%,transparent)]" />
         </div>
+        </div>
 
         {/* Part 2: the contact screen. */}
-        <div ref={panel} className="relative flex flex-col px-5 pb-5 pt-10 md:px-10 md:pb-5 md:pt-0">
+        <div ref={panel} className="relative flex flex-col px-5 pb-5 pt-4 md:px-10 md:pb-5 md:pt-0">
           <div className="grid min-h-0 flex-1 items-center gap-12 md:grid-cols-[1.25fr_1fr] md:gap-10">
             <div>
               <p data-lc-reveal className="font-mono text-[11px] uppercase tracking-[0.14em] text-ink/45">(05) Contact</p>

@@ -1,4 +1,6 @@
-import { useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
+import { getLenis } from '../hooks/useLenis'
 import { gsap, useGSAP, ScrollTrigger, MOTION_OK } from '../lib/gsap'
 import { about, experience, resume } from '../data/content'
 import WorkPoster from './WorkPoster'
@@ -10,24 +12,136 @@ const XP_SCREENS = ['erp', 'lms', 'lmsPlayer']
 // Experience, after the reference the user shared: heading and a call to
 // action on the left, three role cards fanned in 3D on the right. The cards
 // keep their places — left, front, right — so they're easy to follow. The
-// card in focus (the middle one at first) glows chartreuse; hovering, tapping
-// or using the arrows focuses another, which rises, turns to face the viewer
-// and glows. A counter and progress bar track which role is in focus.
+// card in focus (the middle one at first) glows violet; hovering, tapping or
+// using the arrows focuses another, which rises, turns to face the viewer and
+// glows. A counter and progress bar track which role is in focus. On phones
+// and tablets the fan is tighter and tapping a card opens it full size in a
+// sheet that slides up from the bottom.
 const FAN = [
   { x: '-78%', y: '5%', z: -60, ry: 18, rz: -4, s: 0.82 },
   { x: '0%', y: '-3%', z: 40, ry: 0, rz: 0, s: 1 },
   { x: '78%', y: '9%', z: -60, ry: -18, rz: 5, s: 0.82 },
 ]
+const FAN_SM = [
+  { x: '-52%', y: '6%', z: -60, ry: 22, rz: -6, s: 0.8 },
+  { x: '0%', y: '-2%', z: 40, ry: 0, rz: 0, s: 1 },
+  { x: '52%', y: '10%', z: -60, ry: -22, rz: 6, s: 0.8 },
+]
 // Which slot each role takes: the current role stands in the middle.
 const SLOT = [1, 0, 2]
 const EDGE = ['rgba(167,139,250,0.45)', 'rgba(167,139,250,0.9)', 'rgba(113,81,181,0.55)']
+const WIDE = '(min-width: 1024px)'
+
+function useWide() {
+  const [wide, setWide] = useState(() => typeof window !== 'undefined' && window.matchMedia(WIDE).matches)
+  useEffect(() => {
+    const mq = window.matchMedia(WIDE)
+    const on = () => setWide(mq.matches)
+    mq.addEventListener('change', on)
+    return () => mq.removeEventListener('change', on)
+  }, [])
+  return wide
+}
+
+const pad = (i) => String(i + 1).padStart(2, '0')
+
+// The full role, shown in a sheet on phones and tablets.
+function RoleSheet({ open, onClose, onStep }) {
+  const shown = useRef(0)
+  if (open !== null) shown.current = open
+  const e = experience[shown.current]
+  const i = shown.current
+  useEffect(() => {
+    if (open === null) return
+    const lenis = getLenis()
+    lenis?.stop()
+    const html = document.documentElement
+    html.style.overflow = 'hidden'
+    const key = (ev) => ev.key === 'Escape' && onClose()
+    window.addEventListener('keydown', key)
+    return () => {
+      lenis?.start()
+      html.style.overflow = ''
+      window.removeEventListener('keydown', key)
+    }
+  }, [open, onClose])
+  const isOpen = open !== null
+  return createPortal(
+    <div className={`fixed inset-0 z-[100] lg:hidden ${isOpen ? '' : 'pointer-events-none'}`} aria-hidden={!isOpen}>
+      <button
+        type="button"
+        aria-label="Close"
+        tabIndex={isOpen ? 0 : -1}
+        onClick={onClose}
+        className={`absolute inset-0 bg-ink/40 backdrop-blur-sm transition-opacity duration-500 ${isOpen ? 'opacity-100' : 'opacity-0'}`}
+      />
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-label={`${e.role} at ${e.company}`}
+        data-lenis-prevent
+        className={`absolute inset-x-0 bottom-0 max-h-[88svh] overflow-y-auto overscroll-contain rounded-t-[28px] border-t-[1.5px] border-accent bg-card px-5 pb-8 pt-3 shadow-[0_-30px_80px_-20px_rgba(113,81,181,0.45)] transition-transform duration-[600ms] ease-[cubic-bezier(0.16,1,0.3,1)] sm:inset-x-[8%] sm:px-8 ${isOpen ? 'translate-y-0' : 'translate-y-full'}`}
+      >
+        <span aria-hidden="true" className="mx-auto block h-1.5 w-12 rounded-full bg-ink/15" />
+        <div className="mt-5 flex items-start justify-between gap-4">
+          <div>
+            <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-accent-deep">{pad(i)} · {e.period}</p>
+            <h3 className="mt-1.5 text-[24px] font-semibold leading-tight tracking-[-0.02em] text-ink">{e.role}</h3>
+            <p className="mt-1 font-serif text-[17px] italic text-accent-deep">{e.company}</p>
+          </div>
+          <button
+            type="button"
+            onClick={onClose}
+            tabIndex={isOpen ? 0 : -1}
+            aria-label="Close"
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-[1.5px] border-accent text-[16px] text-accent-deep"
+          >
+            ✕
+          </button>
+        </div>
+        <div className="mt-5 overflow-hidden rounded-[14px] border border-jet/10 shadow-[0_20px_40px_-20px_rgba(36,27,53,0.2)]">
+          <WorkPoster variant={XP_SCREENS[i % XP_SCREENS.length]} className="aspect-[16/10] w-full text-[calc((100vw-2.5rem)/22)] sm:text-[calc((84vw-4rem)/22)]" />
+        </div>
+        <p className="mt-5 text-[16px] leading-relaxed text-ink/80">{e.summary}</p>
+        <ul className="mt-4 space-y-2 text-[15px] leading-snug text-ink/75">
+          {e.points.map((pt) => (
+            <li key={pt} className="flex gap-2.5">
+              <span aria-hidden="true" className="mt-[0.5em] h-1.5 w-1.5 shrink-0 rounded-full bg-accent" />
+              {pt}
+            </li>
+          ))}
+        </ul>
+        <ul className="mt-5 flex flex-wrap gap-2">
+          {e.stack.map((t) => (
+            <li key={t} className="rounded-full border border-jet/12 px-3 py-1 text-[12px] font-medium text-ink/85">{t}</li>
+          ))}
+        </ul>
+        <div className="mt-7 flex items-center justify-between">
+          <button type="button" tabIndex={isOpen ? 0 : -1} onClick={() => onStep(-1)} className="flex items-center gap-2 rounded-full border border-jet/25 px-4 py-2.5 text-[14px] text-ink">← Previous</button>
+          <span className="font-mono text-[12px] text-ink/50">{pad(i)} / {pad(experience.length - 1)}</span>
+          <button type="button" tabIndex={isOpen ? 0 : -1} onClick={() => onStep(1)} className="flex items-center gap-2 rounded-full bg-accent px-4 py-2.5 text-[14px] font-semibold text-jet">Next →</button>
+        </div>
+      </div>
+    </div>,
+    document.body,
+  )
+}
 
 function ExperienceShowcase() {
   const root = useRef(null)
   const [focus, setFocus] = useState(0)
+  const [open, setOpen] = useState(null)
+  const wide = useWide()
   const count = experience.length
   const step = (d) => setFocus((a) => (a + d + count) % count)
-  const n = (i) => String(i + 1).padStart(2, '0')
+  const close = useCallback(() => setOpen(null), [])
+  const sheetStep = (d) => {
+    const next = (open + d + count) % count
+    setOpen(next)
+    setFocus(next)
+  }
+  const n = pad
+  const fan = wide ? FAN : FAN_SM
 
   useGSAP(
     () => {
@@ -55,7 +169,7 @@ function ExperienceShowcase() {
             duration: 1.4,
             ease: 'back.out(1.1)',
             stagger: 0.18,
-            scrollTrigger: { trigger: root.current, start: 'top 55%', toggleActions: 'play none none reverse' },
+            scrollTrigger: { trigger: '[data-xp-fan]', start: 'top 75%', toggleActions: 'play none none reverse' },
           },
         )
       })
@@ -66,7 +180,7 @@ function ExperienceShowcase() {
 
   return (
     <div ref={root} className="relative flex min-h-[calc(100svh-7rem)] flex-col justify-center">
-      <div className="grid items-center gap-16 lg:grid-cols-[minmax(0,0.75fr)_minmax(0,1.25fr)] lg:gap-4">
+      <div className="grid items-center gap-6 lg:grid-cols-[minmax(0,0.75fr)_minmax(0,1.25fr)] lg:gap-4">
         {/* Left: heading, text and call to action. */}
         <div className="relative z-10">
           <p data-xp-in className="flex items-center gap-5 text-[12px] font-medium uppercase tracking-[0.35em] text-ink/80">
@@ -99,9 +213,9 @@ function ExperienceShowcase() {
         </div>
 
         {/* Right: three cards fanned in 3D, each staying in its place. */}
-        <div className="relative hidden h-[40rem] [perspective:1800px] lg:block">
+        <div data-xp-fan className="relative h-[27rem] [perspective:1400px] sm:h-[34rem] lg:h-[40rem] lg:[perspective:1800px]">
           {experience.map((e, i) => {
-            const pose = FAN[SLOT[i]]
+            const pose = fan[SLOT[i]]
             const on = focus === i
             return (
               <button
@@ -109,10 +223,13 @@ function ExperienceShowcase() {
                 data-xp-card
                 type="button"
                 onPointerEnter={(ev) => ev.pointerType === 'mouse' && setFocus(i)}
-                onClick={() => setFocus(i)}
+                onClick={() => {
+                  setFocus(i)
+                  if (!wide) setOpen(i)
+                }}
                 aria-pressed={on}
-                aria-label={`${e.role} at ${e.company}`}
-                className="absolute left-1/2 top-1/2 w-[min(58vw,22rem)] text-left md:w-[min(30vw,23rem)]"
+                aria-label={wide ? `${e.role} at ${e.company}` : `Open ${e.role} at ${e.company}`}
+                className="absolute left-1/2 top-1/2 w-[min(58vw,16rem)] text-left sm:w-[min(40vw,19rem)] lg:w-[min(30vw,23rem)]"
                 style={{ zIndex: on ? 30 : SLOT[i] === 1 ? 20 : 10 }}
               >
                 <div
@@ -125,7 +242,7 @@ function ExperienceShowcase() {
                   }}
                 >
                   <article
-                    className="relative overflow-hidden rounded-[28px] border-[1.5px] p-6 transition-[border-color,box-shadow] duration-500"
+                    className="relative overflow-hidden rounded-[22px] border-[1.5px] p-4 transition-[border-color,box-shadow] duration-500 lg:rounded-[28px] lg:p-6"
                     style={{
                       borderColor: on ? 'rgba(167,139,250,0.95)' : EDGE[SLOT[i]].replace(/[\d.]+\)$/, '0.35)'),
                       background: 'linear-gradient(165deg, #FBF8FF 0%, #FBF8FF 45%, #F5F0FF 100%)',
@@ -134,29 +251,30 @@ function ExperienceShowcase() {
                         : `0 0 40px -18px ${EDGE[SLOT[i]]}, 0 50px 80px -40px rgba(36,27,53,0.16), inset 0 1px 0 rgba(255,255,255,0.06)`,
                     }}
                   >
-                    <div className="flex items-start justify-between gap-4">
+                    <div className="flex items-start justify-between gap-3 lg:gap-4">
                       <div>
-                        <h3 className="text-[22px] font-semibold leading-tight tracking-[-0.02em] text-ink md:text-[24px]">{e.role}</h3>
-                        <p className="mt-1 font-mono text-[10px] uppercase tracking-[0.16em] text-ink/45">{e.period}</p>
+                        <h3 className="text-[17px] font-semibold leading-tight tracking-[-0.02em] text-ink sm:text-[20px] lg:text-[24px]">{e.role}</h3>
+                        <p className="mt-1 font-mono text-[9px] uppercase tracking-[0.14em] text-ink/45 lg:text-[10px] lg:tracking-[0.16em]">{e.period}</p>
                       </div>
                       <span
                         aria-hidden="true"
-                        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-[1.5px] text-[15px] transition-colors duration-500"
+                        className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border-[1.5px] text-[13px] transition-colors duration-500 lg:h-10 lg:w-10 lg:text-[15px]"
                         style={{ borderColor: on ? '#A78BFA' : 'rgba(167,139,250,0.5)', color: '#A78BFA' }}
                       >
                         ↗
                       </span>
                     </div>
-                    <div className="mt-5 overflow-hidden rounded-[14px] border border-jet/10 shadow-[0_20px_40px_-20px_rgba(36,27,53,0.16)]">
-                      <WorkPoster variant={XP_SCREENS[i % XP_SCREENS.length]} className="aspect-[16/10] w-full text-[calc(min(58vw,22rem)/22)] md:text-[calc(min(30vw,23rem)/22)]" />
+                    <div className="mt-4 overflow-hidden rounded-[12px] border border-jet/10 shadow-[0_20px_40px_-20px_rgba(36,27,53,0.16)] lg:mt-5 lg:rounded-[14px]">
+                      <WorkPoster variant={XP_SCREENS[i % XP_SCREENS.length]} className="aspect-[16/10] w-full text-[calc(min(58vw,16rem)/22)] sm:text-[calc(min(40vw,19rem)/22)] lg:text-[calc(min(30vw,23rem)/22)]" />
                     </div>
-                    <ul className="mt-5 flex flex-wrap gap-2">
+                    <ul className="mt-4 flex flex-wrap gap-1.5 lg:mt-5 lg:gap-2">
                       {e.stack.map((t) => (
-                        <li key={t} className="rounded-full border border-jet/12 bg-white/[0.06] px-3.5 py-1.5 text-[12px] font-medium text-ink/90">{t}</li>
+                        <li key={t} className="rounded-full border border-jet/12 bg-white/[0.06] px-2.5 py-1 text-[10.5px] font-medium text-ink/90 lg:px-3.5 lg:py-1.5 lg:text-[12px]">{t}</li>
                       ))}
                     </ul>
-                    <p className="mt-4 text-[14.5px] leading-relaxed text-ink/80">{e.summary}</p>
-                    <p className="mt-3 font-serif text-[16px] italic text-accent-deep">{e.company}</p>
+                    <p className="mt-4 hidden text-[14.5px] leading-relaxed text-ink/80 lg:block">{e.summary}</p>
+                    <p className="mt-3 font-serif text-[14px] italic text-accent-deep lg:text-[16px]">{e.company}</p>
+                    <p className="mt-3 font-mono text-[9.5px] uppercase tracking-[0.16em] text-accent-deep lg:hidden">Tap to open ↗</p>
                   </article>
                 </div>
               </button>
@@ -167,60 +285,27 @@ function ExperienceShowcase() {
           <span aria-hidden="true" className="pointer-events-none absolute bottom-[6%] left-[8%] h-14 w-[30%] rounded-full bg-[radial-gradient(closest-side,rgba(167,139,250,0.3),transparent)] blur-2xl" />
           <span aria-hidden="true" className="pointer-events-none absolute bottom-[6%] right-[4%] h-14 w-[30%] rounded-full bg-[radial-gradient(closest-side,rgba(113,81,181,0.3),transparent)] blur-2xl" />
         </div>
-
-        {/* Phones and tablets: the same cards, stacked so each is easy to read. */}
-        <ol className="grid gap-5 sm:grid-cols-2 lg:hidden" aria-label="Experience">
-          {experience.map((e, i) => (
-            <li key={e.role} data-xp-in>
-              <article className="relative overflow-hidden rounded-[24px] border-[1.5px] border-accent/50 bg-card p-5 shadow-[0_0_0_5px_rgba(225,210,250,0.5),0_30px_60px_-30px_rgba(113,81,181,0.4)] sm:p-6">
-                <div className="flex items-start justify-between gap-4">
-                  <div>
-                    <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-accent-deep">{n(i)} · {e.period}</p>
-                    <h3 className="mt-1.5 text-[22px] font-semibold leading-tight tracking-[-0.02em] text-ink">{e.role}</h3>
-                    <p className="mt-1 font-serif text-[16px] italic text-accent-deep">{e.company}</p>
-                  </div>
-                  <span aria-hidden="true" className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-[1.5px] border-accent text-[15px] text-accent-deep">↗</span>
-                </div>
-                <div className="mt-4 overflow-hidden rounded-[14px] border border-jet/10">
-                  <WorkPoster variant={XP_SCREENS[i % XP_SCREENS.length]} className="aspect-[16/10] w-full text-[calc((100vw-5.5rem)/22)] sm:text-[calc((50vw-5rem)/22)]" />
-                </div>
-                <p className="mt-4 text-[15px] leading-relaxed text-ink/80">{e.summary}</p>
-                <ul className="mt-3 space-y-1.5 text-[14px] leading-snug text-ink/75">
-                  {e.points.map((pt) => (
-                    <li key={pt} className="flex gap-2.5">
-                      <span aria-hidden="true" className="mt-[0.5em] h-1.5 w-1.5 shrink-0 rounded-full bg-accent" />
-                      {pt}
-                    </li>
-                  ))}
-                </ul>
-                <ul className="mt-4 flex flex-wrap gap-2">
-                  {e.stack.map((t) => (
-                    <li key={t} className="rounded-full border border-jet/12 px-3 py-1 text-[12px] font-medium text-ink/85">{t}</li>
-                  ))}
-                </ul>
-              </article>
-            </li>
-          ))}
-        </ol>
       </div>
 
       {/* Bottom row: the current role on the left, arrows and progress on the right. */}
-      <div className="mt-8 flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+      <div className="mt-6 flex flex-col-reverse gap-6 md:flex-row md:items-center md:justify-between lg:mt-8">
         <p data-xp-in className="flex items-center gap-3 text-[11px] font-medium uppercase tracking-[0.28em] text-ink/45">
           <span className="h-2 w-2 rounded-full bg-accent shadow-[0_0_10px_#A78BFA]" />
           Currently · {experience[0].company}
         </p>
-        <div className="hidden items-center gap-4 lg:flex">
+        <div className="flex items-center gap-4">
           <button type="button" onClick={() => step(-1)} aria-label="Previous role" className="flex h-12 w-12 items-center justify-center rounded-full border border-jet/25 text-[18px] text-ink transition-colors hover:border-jet/60">←</button>
           <button type="button" onClick={() => step(1)} aria-label="Next role" className="flex h-12 w-12 items-center justify-center rounded-full bg-accent text-[18px] text-jet shadow-[0_0_24px_-4px_rgba(167,139,250,0.8)] transition-[translate] hover:-translate-y-0.5">→</button>
           <div className="ml-4 w-40">
             <p className="text-[15px] text-ink"><span className="font-semibold">{n(focus)}</span> <span className="text-ink/40">/ {n(count - 1)}</span></p>
-            <div className="mt-2.5 h-[3px] w-full rounded-full bg-white/10">
+            <div className="mt-2.5 h-[3px] w-full rounded-full bg-accent/20">
               <div className="h-full rounded-full bg-accent transition-[width] duration-500 ease-out" style={{ width: `${((focus + 1) / count) * 100}%` }} />
             </div>
           </div>
         </div>
       </div>
+
+      <RoleSheet open={open} onClose={close} onStep={sheetStep} />
     </div>
   )
 }
