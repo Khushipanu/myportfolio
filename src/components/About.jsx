@@ -99,7 +99,7 @@ function ExperienceShowcase() {
         </div>
 
         {/* Right: three cards fanned in 3D, each staying in its place. */}
-        <div className="relative h-[34rem] [perspective:1800px] md:h-[38rem] lg:h-[40rem]">
+        <div className="relative hidden h-[40rem] [perspective:1800px] lg:block">
           {experience.map((e, i) => {
             const pose = FAN[SLOT[i]]
             const on = focus === i
@@ -167,6 +167,41 @@ function ExperienceShowcase() {
           <span aria-hidden="true" className="pointer-events-none absolute bottom-[6%] left-[8%] h-14 w-[30%] rounded-full bg-[radial-gradient(closest-side,rgba(167,139,250,0.3),transparent)] blur-2xl" />
           <span aria-hidden="true" className="pointer-events-none absolute bottom-[6%] right-[4%] h-14 w-[30%] rounded-full bg-[radial-gradient(closest-side,rgba(113,81,181,0.3),transparent)] blur-2xl" />
         </div>
+
+        {/* Phones and tablets: the same cards, stacked so each is easy to read. */}
+        <ol className="grid gap-5 sm:grid-cols-2 lg:hidden" aria-label="Experience">
+          {experience.map((e, i) => (
+            <li key={e.role} data-xp-in>
+              <article className="relative overflow-hidden rounded-[24px] border-[1.5px] border-accent/50 bg-card p-5 shadow-[0_0_0_5px_rgba(225,210,250,0.5),0_30px_60px_-30px_rgba(113,81,181,0.4)] sm:p-6">
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-accent-deep">{n(i)} · {e.period}</p>
+                    <h3 className="mt-1.5 text-[22px] font-semibold leading-tight tracking-[-0.02em] text-ink">{e.role}</h3>
+                    <p className="mt-1 font-serif text-[16px] italic text-accent-deep">{e.company}</p>
+                  </div>
+                  <span aria-hidden="true" className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-[1.5px] border-accent text-[15px] text-accent-deep">↗</span>
+                </div>
+                <div className="mt-4 overflow-hidden rounded-[14px] border border-jet/10">
+                  <WorkPoster variant={XP_SCREENS[i % XP_SCREENS.length]} className="aspect-[16/10] w-full text-[calc((100vw-5.5rem)/22)] sm:text-[calc((50vw-5rem)/22)]" />
+                </div>
+                <p className="mt-4 text-[15px] leading-relaxed text-ink/80">{e.summary}</p>
+                <ul className="mt-3 space-y-1.5 text-[14px] leading-snug text-ink/75">
+                  {e.points.map((pt) => (
+                    <li key={pt} className="flex gap-2.5">
+                      <span aria-hidden="true" className="mt-[0.5em] h-1.5 w-1.5 shrink-0 rounded-full bg-accent" />
+                      {pt}
+                    </li>
+                  ))}
+                </ul>
+                <ul className="mt-4 flex flex-wrap gap-2">
+                  {e.stack.map((t) => (
+                    <li key={t} className="rounded-full border border-jet/12 px-3 py-1 text-[12px] font-medium text-ink/85">{t}</li>
+                  ))}
+                </ul>
+              </article>
+            </li>
+          ))}
+        </ol>
       </div>
 
       {/* Bottom row: the current role on the left, arrows and progress on the right. */}
@@ -175,7 +210,7 @@ function ExperienceShowcase() {
           <span className="h-2 w-2 rounded-full bg-accent shadow-[0_0_10px_#A78BFA]" />
           Currently · {experience[0].company}
         </p>
-        <div className="flex items-center gap-4">
+        <div className="hidden items-center gap-4 lg:flex">
           <button type="button" onClick={() => step(-1)} aria-label="Previous role" className="flex h-12 w-12 items-center justify-center rounded-full border border-jet/25 text-[18px] text-ink transition-colors hover:border-jet/60">←</button>
           <button type="button" onClick={() => step(1)} aria-label="Next role" className="flex h-12 w-12 items-center justify-center rounded-full bg-accent text-[18px] text-jet shadow-[0_0_24px_-4px_rgba(167,139,250,0.8)] transition-[translate] hover:-translate-y-0.5">→</button>
           <div className="ml-4 w-40">

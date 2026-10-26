@@ -222,7 +222,7 @@ export default function Work() {
         </div>
 
         {/* Core skills; the ones used in the front card light up. */}
-        <ul aria-label="Core skills" className="pointer-events-none absolute left-5 right-5 top-32 z-20 flex flex-wrap gap-x-4 gap-y-1.5 font-mono text-[10px] uppercase tracking-[0.14em] md:left-auto md:right-10 md:top-28 md:flex-col md:items-end md:gap-2 md:text-[11px]">
+        <ul aria-label="Core skills" className="pointer-events-none absolute left-5 right-5 top-32 z-20 hidden flex-wrap md:flex gap-x-4 gap-y-1.5 font-mono text-[10px] uppercase tracking-[0.14em] md:left-auto md:right-10 md:top-28 md:flex-col md:items-end md:gap-2 md:text-[11px]">
           {SKILLS.map((k) => (
             <li key={k} className={`transition-colors duration-500 ${active.skills.includes(k) ? 'font-semibold text-accent-deep' : 'text-ink/35'}`}>{k}</li>
           ))}
